@@ -19,20 +19,13 @@ public class Bot {
 		pb.command("cmd.exe", "/c", "node MemeBot2000.js");
 		
 		//TODO we need to find the dir of memebot
-		pb.directory(new File("D:\\Desktop\\New folder"));
+		pb.directory(new File("src\\main\\resources\\Bot"));
 		
 		Process botProcess = pb.start();
 		
 		input =  new BufferedReader(new InputStreamReader(botProcess.getInputStream()));
 		error = new BufferedReader(new InputStreamReader(botProcess.getErrorStream()));
 		output = new BufferedWriter(new OutputStreamWriter(botProcess.getOutputStream()));
-
-		// kick off receive and sender thread controllers
-		Controller receiveController = new ReceiverController();
-		Controller senderController = new SenderController();
-
-			// receive controller monitors input port, spawns child to handle process
-			// sender controller monitors sender Q, spawns child to send to discord bot process
 
 
 	}
@@ -41,7 +34,7 @@ public class Bot {
 	 *
 	 * @return console output of the bot as an inputStream
 	 */
-	public BufferedReader getInput() {
+	public BufferedReader getBotOutput() {
 		return input;
 	}
 
@@ -49,7 +42,7 @@ public class Bot {
 	 * 
 	 * @return error output of the bot as an inputstream
 	 */
-	public BufferedReader getError() {
+	public BufferedReader getBotErrorOutput() {
 		return error;
 	}
 
@@ -57,7 +50,7 @@ public class Bot {
 	 * 
 	 * @return console input of the bot, used to write to the bots console
 	 */
-	public BufferedWriter getOutput() {
+	public BufferedWriter getBotConsoleInput() {
 		return output;
 	}
 
