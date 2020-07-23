@@ -23,14 +23,26 @@ public class Bot {
 		output = new BufferedWriter(new OutputStreamWriter(botProcess.getOutputStream()));
 	}
 
+	/**
+	 *
+	 * @return console output of the bot as an inputStream
+	 */
 	public BufferedReader getInput() {
 		return input;
 	}
 
+	/**
+	 * 
+	 * @return error output of the bot as an inputstream
+	 */
 	public BufferedReader getError() {
 		return error;
 	}
 
+	/**
+	 * 
+	 * @return console input of the bot, used to write to the bots console
+	 */
 	public BufferedWriter getOutput() {
 		return output;
 	}
