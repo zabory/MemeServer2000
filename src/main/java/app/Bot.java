@@ -14,7 +14,7 @@ public class Bot {
 	public Bot() throws IOException {
 		
 		ProcessBuilder pb = new ProcessBuilder();
-		pb.command("cmd.exe", "/c", "node MemeBot2000");
+		pb.command("cmd.exe", "/c", "node MemeBot2000.js");
 		
 		Process botProcess = pb.start();
 		
