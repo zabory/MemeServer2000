@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import Thread.*;
 
 public class Bot {
 	
@@ -19,7 +18,7 @@ public class Bot {
 		pb.command("cmd.exe", "/c", "node MemeBot2000.js");
 		
 		//TODO we need to find the dir of memebot
-		pb.directory(new File("src\\main\\resources\\Bot"));
+		pb.directory(new File("src\\main\\resources\\bot"));
 		
 		Process botProcess = pb.start();
 		
