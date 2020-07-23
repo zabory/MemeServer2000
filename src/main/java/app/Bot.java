@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import Thread.*;
 
 public class Bot {
 	
@@ -21,6 +22,15 @@ public class Bot {
 		input =  new BufferedReader(new InputStreamReader(botProcess.getInputStream()));
 		error = new BufferedReader(new InputStreamReader(botProcess.getErrorStream()));
 		output = new BufferedWriter(new OutputStreamWriter(botProcess.getOutputStream()));
+
+		// kick off receive and sender thread controllers
+		Controller receiveController = new ReceiverController();
+		Controller senderController = new SenderController();
+
+			// receive controller monitors input port, spawns child to handle process
+			// sender controller monitors sender Q, spawns child to send to discord bot process
+
+
 	}
 
 	/**
