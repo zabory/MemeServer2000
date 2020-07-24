@@ -14,18 +14,21 @@ public class Memebase {
     static String dbName = "meme.db";
     static List<String> tableDefs = Arrays.asList(
             "CREATE TABLE IF NOT EXISTS " + memeTableName + " (" +
-                    "id integer PRIMARY KEY," +
+                    "id integer PRIMARY KEY UNIQUE," +
                     "link text NOT NULL" +
-                    ");",
-
-            "CREATE TABLE ID NOT EXISTS " + cacheTableName + " (" +
-                    "id integer PRIMARY KEY," +
-                    "link text NOT NULL" +
+                    "submitter text NOT NULL" +
+                    "curator text NOT NULL" +
                     ");",
 
             "CREATE TABLE IF NOT EXISTS " + tagLkpTableName + " (" +
-                    "id integer PRIMARY KEY," +
+                    "id integer," +
                     "tag text NOT NULL" +
+                    ");",
+
+            "CREATE TABLE ID NOT EXISTS " + cacheTableName + " (" +
+                    "id integer PRIMARY KEY UNIQUE," +
+                    "link text NOT NULL" +
+                    "submitter text NOT NULL" +
                     ");"
     );
 
@@ -56,34 +59,39 @@ public class Memebase {
     }
 
     /**
-     *
+     * Insert into the meme table
+     * @param username name of submitting user
      * @param link A link to a meme
      * @param tags Tags associated with this meme
-     * @param isCurator whether or not the inserter is a curator
      * @return true if success
      */
-    public Boolean submitMeme(String username, Boolean isCurator, String link, List<String> tags){
-        String table = cacheTableName;
-        if(isCurator){
-            table = memeTableName;
-        }
-
-        execute("INSERT INTO " + table + "(id, link) VALUES (" + getID() + "," + link + ")");
+    public Boolean submitMeme(String username, String link, List<String> tags){
+        Integer memeID = getID();
+        Boolean status = execute("INSERT INTO " + memeTableName + "(id, link, submitter, curator) " +
+                "VALUES (" + memeID + "," + link + "," + username + "," + username + ")");
         for(String tag : tags){
-            execute("INSERT INTO " + tagLkpTableName + "(id, tag) VALUES (" + id + "," + tag + ")");
+           status &= execute("INSERT INTO " + tagLkpTableName + "(id, tag) VALUES (" + memeID + "," + tag + ")");
         }
 
+        return status;
+    }
+
+    public Boolean cacheMeme(String username, String link, List<String> tags){
         return false;
     }
 
-    private void execute(String sql) {
-        execute(Arrays.asList(sql));
+    public Boolean promoteMeme(Integer id){
+        return false;
+    }
+
+    private Boolean execute(String sql) {
+        return execute(Arrays.asList(sql));
     }
     /**
      *
      * @param sqls sql statements to execute
      */
-    private void execute(List<String> sqls) {
+    private Boolean execute(List<String> sqls) {
         try (Connection conn = DriverManager.getConnection(db)) {
             if (conn != null) {
                 for(String sql : sqls){
@@ -96,7 +104,9 @@ public class Memebase {
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            return false;
         }
+        return true;
     }
 
     /**
