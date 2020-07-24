@@ -8,6 +8,7 @@ import java.util.List;
 public class Memebase {
     String db;
     Integer id;
+    Connection conn;
     static String memeTableName = "memes";
     static String cacheTableName = "cache";
     static String tagLkpTableName = "tag_lkp";
@@ -37,15 +38,26 @@ public class Memebase {
      * else resumes connection to existing db
      * @param filePath The true path where to store this DB
      */
-    Memebase(String filePath) throws SQLException {
+    Memebase(String filePath) {
         this.db = "jdbc:sqlite:" + filePath + dbName;
-        System.out.println("Validating tables");
+    }
+
+    public void open() throws SQLException {
+        conn = DriverManager.getConnection(db);
         execute(tableDefs);
-        ResultSet rs = executeQuery("SELECT MAX(id) FROM " + memeTableName + ";");
-        if(rs != null && rs.getFetchSize() != 0)
-            id = rs.getInt("MAX(id)");
+        ResultSet rs = executeQuery("SELECT MAX(id) m FROM " + memeTableName + ";");
+        if(rs != null && rs.next())
+            id = rs.getInt("m");
         else
             id = 0;
+    }
+
+    public void close(){
+        try {
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -92,21 +104,15 @@ public class Memebase {
      * @param sqls sql statements to execute
      */
     private Boolean execute(List<String> sqls) {
-        try (Connection conn = DriverManager.getConnection(db)) {
-            if (conn != null) {
-                for(String sql : sqls){
-                    conn.createStatement().execute(sql);
-                }
-            }
-            else{
-                System.out.println("Failed to connect to " + db);
-                throw new Exception();
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return false;
+        Boolean retVal = true;
+        try {
+            for(String sql : sqls)
+                conn.createStatement().execute(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            retVal = false;
         }
-        return true;
+        return retVal;
     }
 
     /**
@@ -115,16 +121,10 @@ public class Memebase {
      */
     private ResultSet executeQuery(String sql) {
         ResultSet rs = null;
-        try (Connection conn = DriverManager.getConnection(db)) {
-            if (conn != null) {
-                rs = conn.createStatement().executeQuery(sql);
-            }
-            else{
-                System.out.println("Failed to connect to " + db);
-                throw new Exception();
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        try {
+            rs = conn.createStatement().executeQuery(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return rs;
     }

@@ -9,6 +9,8 @@ public class MemebaseTest {
 
     @Test
     public void constructorTest() throws SQLException {
-        Memebase memebade = new Memebase("C:\\sqlite\\");
+        Memebase memebase = new Memebase("C:\\sqlite\\");
+        memebase.open();
+        memebase.close();
     }
 }
