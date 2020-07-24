@@ -100,7 +100,7 @@ public class MemeBase {
     public Boolean store(String username, String link, List<String> tags){
         Integer memeID = getID();
         Boolean status = execute("INSERT INTO " + memeTableName + "(id, link, submitter, curator) VALUES (?,?,?,?)",
-                Arrays.asList(  new Column(id, Column.ColType.INT),
+                Arrays.asList(  new Column(memeID, Column.ColType.INT),
                                 new Column(link, Column.ColType.STR),
                                 new Column(username, Column.ColType.STR),
                                 new Column(username, Column.ColType.STR)
@@ -108,11 +108,10 @@ public class MemeBase {
 
         for(String tag : tags){
            status &= execute("INSERT INTO " + tagLkpTableName + "(id, tag) VALUES (?,?)",
-                   Arrays.asList(   new Column(id, Column.ColType.INT),
+                   Arrays.asList(   new Column(memeID, Column.ColType.INT),
                                     new Column(tag, Column.ColType.STR)
                    ));
         }
-
         return status;
     }
 
