@@ -6,6 +6,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MemeBase {
+    /*
+     *
+     * VARS AND SUCH
+     *
+     */
+
     static class Column{
         enum ColType{
             INT,
@@ -47,6 +53,12 @@ public class MemeBase {
                     ");"
     );
 
+    /*
+     *
+     * PUBLIC
+     *
+     */
+
     /**
      * Constructor
      * @param filePath The true path where to store this DB
@@ -81,12 +93,12 @@ public class MemeBase {
     }
 
     /**
-     *
+     * Get a meme that matches the affiliated tags
      * @param tags The tags that this meme must have
      * @return  null if no meme exists with all provided tags
      *          link to a meme if atleast one exists that exists
      */
-    public String getMeme(List<String> tags){
+    public String get(List<String> tags){
         return null;
     }
 
@@ -97,7 +109,7 @@ public class MemeBase {
      * @param tags Tags associated with this meme
      * @return true if success
      */
-    public Boolean store(String username, String link, List<String> tags){
+    public Integer store(String username, String link, List<String> tags){
         Integer memeID = getID();
         Boolean status = execute("INSERT INTO " + memeTableName + "(id, link, submitter, curator) VALUES (?,?,?,?)",
                 Arrays.asList(  new Column(memeID, Column.ColType.INT),
@@ -112,24 +124,39 @@ public class MemeBase {
                                     new Column(tag, Column.ColType.STR)
                    ));
         }
-        return status;
-    }
-
-    public Boolean cache(String username, String link, List<String> tags){
-        return false;
-    }
-
-    public Boolean promote(Integer id){
-        return false;
-    }
-
-    private Boolean execute(String sql) {
-        return execute(Arrays.asList(sql));
+        return status ? memeID : null;
     }
 
     /**
+     * Insert into cache table
+     * @param username user who submitted meme
+     * @param link link to meme
+     * @param tags tags for this meme
+     * @return
+     */
+    public Integer cache(String username, String link, List<String> tags){
+        return null;
+    }
+
+    /**
+     * Promote a meme from the cache to meme table
+     * @param id of the meme
+     * @return
+     */
+    public Integer promote(Integer id){
+        return null;
+    }
+
+    /*
      *
+     *  PRIVATE
+     *
+     */
+
+    /**
+     * Execute a bunch of no return querys
      * @param sqls sql statements to execute
+     * @return status of execution
      */
     private Boolean execute(List<String> sqls) {
         Boolean retVal = true;
@@ -144,8 +171,9 @@ public class MemeBase {
     }
 
     /**
-     *
+     * execute a query that returns data
      * @param sql sql statement to execute
+     * @return the results of query
      */
     private ResultSet executeQuery(String sql) {
         ResultSet rs = null;
@@ -158,9 +186,10 @@ public class MemeBase {
     }
 
     /**
-     *
+     * execute a query that needs to be built with typed params
      * @param sql sql statement to prepare
      * @param cols column values
+     * @return the status of query
      */
     private Boolean execute(String sql, List<Column> cols) {
         Boolean ret = true;
@@ -185,6 +214,10 @@ public class MemeBase {
         return ret;
     }
 
+    /**
+     * Increments the ID count
+     * @return the freshest ID
+     */
     private Integer getID() {
         id++;
         return id;
