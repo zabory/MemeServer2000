@@ -15,8 +15,8 @@ public class Memebase {
     static List<String> tableDefs = Arrays.asList(
             "CREATE TABLE IF NOT EXISTS " + memeTableName + " (" +
                     "id integer PRIMARY KEY UNIQUE," +
-                    "link text NOT NULL" +
-                    "submitter text NOT NULL" +
+                    "link text NOT NULL," +
+                    "submitter text NOT NULL," +
                     "curator text NOT NULL" +
                     ");",
 
@@ -25,9 +25,9 @@ public class Memebase {
                     "tag text NOT NULL" +
                     ");",
 
-            "CREATE TABLE ID NOT EXISTS " + cacheTableName + " (" +
+            "CREATE TABLE IF NOT EXISTS " + cacheTableName + " (" +
                     "id integer PRIMARY KEY UNIQUE," +
-                    "link text NOT NULL" +
+                    "link text NOT NULL," +
                     "submitter text NOT NULL" +
                     ");"
     );
@@ -41,9 +41,9 @@ public class Memebase {
         this.db = "jdbc:sqlite:" + filePath + dbName;
         System.out.println("Validating tables");
         execute(tableDefs);
-        ResultSet rs = executeQuery("SELECT MAX(id)");
-        if(rs != null)
-            id = rs.getInt("id");
+        ResultSet rs = executeQuery("SELECT MAX(id) FROM " + memeTableName + ";");
+        if(rs != null && rs.getFetchSize() != 0)
+            id = rs.getInt("MAX(id)");
         else
             id = 0;
     }
