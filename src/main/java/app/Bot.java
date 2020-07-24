@@ -1,6 +1,7 @@
 package app;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -16,18 +17,23 @@ public class Bot {
 		ProcessBuilder pb = new ProcessBuilder();
 		pb.command("cmd.exe", "/c", "node MemeBot2000.js");
 		
+		//TODO we need to find the dir of memebot
+		pb.directory(new File("src\\main\\resources\\bot"));
+		
 		Process botProcess = pb.start();
 		
 		input =  new BufferedReader(new InputStreamReader(botProcess.getInputStream()));
 		error = new BufferedReader(new InputStreamReader(botProcess.getErrorStream()));
 		output = new BufferedWriter(new OutputStreamWriter(botProcess.getOutputStream()));
+
+
 	}
 
 	/**
 	 *
 	 * @return console output of the bot as an inputStream
 	 */
-	public BufferedReader getInput() {
+	public BufferedReader getBotOutput() {
 		return input;
 	}
 
@@ -35,7 +41,7 @@ public class Bot {
 	 * 
 	 * @return error output of the bot as an inputstream
 	 */
-	public BufferedReader getError() {
+	public BufferedReader getBotErrorOutput() {
 		return error;
 	}
 
@@ -43,7 +49,7 @@ public class Bot {
 	 * 
 	 * @return console input of the bot, used to write to the bots console
 	 */
-	public BufferedWriter getOutput() {
+	public BufferedWriter getBotConsoleInput() {
 		return output;
 	}
 
