@@ -1,6 +1,7 @@
 package app;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,11 +34,15 @@ public class Memebase {
      * else resumes connection to existing db
      * @param filePath The true path where to store this DB
      */
-    Memebase(String filePath){
+    Memebase(String filePath) throws SQLException {
         this.db = "jdbc:sqlite:" + filePath + dbName;
         System.out.println("Validating tables");
-        executeSql(tableDefs);
-        // get max ID
+        execute(tableDefs);
+        ResultSet rs = executeQuery("SELECT MAX(id)");
+        if(rs != null)
+            id = rs.getInt("id");
+        else
+            id = 0;
     }
 
     /**
@@ -63,38 +68,59 @@ public class Memebase {
             table = memeTableName;
         }
 
-        executeSql("INSERT INTO " + table + "(id, link) VALUES ()");
+        execute("INSERT INTO " + table + "(id, link) VALUES (" + getID() + "," + link + ")");
+        for(String tag : tags){
+            execute("INSERT INTO " + tagLkpTableName + "(id, tag) VALUES (" + id + "," + tag + ")");
+        }
 
-
+        return false;
     }
 
-
-    /**
-     *
-     * @param sql sql statment to execute
-     */
-    private void executeSql(String sql) {
-        executeSql(Arrays.asList(sql));
+    private void execute(String sql) {
+        execute(Arrays.asList(sql));
     }
-
     /**
      *
      * @param sqls sql statements to execute
      */
-    private void executeSql(List<String> sqls) {
+    private void execute(List<String> sqls) {
         try (Connection conn = DriverManager.getConnection(db)) {
             if (conn != null) {
                 for(String sql : sqls){
-                    ResultSet rs = conn.createStatement().executeQuery(sql);
+                    conn.createStatement().execute(sql);
                 }
             }
             else{
                 System.out.println("Failed to connect to " + db);
                 throw new Exception();
             }
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    /**
+     *
+     * @param sql sql statement to execute
+     */
+    private ResultSet executeQuery(String sql) {
+        ResultSet rs = null;
+        try (Connection conn = DriverManager.getConnection(db)) {
+            if (conn != null) {
+                rs = conn.createStatement().executeQuery(sql);
+            }
+            else{
+                System.out.println("Failed to connect to " + db);
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return rs;
+    }
+
+    private Integer getID() {
+        id++;
+        return id;
     }
 }
