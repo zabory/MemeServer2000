@@ -1,0 +1,12 @@
+{
+  "name": "MemeBot2000",
+  "version": "2000",
+  "description": "umiwa mou shindeiru",
+  "main": "bot.js",
+  "author": "Jimmy Johns and the Shoester",
+  "dependencies": {
+    "discord.io": "^2.5.3",
+    "discord.js": "^12.2.0",
+    "winston": "^3.3.3"
+  }
+}
