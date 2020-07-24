@@ -3,5 +3,17 @@
   <groupId>MemeServer2000</groupId>
   <artifactId>MemeServer2000</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>MemeServer2000</name>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>7</source>
+                    <target>7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <name>MemeServer2000</name>
 </project>
