@@ -18,7 +18,7 @@ public class MemeBaseTest {
     }
 
     @Test
-    public void adminTest() throws SQLException {
+    public void adminSubmitTest() throws SQLException {
         MemeBase memebase = new MemeBase("C:\\sqlite\\");
         Integer expecID = 1;
         String link = "https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg";
@@ -29,4 +29,16 @@ public class MemeBaseTest {
         assertTrue(memebase.close());
     }
 
+    @Test
+    public void submitApproveTest() throws SQLException {
+        MemeBase memebase = new MemeBase("C:\\sqlite\\");
+        Integer expecID = 1;
+        String link = "https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg";
+        assertTrue(memebase.open());
+        assertEquals(expecID, memebase.cache("DANIEL THE FUGLY", link, Arrays.asList("daniel", "ugly", "yeet")));
+        assertTrue(memebase.promote(expecID, "Ziggy"));
+        assertTrue(memebase.demote(expecID));
+        assertEquals(link, memebase.reject(expecID));
+        assertTrue(memebase.close());
+    }
 }
