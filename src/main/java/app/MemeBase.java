@@ -29,9 +29,9 @@ public class MemeBase {
     String db;
     Integer headID;
     Connection conn;
-    static String memeTableName = "Meme_DB";
-    static String cacheTableName = "Cache_DB";
-    static String tagLkpTableName = "Tag_LKP";
+    static String memeTableName = "memes";
+    static String cacheTableName = "cached_memes";
+    static String tagLkpTableName = "tag_lkp";
     static String dbName = "meme.db";
     static List<String> tableDefs = Arrays.asList(
             "CREATE TABLE IF NOT EXISTS " + memeTableName + " (" +
