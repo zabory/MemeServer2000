@@ -134,20 +134,8 @@ public class MemeBase {
                                 new Column(username, Column.ColType.STR),
                                 new Column(username, Column.ColType.STR)
                 ));
-
-        for(String tag : tags){
-            if(status){
-                status &= execute("INSERT INTO " + tagLkpTableName + " (id, tag) VALUES (?,?)",
-                        Arrays.asList(   new Column(memeID, Column.ColType.INT),
-                                new Column(tag, Column.ColType.STR)
-                        ));
-            }
-        }
-
         if(status)
-            status = commit();
-        else
-            rollback();
+            status = insertTags(memeID, tags);
         return status ? memeID : null;
     }
 
@@ -159,7 +147,15 @@ public class MemeBase {
      * @return the id of the meme
      */
     public Integer cache(String username, String link, List<String> tags){
-        return null;
+        Integer memeID = getID();
+        Boolean status = execute("INSERT INTO " + cacheTableName + " (id, link, submitter) VALUES (?,?,?)",
+                Arrays.asList(  new Column(memeID, Column.ColType.INT),
+                        new Column(link, Column.ColType.STR),
+                        new Column(username, Column.ColType.STR)
+                ));
+        if(status)
+            status = insertTags(memeID, tags);
+        return status ? memeID : null;
     }
 
     /**
@@ -168,8 +164,45 @@ public class MemeBase {
      * @param curatorName name of curator
      * @return
      */
-    public Integer promote(Integer id, String curatorName){
-        return null;
+    public Boolean promote(Integer id, String curatorName){
+        String link = null;
+        String username = null;
+        // Get the link
+        ResultSet rs = executeQuery("SELECT link, submitter FROM " + cacheTableName + " WHERE id = ?", Arrays.asList(new Column(id, Column.ColType.INT)));
+        try {
+            if(rs != null && rs.next()) {
+                link = rs.getString("link");
+                username = rs.getString("submitter");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed to find a meme with an ID of " + id);
+            return false;
+        }
+
+        Boolean status = execute("INSERT INTO " + memeTableName + " (id, link, submitter, curator) VALUES (?,?,?,?)",
+                Arrays.asList(  new Column(id, Column.ColType.INT),
+                        new Column(link, Column.ColType.STR),
+                        new Column(username, Column.ColType.STR),
+                        new Column(curatorName, Column.ColType.STR)
+                ));
+
+        if(!status){
+            System.out.println("Failed to promote meme to MemeDB (" + id + ", " + link + ", " + username + ", " + curatorName + ")");
+            return false;
+        }
+
+        status = execute("DELETE FROM " + cacheTableName + " WHERE id = ?", Arrays.asList(  new Column(id, Column.ColType.INT)));
+        if(!status){
+            System.out.println("Failed to remove meme from cache (" + id + ", " + link + ", " + username + ")");
+            return false;
+        }
+
+        if(status)
+            status = commit();
+        else
+            rollback();
+        return status;
     }
 
     /**
@@ -178,14 +211,14 @@ public class MemeBase {
      * @return
      */
     public Boolean demote(Integer id) {
-        String link = null;
-        String username = null;
+        String link = null, username = null, curator = null;
         // Get the link
-        ResultSet rs = executeQuery("SELECT link, submitter FROM " + memeTableName + " WHERE id = ?", Arrays.asList(new Column(id, Column.ColType.INT)));
+        ResultSet rs = executeQuery("SELECT link, submitter, curator FROM " + memeTableName + " WHERE id = ?", Arrays.asList(new Column(id, Column.ColType.INT)));
         try {
             if(rs != null && rs.next()) {
                 link = rs.getString("link");
                 username = rs.getString("submitter");
+                curator = rs.getString("curator");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -200,13 +233,13 @@ public class MemeBase {
                 ));
 
         if(!status){
-            System.out.println("Failed to demote meme to cache(" + id + ", " + link + ", " + username + ")");
+            System.out.println("Failed to demote meme to cache(" + id + ", " + link + ", " + username + ", " + curator + ")");
             return false;
         }
 
         status = execute("DELETE FROM " + memeTableName + " WHERE id = ?", Arrays.asList(  new Column(id, Column.ColType.INT)));
         if(!status){
-            System.out.println("Failed to remove meme from MemeDB (" + id + ", " + link + ", " + username + ")");
+            System.out.println("Failed to remove meme from MemeDB (" + id + ", " + link + ", " + username + ", " + curator + ")");
             return false;
         }
 
@@ -353,6 +386,9 @@ public class MemeBase {
         return ret;
     }
 
+    /**
+     * rolls back the database
+     */
     private void rollback() {
         try {
             conn.rollback();
@@ -361,6 +397,10 @@ public class MemeBase {
         }
     }
 
+    /**
+     *
+     * @return whether commit occurred
+     */
     private Boolean commit() {
         try {
             conn.commit();
@@ -370,6 +410,33 @@ public class MemeBase {
             return false;
         }
         return true;
+    }
+
+
+    /**
+     *  Inerts the tags into the db
+     * @param memeID ID of the meme
+     * @param tags tags of the meme
+     * @return the status of tag insertion
+     */
+    private Boolean insertTags(Integer memeID, List<String> tags){
+        Boolean status = true;
+        for(String tag : tags){
+            if(status){
+                status &= execute("INSERT INTO " + tagLkpTableName + " (id, tag) VALUES (?,?)",
+                        Arrays.asList(   new Column(memeID, Column.ColType.INT),
+                                new Column(tag, Column.ColType.STR)
+                        ));
+            }
+        }
+
+        if(status)
+            status = commit();
+        else {
+            System.out.println("Encountered and error, rolling back...");
+            rollback();
+        }
+        return status;
     }
 
     /**

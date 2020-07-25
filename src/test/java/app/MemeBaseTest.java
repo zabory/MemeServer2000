@@ -11,14 +11,14 @@ import static org.junit.Assert.*;
 public class MemeBaseTest {
 
     @Test
-    public void openCloseTest() throws SQLException {
+    public void openCloseTest() {
         MemeBase memebase = new MemeBase("C:\\sqlite\\");
         assertTrue(memebase.open());
         assertTrue(memebase.close());
     }
 
     @Test
-    public void adminTest() throws SQLException {
+    public void adminSubmitTest() {
         MemeBase memebase = new MemeBase("C:\\sqlite\\");
         Integer expecID = 1;
         String link = "https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg";
@@ -29,4 +29,16 @@ public class MemeBaseTest {
         assertTrue(memebase.close());
     }
 
+    @Test
+    public void submitApproveTest() {
+        MemeBase memebase = new MemeBase("C:\\sqlite\\");
+        Integer expecID = 1;
+        String link = "https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg";
+        assertTrue(memebase.open());
+        assertEquals(expecID, memebase.cache("DANIEL THE FUGLY", link, Arrays.asList("daniel", "ugly", "yeet")));
+        assertTrue(memebase.promote(expecID, "Ziggy"));
+        assertTrue(memebase.demote(expecID));
+        assertEquals(link, memebase.reject(expecID));
+        assertTrue(memebase.close());
+    }
 }
