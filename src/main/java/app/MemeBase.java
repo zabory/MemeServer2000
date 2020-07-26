@@ -36,7 +36,7 @@ public class MemeBase {
     static List<String> tableDefs = Arrays.asList(
             "CREATE TABLE IF NOT EXISTS " + memeTableName + " (" +
                     "id integer PRIMARY KEY UNIQUE," +
-                    "link text NOT NULL," +
+                    "link text UNIQUE NOT NULL," +
                     "submitter text NOT NULL," +
                     "curator text NOT NULL" +
                     ");",
@@ -48,7 +48,7 @@ public class MemeBase {
 
             "CREATE TABLE IF NOT EXISTS " + cacheTableName + " (" +
                     "id integer PRIMARY KEY UNIQUE," +
-                    "link text NOT NULL," +
+                    "link text UNIQUE NOT NULL," +
                     "submitter text NOT NULL" +
                     ");"
     );
@@ -116,7 +116,29 @@ public class MemeBase {
      *          link to a meme if atleast one exists that exists
      */
     public String get(List<String> tags){
-        return null;
+        ResultSet rs = null;
+        String link = null;
+//        if(tags != null && tags.size()>0){
+//            String sql = "SELECT m.link FROM (&&) n INNER JOIN " + memeTableName + " m ON m.id = n.id ORDER BY RANDOM() LIMIT 1;";
+//            String subQuery = "SELECT id FROM (SELECT COUNT(*) c, id FROM " + tagLkpTableName + " WHERE tag IN (&&) GROUP BY id HAVING c = " + tags.size() + ")";
+//            for(String tag : tags){
+//
+//            }
+//        }
+//        // Default query for no tags
+//        else
+            rs = executeQuery("SELECT m.link FROM " + tagLkpTableName + " n INNER JOIN " + memeTableName + " m ON m.id = n.id ORDER BY RANDOM() LIMIT 1;");
+
+        try {
+            if(rs != null && rs.next()) {
+                link = rs.getString("link");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("No meme exists that contains that tags: " + tags);
+            return null;
+        }
+        return link;
     }
 
     /**
