@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MemeBase {
+public class MemeBase2000 {
     /*
      *
      * VARS AND SUCH
@@ -63,7 +63,7 @@ public class MemeBase {
      * Constructor
      * @param filePath The true path where to store this DB
      */
-    MemeBase(String filePath) {
+    MemeBase2000(String filePath) {
         this.db = "jdbc:sqlite:" + filePath + dbName;
     }
 
@@ -196,6 +196,7 @@ public class MemeBase {
     public Boolean promote(Integer id, String curatorName){
         String link = null;
         String username = null;
+        Boolean status = true;
         // Get the link
         ResultSet rs = executeQuery("SELECT link, submitter FROM " + cacheTableName + " WHERE id = ?", Arrays.asList(new Column(id, Column.ColType.INT)));
         try {
@@ -209,21 +210,28 @@ public class MemeBase {
             return false;
         }
 
-        Boolean status = execute("INSERT INTO " + memeTableName + " (id, link, submitter, curator) VALUES (?,?,?,?)",
-                Arrays.asList(  new Column(id, Column.ColType.INT),
-                        new Column(link, Column.ColType.STR),
-                        new Column(username, Column.ColType.STR),
-                        new Column(curatorName, Column.ColType.STR)
-                ));
 
+        if(link != null && username != null){
+            status = execute("INSERT INTO " + memeTableName + " (id, link, submitter, curator) VALUES (?,?,?,?)",
+                    Arrays.asList(  new Column(id, Column.ColType.INT),
+                            new Column(link, Column.ColType.STR),
+                            new Column(username, Column.ColType.STR),
+                            new Column(curatorName, Column.ColType.STR)
+                    ));
+
+        }
+        else
+            status = false;
         if(!status){
             System.out.println("Failed to promote meme to MemeDB (" + id + ", " + link + ", " + username + ", " + curatorName + ")");
+            rollback();
             return false;
         }
 
         status = execute("DELETE FROM " + cacheTableName + " WHERE id = ?", Arrays.asList(  new Column(id, Column.ColType.INT)));
         if(!status){
             System.out.println("Failed to remove meme from cache (" + id + ", " + link + ", " + username + ")");
+            rollback();
             return false;
         }
 
@@ -263,12 +271,14 @@ public class MemeBase {
 
         if(!status){
             System.out.println("Failed to demote meme to cache(" + id + ", " + link + ", " + username + ", " + curator + ")");
+            rollback();
             return false;
         }
 
         status = execute("DELETE FROM " + memeTableName + " WHERE id = ?", Arrays.asList(  new Column(id, Column.ColType.INT)));
         if(!status){
             System.out.println("Failed to remove meme from MemeDB (" + id + ", " + link + ", " + username + ", " + curator + ")");
+            rollback();
             return false;
         }
 
@@ -300,11 +310,13 @@ public class MemeBase {
         Boolean status = execute("DELETE FROM " + cacheTableName + " WHERE id = ?", Arrays.asList(  new Column(id, Column.ColType.INT)));
         if(!status){
             System.out.println("Failed to remove meme from cache: " + id);
+            rollback();
             return null;
         }
        status = execute("DELETE FROM " + tagLkpTableName + " WHERE id = ?", Arrays.asList(  new Column(id, Column.ColType.INT)));
         if(!status){
             System.out.println("Failed to remove meme from tag_lkp: " + id);
+            rollback();
             return null;
         }
         if(status)
