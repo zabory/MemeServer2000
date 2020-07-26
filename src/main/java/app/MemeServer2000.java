@@ -10,7 +10,7 @@ public class MemeServer2000 {
 		// put bot stuff here
 
 		// create the controller
-		MemeDBController2000 controller = new MemeDBController2000("C:\\sqlite\\");
+		MemeDBC2000 controller = new MemeDBC2000("C:\\sqlite\\");
 		BlockingQueue dbOutputQ = controller.getOutputQ();
 		BlockingQueue dbInputQ = controller.getInputQ();
 
