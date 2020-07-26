@@ -5,6 +5,7 @@ import org.junit.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
@@ -80,7 +81,7 @@ public class MemeBase2000Test {
         Integer expecID = 1;
         String link = "https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg";
         assertEquals(expecID, memebase.store("Ziggy", link, Arrays.asList("meta", "books")));
-        assertEquals(link, memebase.get(null));
+        assertEquals(link, memebase.get(new ArrayList<String>()));
     }
 
     @Test
@@ -90,7 +91,7 @@ public class MemeBase2000Test {
         assertEquals(expecID, memebase.store("Ziggy", link, Arrays.asList("meta", "books")));
         assertTrue(memebase.demote(expecID));
         assertEquals(link, memebase.reject(expecID));
-        assertEquals(null, memebase.get(null));
+        assertEquals(null, memebase.get(new ArrayList<String>()));
     }
 
     @Test
@@ -118,7 +119,33 @@ public class MemeBase2000Test {
 
         assertEquals(link1, memebase.get(Arrays.asList("books")));
         assertEquals(link2, memebase.get(Arrays.asList("diagram")));
+        assertEquals(null, memebase.get(Arrays.asList("nudes")));
         assertEquals(link3, memebase.get(Arrays.asList("animal", "oracle", "dog")));
+    }
+
+    @Test
+    public void getByIDTest() {
+        Integer ID1 = 1, ID2 = 2, ID3 = 3, ID4 = 4;
+        String link1 = "https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg",
+                link2 = "https://cdn.discordapp.com/attachments/647667357879107584/736409444577050764/MemeBot2000.jpg",
+                link3 = "https://cdn.discordapp.com/attachments/647667357879107584/735864874932109322/xvOzIkw.jpeg";
+        assertEquals(ID1, memebase.store("Ziggy", link1, Arrays.asList("meta", "books")));
+        assertEquals(ID2, memebase.store("Ziggy", link2, Arrays.asList("server", "diagram")));
+        assertEquals(ID3, memebase.store("Ziggy", link3, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
+
+        assertEquals(link3, memebase.get(ID3));
+        assertEquals(link2, memebase.get(ID2));
+        assertEquals(null, memebase.get(ID4));
+
+        assertTrue(memebase.demote(ID3));
+        assertEquals(null, memebase.get(ID3));
+        assertEquals(link3, memebase.reject(ID3));
+        assertEquals(null, memebase.get(ID3));
+
+        assertTrue(memebase.demote(ID1));
+        assertEquals(null, memebase.get(ID1));
+        assertTrue(memebase.promote(ID1, "Ziggy"));
+        assertEquals(link1, memebase.get(ID1));
     }
 
 }

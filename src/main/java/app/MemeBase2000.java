@@ -149,6 +149,25 @@ public class MemeBase2000 {
     }
 
     /**
+     * Gets a meme if the provided ID exists
+     * @param id of a meme
+     * @return the link to the meme or null
+     */
+    public String get(Integer id){
+        String link = null;
+        ResultSet rs = executeQuery("SELECT link FROM " + memeTableName + " WHERE id = ?", Arrays.asList(new Column(id, Column.ColType.INT)));
+        try {
+            if(rs != null && rs.next()) {
+                link = rs.getString("link");
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            System.out.println("No meme exists with ID: " + id);
+        }
+        return link;
+    }
+
+    /**
      * Insert into the meme table
      * @param username name of submitting user
      * @param link A link to a meme
