@@ -75,7 +75,19 @@ bot.on('message', data => {
 //Input to program
 consoleInput.on('line', (input) => {
 	
+	//I expect this to have some stuff
+	//json = JSON.parse(input)
+	//user:username
+	
+	user = input
+	
+	bot.users.cache.array().forEach(currentUser => {
+		if(user == currentUser.username){
+			currentUser.createDM().then(userDM =>{
+				userDM.send('test')
+			});
+		}
+	});
 });
-
 
 bot.login(auth.token)
