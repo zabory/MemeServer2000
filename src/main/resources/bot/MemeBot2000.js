@@ -80,9 +80,9 @@ bot.on('messageReactionAdd', data => {
 		channel = data.message.channel.id
 		
 		if(channel == auth.channel){
-			if(data.emoji.name == 'x_'){
+			if(data.emoji.id == auth.deny){
 				console.log("denied")
-			}else if(data.emoji.name == 'check'){
+			}else if(data.emoji.id == auth.approve){
 				console.log("approved")
 			}
 		}
@@ -116,8 +116,8 @@ consoleInput.on('line', (input) => {
 		//sends message
 		message = bot.channels.cache.get(auth.channel).send(body).then(message => {
 			//add reactions
-			message.react(message.guild.emojis.cache.get('736967055911420005'))
-			message.react(message.guild.emojis.cache.get('736967556635688981'))
+			message.react(message.guild.emojis.cache.get(auth.approve))
+			message.react(message.guild.emojis.cache.get(auth.deny))
 		});
 		
 		
