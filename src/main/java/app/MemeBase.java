@@ -118,15 +118,22 @@ public class MemeBase {
     public String get(List<String> tags){
         ResultSet rs = null;
         String link = null;
-//        if(tags != null && tags.size()>0){
-//            String sql = "SELECT m.link FROM (&&) n INNER JOIN " + memeTableName + " m ON m.id = n.id ORDER BY RANDOM() LIMIT 1;";
-//            String subQuery = "SELECT id FROM (SELECT COUNT(*) c, id FROM " + tagLkpTableName + " WHERE tag IN (&&) GROUP BY id HAVING c = " + tags.size() + ")";
-//            for(String tag : tags){
-//
-//            }
-//        }
-//        // Default query for no tags
-//        else
+        if(tags != null && tags.size()>0){
+            String sql = "SELECT m.link FROM (&&) n INNER JOIN " + memeTableName + " m ON m.id = n.id ORDER BY RANDOM() LIMIT 1;";
+            String subQuery = "SELECT id FROM (SELECT COUNT(*) c, id FROM " + tagLkpTableName + " WHERE tag IN (&&) GROUP BY id HAVING c = " + tags.size() + ")";
+            String tagList = "";
+            for(int i=0;i<tags.size();i++){
+                tagList +=  "?,";
+            }
+            subQuery = subQuery.replace("&&", tagList.substring(0, tagList.length()-1));
+            sql = sql.replace("&&", subQuery);
+            List<Column> cols = new ArrayList<Column>();
+            for(int i=0;i<tags.size();i++)
+                cols.add(i, new Column(tags.get(i), Column.ColType.STR));
+            rs = executeQuery(sql, cols);
+        }
+        // Default query for no tags
+        else
             rs = executeQuery("SELECT m.link FROM " + tagLkpTableName + " n INNER JOIN " + memeTableName + " m ON m.id = n.id ORDER BY RANDOM() LIMIT 1;");
 
         try {
