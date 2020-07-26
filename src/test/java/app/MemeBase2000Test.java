@@ -6,18 +6,17 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class MemeBaseTest {
-    static MemeBase memebase;
+public class MemeBase2000Test {
+    static MemeBase2000 memebase;
 
     @BeforeClass
     public static void construct(){
         // connect to the db
         String db = "C:\\sqlite\\";
-        memebase = new MemeBase(db);
+        memebase = new MemeBase2000(db);
     }
 
     @Before
