@@ -101,7 +101,7 @@ consoleInput.on('line', (input) => {
 	body = json.body
 	
 	//sends message to user
-	if(command == 'sendUser'){
+	if(command == 'sendToUser'){
 		//find and open user dm
 		bot.users.cache.array().forEach(currentUser => {
 			if(user == currentUser.username){
