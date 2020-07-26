@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MemeBase2000 {
+public class MemeDB2000 {
     /*
      *
      * VARS AND SUCH
@@ -63,7 +63,7 @@ public class MemeBase2000 {
      * Constructor
      * @param filePath The true path where to store this DB
      */
-    MemeBase2000(String filePath) {
+    MemeDB2000(String filePath) {
         this.db = "jdbc:sqlite:" + filePath + dbName;
     }
 

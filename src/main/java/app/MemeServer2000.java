@@ -1,10 +1,6 @@
 package app;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -14,7 +10,7 @@ public class MemeServer2000 {
 		// put bot stuff here
 
 		// create the controller
-		MemeBaseController2000 controller = new MemeBaseController2000("C:\\sqlite\\");
+		MemeDBController2000 controller = new MemeDBController2000("C:\\sqlite\\");
 		BlockingQueue dbOutputQ = controller.getOutputQ();
 		BlockingQueue dbInputQ = controller.getInputQ();
 

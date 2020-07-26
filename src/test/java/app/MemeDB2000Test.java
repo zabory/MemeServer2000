@@ -10,14 +10,14 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-public class MemeBase2000Test {
-    static MemeBase2000 memebase;
+public class MemeDB2000Test {
+    static MemeDB2000 memebase;
 
     @BeforeClass
     public static void construct(){
         // connect to the db
         String db = "C:\\sqlite\\";
-        memebase = new MemeBase2000(db);
+        memebase = new MemeDB2000(db);
     }
 
     @Before
