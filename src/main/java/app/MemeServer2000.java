@@ -5,52 +5,41 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class MemeServer2000 {
-
-	//this class will act as the controller
-	// create a bot and memedb
-	// create child to monitor approval Q
-		// watch the Q, if a meme appears, send it to the approval channel
-		// on response, controller will inform DB and this child
-	// read input buffer from bot
-	// use that to spawn children
-	//children perform tasks to populate output buffer and approval Q
-	//parallel issues
-
 	public static void main(String[] args) throws IOException {
 		// get the bot streams
-		Bot bot = new Bot();
-		BufferedReader outputReader = bot.getBotOutput();
-		BufferedWriter inputWriter = bot.getBotConsoleInput();
+		// put bot stuff here
 
-		// connect to the DB
-		MemeBase2000 db = new MemeBase2000("C:\\sqlite\\");
+		// create the controller
+		MemeBaseController2000 controller = new MemeBaseController2000("C:\\sqlite\\");
+		BlockingQueue dbOutputQ = controller.getOutputQ();
+		BlockingQueue dbInputQ = controller.getInputQ();
 
 		// approveQ
-		Queue<Integer> approveQ = new LinkedList<>();
+		BlockingQueue approveQ = new LinkedBlockingQueue();
 		Integer lastID = null;
 
 		// begin loop
 		while(true){
 			// check bot output for messages
-			if(outputReader.ready()){
-				String line = outputReader.readLine();
-				// read JSON output and pass it off to a child to handle
-				// pass the db along so that the child can talk to the DB
+				// write a message to the dbInputQ
 
+			// check messages from controller
+			if(!dbOutputQ.isEmpty()){
+				//	if a meme cached/curator submission ACK, send ACK to user
+				// 	if an approveQ meme return, send the meme to be assessed by curator
+				//	if a meme approved/rejection ACK, clear channel and pop approveQ
+				//	if a meme return for a request, send link or error to bot to post
 			}
 
 			// check approveQ for a new ID
-			if(approveQ.peek() != null && approveQ.peek() != lastID){
-				// spawn a child to get the meme from the DB
+			if(!approveQ.isEmpty() && approveQ.peek() != lastID){
+				//
 			}
 
-			// check messages from children
-			//	if a meme cached/curator submission ACK, send ACK to user
-			// 	if an approveQ meme return, send the meme to be assessed by curator
-			//	if a meme approved/rejection ACK, clear channel and pop approveQ
-			//	if a meme return for a request, send link or error to bot to post
 
 		}
 
