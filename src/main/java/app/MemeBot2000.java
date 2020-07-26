@@ -6,13 +6,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-public class Bot {
+public class MemeBot2000 {
 	
 	private BufferedReader input;
 	private BufferedReader error;
 	private BufferedWriter output;
 	
-	public Bot() throws IOException {
+	public MemeBot2000() throws IOException {
 		
 		ProcessBuilder pb = new ProcessBuilder();
 		pb.command("cmd.exe", "/c", "node MemeBot2000.js");
