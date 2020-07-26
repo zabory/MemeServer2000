@@ -72,6 +72,23 @@ bot.on('message', data => {
 	}
 });
 
+bot.on('messageReactionAdd', data => {
+	
+	if(data.users.cache.array().length > 1){
+	
+		//get the channel ID
+		channel = data.message.channel.id
+		
+		if(channel == auth.channel){
+			if(data.emoji.name == 'x_'){
+				console.log("denied")
+			}else if(data.emoji.name == 'check'){
+				console.log("approved")
+			}
+		}
+	}
+});
+
 //Input to program
 consoleInput.on('line', (input) => {
 	
@@ -88,15 +105,22 @@ consoleInput.on('line', (input) => {
 		//find and open user dm
 		bot.users.cache.array().forEach(currentUser => {
 			if(user == currentUser.username){
-				currentUser.createDM().then(userDM =>{
+				currentUser.createDM().then(userDM => {
 					//send the message
 					userDM.send(body)
 				});
 			}
 		});
 	//sends message to meme channel
-	}else if(command == 'sendChannel'){
-		bot.channels.cache.get(auth.channel).send(body)
+	}else if(command == 'sendToQueue'){
+		//sends message
+		message = bot.channels.cache.get(auth.channel).send(body).then(message => {
+			//add reactions
+			message.react(message.guild.emojis.cache.get('736967055911420005'))
+			message.react(message.guild.emojis.cache.get('736967556635688981'))
+		});
+		
+		
 	//clears queue of meme channel
 	}else if(command == 'clearQueue'){
 		bot.guilds.cache.array()[0].channels.cache.array().forEach(channel => {
