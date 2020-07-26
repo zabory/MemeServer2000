@@ -95,6 +95,19 @@ public class MemeBaseTest {
     }
 
     @Test
+    public void noTagTest() {
+        Integer ID1 = 1, ID2 = 2, ID3 = 3;
+        String link1 = "https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg",
+                link2 = "https://cdn.discordapp.com/attachments/647667357879107584/736409444577050764/MemeBot2000.jpg",
+                link3 = "https://cdn.discordapp.com/attachments/647667357879107584/735864874932109322/xvOzIkw.jpeg";
+        assertEquals(ID1, memebase.store("Ziggy", link1, Arrays.asList("meta", "books")));
+        assertEquals(ID2, memebase.store("Ziggy", link2, Arrays.asList("server", "diagram")));
+        assertEquals(ID3, memebase.store("Ziggy", link3, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
+
+        assertEquals(null, memebase.get(Arrays.asList("YOOOOOOOOO", "didly squat")));
+    }
+
+    @Test
     public void specMemeTest() {
         Integer ID1 = 1, ID2 = 2, ID3 = 3;
         String link1 = "https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg",
