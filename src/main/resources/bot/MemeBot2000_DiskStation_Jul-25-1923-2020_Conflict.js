@@ -76,35 +76,19 @@ bot.on('message', data => {
 consoleInput.on('line', (input) => {
 	
 	//I expect this to have some stuff
-	json = JSON.parse(input)
-	
-	user = json.user
+	//json = JSON.parse(input)
+	user= json.username
 	command = json.command
 	channelID = json.channelID
-	body = json.body
 	
-	//sends message to user
-	if(command == 'sendUser'){
-		//find and open user dm
-		bot.users.cache.array().forEach(currentUser => {
-			if(user == currentUser.username){
-				currentUser.createDM().then(userDM =>{
-					//send the message
-					userDM.send(body)
-				});
-			}
-		});
-	//sends message to meme channel
-	}else if(command == 'sendChannel'){
-		bot.channels.cache.get(auth.channel).send(body)
-	//clears queue of meme channel
-	}else if(command == 'clearQueue'){
-		bot.guilds.cache.array()[0].channels.cache.array().forEach(channel => {
-			if(channel.type == 'text' && channel.id == auth.channel){
-				channel.bulkDelete(100)
-			}
-		});
-	}
+	
+	bot.users.cache.array().forEach(currentUser => {
+		if(user == currentUser.username){
+			currentUser.createDM().then(userDM =>{
+				userDM.send('UwU')
+			});
+		}
+	});
 });
 
 bot.login(auth.token)
