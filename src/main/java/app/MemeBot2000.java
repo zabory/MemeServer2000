@@ -22,6 +22,13 @@ public class MemeBot2000 {
 		
 		Process botProcess = pb.start();
 		
+		//Sleep thread, not like the server can do anything while the bot is booting up and connecting anywas
+		try {
+			Thread.sleep(3500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		input =  new BufferedReader(new InputStreamReader(botProcess.getInputStream()));
 		error = new BufferedReader(new InputStreamReader(botProcess.getErrorStream()));
 		output = new BufferedWriter(new OutputStreamWriter(botProcess.getOutputStream()));
