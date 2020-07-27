@@ -10,6 +10,9 @@ var CIH = require('./consoleInputHandler.js')
 
 var bot = new Discord.Client();
 
+/**
+ *yo
+ */
 const consoleInput = readline.createInterface({
 	input: process.stdin,
 	output: process.stdout

@@ -4,6 +4,14 @@ import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * 
+ * @author Ben Shabowski
+ * @author Jacob Marszalek
+ * @version 2000
+ * @since 2000
+ * 
+ */
 public class MemeServer2000 {
 	public static void main(String[] args) throws IOException {
 		// get the bot streams
