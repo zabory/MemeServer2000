@@ -1,5 +1,7 @@
 package app;
 
+import dataStructures.MemeDBMsg2000;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -14,6 +16,7 @@ public class MemeDBC2000 {
 
     MemeDBC2000(String filePath){
         db = new MemeDB2000(filePath);
+        db.open();
         outputQ = new LinkedBlockingQueue();
         inputQ = new LinkedBlockingQueue();
     }
@@ -27,8 +30,52 @@ public class MemeDBC2000 {
     }
 
     public void spin(){
-        if(!inputQ.isEmpty()){
+        while(true){
+            if(!inputQ.isEmpty()){
+                // Get the msg
+                try {
+                    MemeDBMsg2000 msg = (MemeDBMsg2000) inputQ.take();
+                    switch(msg.getType()) {
+                        case GET_MEME_ID:
+                            String link = db.get(msg.getId());
+                            if(link != null){
+                                outputQ.put(new MemeDBMsg2000()
+                                        .type(MemeDBMsg2000.MsgDBType.APPROVE_MEME)
+                                        .message("Curate me pls")
+                                        .link(link)
+                                        .tags(msg.getTags()));
+                                break;
+                            }
+                            else{
+                                outputQ.put(new MemeDBMsg2000()
+                                        .type(MemeDBMsg2000.MsgDBType.ERROR)
+                                        .message("Failed to get meme of ID: " + msg.getId()));
+                            }
+                        case GET_MEME_TAGS:
 
+                            break;
+                        case STORE_MEME:
+
+                            break;
+                        case CACHE_MEME:
+
+                            break;
+                        case PROMOTE_MEME:
+
+                            break;
+                        case DEMOTE_MEME:
+
+                            break;
+                        case REJECT_MEME:
+
+                            break;
+                        default:
+                            System.out.println("MemeDBC cannot handle a message of type: " + msg.getType().toString());
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
