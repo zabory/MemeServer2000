@@ -11,21 +11,21 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class MemeDBC2000 {
     private MemeDB2000 db;
-    private BlockingQueue outputQ;
-    private BlockingQueue inputQ;
+    private BlockingQueue<MemeDBMsg2000> outputQ;
+    private BlockingQueue<MemeDBMsg2000> inputQ;
 
     MemeDBC2000(String filePath){
         db = new MemeDB2000(filePath);
         db.open();
-        outputQ = new LinkedBlockingQueue();
-        inputQ = new LinkedBlockingQueue();
+        outputQ = new LinkedBlockingQueue<MemeDBMsg2000>();
+        inputQ = new LinkedBlockingQueue<MemeDBMsg2000>();
     }
 
-    public BlockingQueue getInputQ() {
+    public BlockingQueue<MemeDBMsg2000> getInputQ() {
         return inputQ;
     }
 
-    public BlockingQueue getOutputQ() {
+    public BlockingQueue<MemeDBMsg2000> getOutputQ() {
         return outputQ;
     }
 
