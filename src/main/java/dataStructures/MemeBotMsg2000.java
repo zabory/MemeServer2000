@@ -2,7 +2,7 @@ package dataStructures;
 
 import org.json.JSONObject;
 
-public class MemeBotMessage2000 {
+public class MemeBotMsg2000 {
 	
 	private String user;
 	private String command;
@@ -13,7 +13,7 @@ public class MemeBotMessage2000 {
 	 * Create message from JSON object
 	 * @param j JSON object of the message
 	 */
-	public MemeBotMessage2000(JSONObject j) {
+	public MemeBotMsg2000(JSONObject j) {
 		user = j.getString("user");
 		command = j.getString("command");
 		body = j.getString("body");
@@ -27,7 +27,7 @@ public class MemeBotMessage2000 {
 	 * @param body Body of the message
 	 * @param channelID ChannelID of the message
 	 */
-	public MemeBotMessage2000(String user, String command, String body, long channelID) {
+	public MemeBotMsg2000(String user, String command, String body, long channelID) {
 		this.user = user;
 		this.command = command;
 		this.body = body;

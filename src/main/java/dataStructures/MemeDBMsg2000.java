@@ -3,7 +3,7 @@ package dataStructures;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MemeDBMessage2000 {
+public class MemeDBMsg2000 {
     enum MsgDBType {
         // To MemeDB message types
         GET_MEME_ID,            // Used to get a specific meme to approve
@@ -29,7 +29,7 @@ public class MemeDBMessage2000 {
     private String username;
 
     // For GET_MEME_ID, DEMOTE_MEME, or REJECT_MEME
-    public MemeDBMessage2000(MsgDBType type, Integer id) {
+    public MemeDBMsg2000(MsgDBType type, Integer id) {
         this.type = type;
         this.message = null;
         this.link = null;
@@ -39,7 +39,7 @@ public class MemeDBMessage2000 {
     }
 
     // For GET_MEME_TAGS
-    public MemeDBMessage2000(List<String> tags) {
+    public MemeDBMsg2000(List<String> tags) {
         this.type = MsgDBType.GET_MEME_TAGS;
         this.message = null;
         this.link = null;
@@ -49,7 +49,7 @@ public class MemeDBMessage2000 {
     }
 
     // For STORE_MEME and CACHE_MEME
-    public MemeDBMessage2000(MsgDBType type, String link, List<String> tags, String username) {
+    public MemeDBMsg2000(MsgDBType type, String link, List<String> tags, String username) {
         this.type = type;
         this.message = null;
         this.link = link;
@@ -59,7 +59,7 @@ public class MemeDBMessage2000 {
     }
 
     // For PROMOTE_MEME
-    public MemeDBMessage2000(Integer id, String username) {
+    public MemeDBMsg2000(Integer id, String username) {
         this.type = MsgDBType.PROMOTE_MEME;
         this.message = null;
         this.link = null;
@@ -69,7 +69,7 @@ public class MemeDBMessage2000 {
     }
 
     // For SUBMIT_ACK
-    public MemeDBMessage2000(String message, Integer id, String username) {
+    public MemeDBMsg2000(String message, Integer id, String username) {
         this.type = MsgDBType.SUBMIT_ACK;
         this.message = message;
         this.link = null;
@@ -79,7 +79,7 @@ public class MemeDBMessage2000 {
     }
 
     // For APPROVE_MEME
-    public MemeDBMessage2000(String message, String link, List<String> tags, String username) {
+    public MemeDBMsg2000(String message, String link, List<String> tags, String username) {
         this.type = MsgDBType.APPROVE_MEME;
         this.message = message;
         this.link = link;
@@ -89,7 +89,7 @@ public class MemeDBMessage2000 {
     }
 
     // For CURATE_RESULT
-    public MemeDBMessage2000(String message, String username) {
+    public MemeDBMsg2000(String message, String username) {
         this.type = MsgDBType.CURATE_RESULT;
         this.message = message;
         this.link = null;
@@ -99,7 +99,7 @@ public class MemeDBMessage2000 {
     }
 
     // For MEME
-    public MemeDBMessage2000(String message, String link, String username) {
+    public MemeDBMsg2000(String message, String link, String username) {
         this.type = MsgDBType.MEME;
         this.message = message;
         this.link = link;
