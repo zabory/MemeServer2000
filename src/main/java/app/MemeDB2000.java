@@ -172,7 +172,7 @@ public class MemeDB2000 {
      * @param username name of submitting user
      * @param link A link to a meme
      * @param tags Tags associated with this meme
-     * @return true if success
+     * @return the id of the meme
      */
     public Integer store(String username, String link, List<String> tags){
         Integer memeID = getID();
