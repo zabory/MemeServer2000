@@ -12,6 +12,8 @@ public class MemeBot2000 {
 	private BufferedReader error;
 	private BufferedWriter output;
 	
+	private Process bot;
+	
 	public MemeBot2000() throws IOException {
 		
 		ProcessBuilder pb = new ProcessBuilder();
@@ -20,7 +22,7 @@ public class MemeBot2000 {
 		//TODO we need to find the dir of memebot
 		pb.directory(new File("src\\main\\resources\\bot"));
 		
-		Process botProcess = pb.start();
+		bot = pb.start();
 		
 		//Sleep thread, not like the server can do anything while the bot is booting up and connecting anywas
 		try {
@@ -29,11 +31,18 @@ public class MemeBot2000 {
 			e.printStackTrace();
 		}
 		
-		input =  new BufferedReader(new InputStreamReader(botProcess.getInputStream()));
-		error = new BufferedReader(new InputStreamReader(botProcess.getErrorStream()));
-		output = new BufferedWriter(new OutputStreamWriter(botProcess.getOutputStream()));
+		input =  new BufferedReader(new InputStreamReader(bot.getInputStream()));
+		error = new BufferedReader(new InputStreamReader(bot.getErrorStream()));
+		output = new BufferedWriter(new OutputStreamWriter(bot.getOutputStream()));
 
 
+	}
+	
+	/**
+	 * Kill the bot process
+	 */
+	public void kill() {
+		bot.destroyForcibly();
 	}
 
 	/**

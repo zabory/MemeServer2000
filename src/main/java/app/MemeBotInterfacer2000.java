@@ -32,13 +32,16 @@ public class MemeBotInterfacer2000 {
 	//output to bot
 	private BufferedWriter botOutput;
 	
+	//actual bot
+	private MemeBot2000 bot;
+	
 	public MemeBotInterfacer2000(LinkedBlockingQueue<MemeBotMsg2000> input) {
 		this.input = input;
 		output = new LinkedBlockingQueue<MemeBotMsg2000>();
 		
 		try {
 			//launch bot
-			MemeBot2000 bot = new MemeBot2000();
+			bot = new MemeBot2000();
 			
 			//get bot streams
 			botInput = bot.getBotOutput();
@@ -55,6 +58,13 @@ public class MemeBotInterfacer2000 {
 			System.out.println("Could not start bot, exiting program very ungracefully");
 			System.exit(1);
 		}
+	}
+	
+	/**
+	 * Kills the bot
+	 */
+	public void killBot() {
+		bot.kill();
 	}
 	
 	/**
