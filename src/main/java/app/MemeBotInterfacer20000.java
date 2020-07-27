@@ -17,16 +17,24 @@ import dataStructures.MemeBotMsg2000;
  * @version 2000
  * @since 2000
  */
-public class MemeBotInterfacer20000 extends Thread {
+public class MemeBotInterfacer20000 extends Thread{
 	
-	private Queue<MemeBotMsg2000> input = new LinkedBlockingQueue<MemeBotMsg2000>();
-	private Queue<MemeBotMsg2000> output = new LinkedBlockingQueue<MemeBotMsg2000>();
+	//input from main thread
+	private Queue<MemeBotMsg2000> input;
+	//output to main thread
+	private Queue<MemeBotMsg2000> output;
 	
+	//input from bot
 	private BufferedReader botInput;
+	//error input from bot
 	private BufferedReader botErrorInput;
+	//output to bot
 	private BufferedWriter botOutput;
 	
-	public MemeBotInterfacer20000() {
+	public MemeBotInterfacer20000(LinkedBlockingQueue<MemeBotMsg2000> input) {
+		this.input = input;
+		output = new LinkedBlockingQueue<MemeBotMsg2000>();
+		
 		try {
 			//launch bot
 			MemeBot2000 bot = new MemeBot2000();
@@ -36,9 +44,10 @@ public class MemeBotInterfacer20000 extends Thread {
 			botErrorInput = bot.getBotErrorOutput();
 			botOutput = bot.getBotConsoleInput();
 			
-			//start input bot stream thread
-			new inputThread().start();
-			new errorInputThread().start();
+			//start all threads
+			new BotInputThread().start();
+			new ErrorInputThread().start();
+			new BotOutputThread().start();
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -47,37 +56,36 @@ public class MemeBotInterfacer20000 extends Thread {
 		}
 	}
 	
-	
-	public void run() {
-		
-	}
-	
-	public void addToOutput(MemeBotMsg2000 message) {
-		output.add(message);
-	}
-	
-	public void sendToBot(MemeBotMsg2000 message) {
-		try {
-			botOutput.write(message.toString());
-			botOutput.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
+	/**
+	 * Class to handle out to the bot's input thread
+	 * @author Ben Shabowski
+	 * @version 2000
+	 * @since 2000
+	 */
+	private class BotOutputThread extends Thread {
+		public void run() {
+			while(true) {
+				try {
+					botOutput.write(input.poll().toJSON().toString() + "\n");
+					botOutput.flush();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
 	/**
-	 * Handles any error coming from the bot
-	 * @param error Error message from the bot
+	 * Class to handle input from the bot's output thread. 
+	 * @author Ben Shabowski
+	 * @version 2000
+	 * @since 2000
 	 */
-	private void handleError(String error) {
-		
-	}
-	
-	private class inputThread extends Thread {
+	private class BotInputThread extends Thread {
 		public void run() {
 			while (true) {
 				try {
-					input.add(new MemeBotMsg2000(new JSONObject(botInput.readLine())));
+					output.add(new MemeBotMsg2000(new JSONObject(botInput.readLine())));
 				} catch (JSONException | IOException e) {
 					e.printStackTrace();
 				}
@@ -85,7 +93,13 @@ public class MemeBotInterfacer20000 extends Thread {
 		}
 	}
 	
-	private class errorInputThread extends Thread{
+	/**
+	 * Class to handle input from the bot's error output thread
+	 * @author Ben Shabowski
+	 * @version 2000
+	 * @since 2000
+	 */
+	private class ErrorInputThread extends Thread{
 		public void run() {
 			String error = "";
 			String input = "";
@@ -99,8 +113,7 @@ public class MemeBotInterfacer20000 extends Thread {
 					e.printStackTrace();
 				}
 			}
-			
-			handleError(error);
+			output.add(new MemeBotMsg2000().body("ERROR:\n" + error));
 		}
 	}
 }
