@@ -12,12 +12,13 @@ import org.json.JSONObject;
 import dataStructures.MemeBotMsg2000;
 
 /**
- * An interfacer between the memeBot and the main thread
+ * An interfacer between the memeBot and the main thread.
+ * Also contains and hosts the process for the bot.
  * @author Ben Shabowski
  * @version 2000
  * @since 2000
  */
-public class MemeBotInterfacer20000 extends Thread{
+public class MemeBotInterfacer2000 {
 	
 	//input from main thread
 	private Queue<MemeBotMsg2000> input;
@@ -31,7 +32,7 @@ public class MemeBotInterfacer20000 extends Thread{
 	//output to bot
 	private BufferedWriter botOutput;
 	
-	public MemeBotInterfacer20000(LinkedBlockingQueue<MemeBotMsg2000> input) {
+	public MemeBotInterfacer2000(LinkedBlockingQueue<MemeBotMsg2000> input) {
 		this.input = input;
 		output = new LinkedBlockingQueue<MemeBotMsg2000>();
 		
@@ -66,10 +67,12 @@ public class MemeBotInterfacer20000 extends Thread{
 		public void run() {
 			while(true) {
 				try {
-					botOutput.write(input.poll().toJSON().toString() + "\n");
-					botOutput.flush();
+					if(input.size() > 0) {
+						botOutput.write(input.poll().toJSON().toString() + "\n");
+						botOutput.flush();
+					}
 				} catch (IOException e) {
-					e.printStackTrace();
+					System.out.println(e);
 				}
 			}
 		}
@@ -116,4 +119,12 @@ public class MemeBotInterfacer20000 extends Thread{
 			output.add(new MemeBotMsg2000().body("ERROR:\n" + error));
 		}
 	}
+
+	public Queue<MemeBotMsg2000> getOutput() {
+		return output;
+	}
+	
+	
+	
+	
 }

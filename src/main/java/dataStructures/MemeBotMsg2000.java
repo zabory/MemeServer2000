@@ -14,6 +14,8 @@ public class MemeBotMsg2000 {
 	private String command;
 	private String body;
 	private long channelID;
+	private boolean admin;
+	private String url;
 
 	/**
 	 * Create a message from variables
@@ -22,19 +24,23 @@ public class MemeBotMsg2000 {
 	 * @param command   Command for message
 	 * @param body      Body of the message
 	 * @param channelID ChannelID of the message
+	 * @param admin If the message comes from a user with admin
+	 * @param url embedded URL of an image
 	 */
-	public MemeBotMsg2000(String user, String command, String body, long channelID) {
+	public MemeBotMsg2000(String user, String command, String body, long channelID, boolean admin, String url) {
 		this.user = user;
 		this.command = command;
 		this.body = body.toLowerCase();
 		this.channelID = channelID;
+		this.admin = admin;
+		this.url = url;
 	}
 
 	/**
 	 * Default constructor for class, setting everything to the default value
 	 */
 	public MemeBotMsg2000() {
-		this("", "", "", 0);
+		this("", "", "", 0, false, "");
 	}
 
 	/**
@@ -43,8 +49,32 @@ public class MemeBotMsg2000 {
 	 * @param jObject JSON object of the message
 	 */
 	public MemeBotMsg2000(JSONObject jObject) {
-		this(jObject.getString("user"), jObject.getString("command"), jObject.getString("body").toLowerCase(),
-				jObject.getLong("channelID"));
+		if(jObject.has("user")) {
+			user = jObject.getString("user");
+		}
+		
+		if(jObject.has("command")) {
+			command = jObject.getString("command");
+		}
+		
+		if(jObject.has("body")) {
+			body = jObject.getString("body");
+		}
+		
+		if(jObject.has("url")) {
+			url = jObject.getString("url");
+		}
+		
+		if(jObject.has("channelID")) {
+			channelID = jObject.getLong("channelID");
+		}
+		
+		if(jObject.has("admin")) {
+			admin = jObject.getBoolean("admin");
+		}
+		
+//		 jObject.getString("body").toLowerCase(),
+//				jObject.getLong("channelID"));
 	}
 
 	/**
@@ -58,6 +88,8 @@ public class MemeBotMsg2000 {
 		j.put("command", command);
 		j.put("body", body);
 		j.put("channelID", channelID);
+		j.put("admin", admin);
+		j.put("url", url);
 		return j;
 	}
 
@@ -93,6 +125,22 @@ public class MemeBotMsg2000 {
 		this.channelID = channelID;
 	}
 
+	public boolean isAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
 	public MemeBotMsg2000 user(String user) {
 		this.user = user;
 		return this;
@@ -110,6 +158,16 @@ public class MemeBotMsg2000 {
 
 	public MemeBotMsg2000 channelID(long channelID) {
 		this.channelID = channelID;
+		return this;
+	}
+	
+	public MemeBotMsg2000 admin(boolean admin) {
+		this.admin = admin;
+		return this;
+	}
+	
+	public MemeBotMsg2000 url(String url) {
+		this.url = url;
 		return this;
 	}
 

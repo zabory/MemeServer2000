@@ -40,7 +40,7 @@ module.exports = {
 								}
 							});
 						
-							json = {'user':user, 'admin':adminRole, 'channelID':channel, 'url':url, 'tags': tags}
+							json = {'user':user, 'admin':adminRole, 'channelID':channel, 'url':url, 'body': tags}
 							console.log(JSON.stringify(json))
 						
 							if(json.admin){
