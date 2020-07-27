@@ -30,81 +30,51 @@ public class MemeDBMsg2000 {
 
     // For GET_MEME_ID, DEMOTE_MEME, or REJECT_MEME
     public MemeDBMsg2000(MsgDBType type, Integer id) {
-        this.type = type;
-        this.message = null;
-        this.link = null;
-        this.id = id;
-        this.tags = null;
-        this.username = null;
+        this(type, null, null, id, null, null);
     }
 
     // For GET_MEME_TAGS
     public MemeDBMsg2000(List<String> tags) {
-        this.type = MsgDBType.GET_MEME_TAGS;
-        this.message = null;
-        this.link = null;
-        this.id = null;
-        this.tags = tags;
-        this.username = null;
+        this(MsgDBType.GET_MEME_TAGS, null, null, null, tags, null);
     }
 
     // For STORE_MEME and CACHE_MEME
     public MemeDBMsg2000(MsgDBType type, String link, List<String> tags, String username) {
-        this.type = type;
-        this.message = null;
-        this.link = link;
-        this.id = null;
-        this.tags = tags;
-        this.username = username;
+        this(type, null, link, null, tags, username);
     }
 
     // For PROMOTE_MEME
     public MemeDBMsg2000(Integer id, String username) {
-        this.type = MsgDBType.PROMOTE_MEME;
-        this.message = null;
-        this.link = null;
-        this.id = id;
-        this.tags = null;
-        this.username = username;
+        this(MsgDBType.PROMOTE_MEME, null, null, id, null, username);
     }
 
     // For SUBMIT_ACK
     public MemeDBMsg2000(String message, Integer id, String username) {
-        this.type = MsgDBType.SUBMIT_ACK;
-        this.message = message;
-        this.link = null;
-        this.id = id;
-        this.tags = null;
-        this.username = username;
+        this(MsgDBType.SUBMIT_ACK, message, null, id, null, username);
     }
 
     // For APPROVE_MEME
     public MemeDBMsg2000(String message, String link, List<String> tags, String username) {
-        this.type = MsgDBType.APPROVE_MEME;
-        this.message = message;
-        this.link = link;
-        this.id = null;
-        this.tags = tags;
-        this.username = username;
+        this(MsgDBType.APPROVE_MEME, message, link, null, tags, username);
     }
 
     // For CURATE_RESULT
     public MemeDBMsg2000(String message, String username) {
-        this.type = MsgDBType.CURATE_RESULT;
-        this.message = message;
-        this.link = null;
-        this.id = null;
-        this.tags = null;
-        this.username = username;
+        this(MsgDBType.CURATE_RESULT, message, null, null, null, username);
     }
 
     // For MEME
     public MemeDBMsg2000(String message, String link, String username) {
-        this.type = MsgDBType.MEME;
+        this(MsgDBType.MEME, message, link, null, null, username);
+    }
+
+    // Default
+    public MemeDBMsg2000(MsgDBType type, String message, String link, Integer id, List<String> tags, String username) {
+        this.type = type;
         this.message = message;
         this.link = link;
-        this.id = null;
-        this.tags = null;
+        this.id = id;
+        this.tags = tags;
         this.username = username;
     }
 
