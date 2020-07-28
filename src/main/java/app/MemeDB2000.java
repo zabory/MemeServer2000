@@ -286,7 +286,7 @@ public class MemeDB2000 {
                     ));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-            error("ROLLBACK. Failed to insert meme into the cache: " + tags);
+            error("ROLLBACK. Failed to insert meme into the cache: (" + tags + ", " + link + ", " + username + ")");
             rollback();
         }
 

@@ -8,7 +8,7 @@ import java.util.concurrent.BlockingQueue;
  *
  * Performs actions on the DB based off of instruction in the inputQ and puts the output into the outputQ
  */
-public class MemeDBC2000 {
+public class MemeDBC2000 extends Thread{
     private MemeDB2000 db;
     private BlockingQueue<MemeDBMsg2000> outputQ;
     private BlockingQueue<MemeDBMsg2000> inputQ;
@@ -20,7 +20,7 @@ public class MemeDBC2000 {
         inputQ = inQ;
     }
 
-    public void spin(){
+    public void run(){
         String link = null, username = null;
         Integer id = null;
         Boolean status = true;
@@ -131,6 +131,11 @@ public class MemeDBC2000 {
                             else
                                 getDBError(msg, false);
                             break;
+
+                        case TERMINATE:
+                            db.close();
+                            return;
+
                         default:
                             System.out.println("MemeDBC cannot handle a message of type: " + msg.getType().toString());
                     }
@@ -141,6 +146,7 @@ public class MemeDBC2000 {
                             "Tags: " + msg.getTags() +
                             "Username: " + msg.getUsername() +
                             "ID: " + msg.getId());
+                    db.close();
                     return;
                 }
             }

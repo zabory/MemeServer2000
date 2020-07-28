@@ -19,7 +19,8 @@ public class MemeDBMsg2000 {
         CURATE_RESULT,          // Used to return the result of the curation back to the bot (promote or reject)
         MEME,                   // Used to pass the meme link back to the bot
 
-        ERROR
+        ERROR,
+        TERMINATE
     }
 
     private MsgDBType type;
