@@ -27,11 +27,12 @@ module.exports = {
 			}else if(command == 'sendToChannel' || command == 'sendToQueue'){
 				// sends message
 				message = bot.channels.cache.get(channelID).send(body).then(message => {
-					if(command == 'sendToQueue'){}
+					if(command == 'sendToQueue'){
 						// add reactions
 						message.react(message.guild.emojis.cache.get(auth.approve))
 						message.react(message.guild.emojis.cache.get(auth.deny))
 					}
+					
 				});
 				
 				
