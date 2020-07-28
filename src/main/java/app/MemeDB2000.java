@@ -212,7 +212,27 @@ public class MemeDB2000 {
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-            error("No meme exists with ID: " + id);
+            error("No meme exists in MemeDB with ID: " + id);
+        }
+        return link;
+    }
+
+    /**
+     * Gets a meme from cache
+     * @param id of a meme
+     * @return the link to the meme or null
+     */
+    public String getCache(Integer id){
+        errorMsg = "";
+        String link = null;
+        try {
+            ResultSet rs = executeQuery("SELECT link FROM " + cacheTableName + " WHERE id = ?", Arrays.asList(new Column(id, Column.ColType.INT)));
+            if(rs != null && rs.next()) {
+                link = rs.getString("link");
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            error("No meme exists within the Cache with ID: " + id);
         }
         return link;
     }
