@@ -37,7 +37,6 @@ public class MemeDBC2000 extends Thread{
                                         .type(MemeDBMsg2000.MsgDBType.APPROVE_MEME)
                                         .message("Curate me pls")
                                         .link(link)
-                                        .tags(msg.getTags())
                                 );
                             }
                             else

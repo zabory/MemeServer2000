@@ -49,7 +49,7 @@ public class MemeDBC2000Test {
     }
 
     @Test
-    public void basicSubmitTest(){
+    public void basicStoreTest(){
         try {
             inputQ.put(new MemeDBMsg2000()
                     .type(STORE_MEME)
@@ -66,5 +66,137 @@ public class MemeDBC2000Test {
         }
     }
 
+    @Test
+    public void basicPromoteTest(){
+        try {
+            inputQ.put(new MemeDBMsg2000()
+                    .type(CACHE_MEME)
+                    .link("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg")
+                    .username("Zabory")
+                    .tags(Arrays.asList("bread", "seals")));
+            MemeDBMsg2000 msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(SUBMIT_ACK, msg.getType());
+            assertEquals((Integer) 1, msg.getId());
+            assertEquals("Zabory", msg.getUsername());
 
+            inputQ.put(new MemeDBMsg2000()
+                    .type(PROMOTE_MEME).id(1)
+                    .username("Ziggy"));
+            msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(CURATE_RESULT, msg.getType());
+            assertEquals((Integer) 1, msg.getId());
+            assertEquals("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg", msg.getLink());
+            assertEquals("Zabory", msg.getUsername());
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    public void basicRejectTest(){
+        try {
+            inputQ.put(new MemeDBMsg2000()
+                    .type(CACHE_MEME)
+                    .link("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg")
+                    .username("Zabory")
+                    .tags(Arrays.asList("bread", "seals")));
+            MemeDBMsg2000 msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(SUBMIT_ACK, msg.getType());
+            assertEquals((Integer) 1, msg.getId());
+            assertEquals("Zabory", msg.getUsername());
+
+            inputQ.put(new MemeDBMsg2000()
+                    .type(REJECT_MEME).id(1)
+                    .username("Ziggy"));
+            msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(CURATE_RESULT, msg.getType());
+            assertEquals((Integer) 1, msg.getId());
+            assertEquals("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg", msg.getLink());
+            assertEquals("Zabory", msg.getUsername());
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    public void basicDemoteTest(){
+        try {
+            inputQ.put(new MemeDBMsg2000()
+                    .type(STORE_MEME)
+                    .link("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg")
+                    .username("Zabory")
+                    .tags(Arrays.asList("bread", "seals")));
+            MemeDBMsg2000 msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(SUBMIT_ACK, msg.getType());
+            assertEquals((Integer) 1, msg.getId());
+            assertEquals("Zabory", msg.getUsername());
+
+            inputQ.put(new MemeDBMsg2000()
+                    .type(DEMOTE_MEME).id(1));
+            msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(CURATE_RESULT, msg.getType());
+            assertEquals((Integer) 1, msg.getId());
+            assertEquals("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg", msg.getLink());
+            assertEquals("Zabory", msg.getUsername());
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    public void basicGetMemeToApproveTest(){
+        try {
+            inputQ.put(new MemeDBMsg2000()
+                    .type(STORE_MEME)
+                    .link("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg")
+                    .username("Zabory")
+                    .tags(Arrays.asList("bread", "seals")));
+            MemeDBMsg2000 msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(SUBMIT_ACK, msg.getType());
+            assertEquals((Integer) 1, msg.getId());
+            assertEquals("Zabory", msg.getUsername());
+
+            inputQ.put(new MemeDBMsg2000().type(GET_MEME_ID).id(1));
+            msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(APPROVE_MEME, msg.getType());
+            assertEquals("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg", msg.getLink());
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    public void basicGetMemeTagsTest(){
+        try {
+            inputQ.put(new MemeDBMsg2000()
+                    .type(STORE_MEME)
+                    .link("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg")
+                    .username("Zabory")
+                    .tags(Arrays.asList("bread", "seals")));
+            MemeDBMsg2000 msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(SUBMIT_ACK, msg.getType());
+            assertEquals((Integer) 1, msg.getId());
+            assertEquals("Zabory", msg.getUsername());
+
+            inputQ.put(new MemeDBMsg2000()
+                    .type(GET_MEME_TAGS)
+                    .tags(Arrays.asList("seals"))
+                    .username("Bendu"));
+            msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(MEME, msg.getType());
+            assertEquals("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg", msg.getLink());
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
 }
