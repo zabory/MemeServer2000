@@ -18,9 +18,9 @@ public class MemeServer2000 {
 		// put bot stuff here
 
 		// create the controller
-		MemeDBC2000 controller = new MemeDBC2000("C:\\sqlite\\");
-		BlockingQueue dbOutputQ = controller.getOutputQ();
-		BlockingQueue dbInputQ = controller.getInputQ();
+		BlockingQueue dbOutputQ = new LinkedBlockingQueue();
+		BlockingQueue dbInputQ = new LinkedBlockingQueue();
+		MemeDBC2000 controller = new MemeDBC2000("C:\\sqlite\\", dbInputQ, dbOutputQ);
 
 		// approveQ
 		BlockingQueue approveQ = new LinkedBlockingQueue();

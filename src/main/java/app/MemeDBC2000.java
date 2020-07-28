@@ -14,19 +14,11 @@ public class MemeDBC2000 {
     private BlockingQueue<MemeDBMsg2000> outputQ;
     private BlockingQueue<MemeDBMsg2000> inputQ;
 
-    MemeDBC2000(String filePath){
+    MemeDBC2000(String filePath, BlockingQueue inQ, BlockingQueue outQ){
         db = new MemeDB2000(filePath);
         db.open();
-        outputQ = new LinkedBlockingQueue<MemeDBMsg2000>();
-        inputQ = new LinkedBlockingQueue<MemeDBMsg2000>();
-    }
-
-    public BlockingQueue<MemeDBMsg2000> getInputQ() {
-        return inputQ;
-    }
-
-    public BlockingQueue<MemeDBMsg2000> getOutputQ() {
-        return outputQ;
+        outputQ = outQ;
+        inputQ = inQ;
     }
 
     public void spin(){
@@ -34,7 +26,7 @@ public class MemeDBC2000 {
             if(!inputQ.isEmpty()){
                 // Get the msg
                 try {
-                    MemeDBMsg2000 msg = (MemeDBMsg2000) inputQ.take();
+                    MemeDBMsg2000 msg = inputQ.take();
                     switch(msg.getType()) {
                         case GET_MEME_ID:
                             String link = db.get(msg.getId());
@@ -67,6 +59,9 @@ public class MemeDBC2000 {
 
                             break;
                         case REJECT_MEME:
+
+                            break;
+                        case ERROR:
 
                             break;
                         default:
