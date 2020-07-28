@@ -205,6 +205,81 @@ public class MemeDBC2000Test {
     }
 
     @Test
+    public void errorTest(){
+
+        // run 50 CACHE commands
+        String link = "b";
+        try{
+            for(int i=0;i<50;i++){
+                inputQ.put(new MemeDBMsg2000()
+                        .type(CACHE_MEME)
+                        .link(link)
+                        .username(getRandomName())
+                        .tags(getRandomTagList(4))
+                );
+                link += "b";
+            }
+
+            inputQ.put(new MemeDBMsg2000()
+                    .type(STORE_MEME)
+                    .link("testlinkstore")
+                    .username(getRandomName())
+                    .tags(getRandomTagList(4))
+            );
+
+            inputQ.put(new MemeDBMsg2000()
+                    .type(CACHE_MEME)
+                    .link("testlink")
+                    .username(getRandomName())
+                    .tags(getRandomTagList(4))
+            );
+
+            for(int i=0;i<52;i++)
+                outputQ.take();
+
+            // cant extract a meme for a tag that doesnt exist
+            inputQ.put(new MemeDBMsg2000()
+                    .type(GET_MEME_TAGS)
+                    .username(getRandomName())
+                    .tags(Arrays.asList("idontexist"))
+            );
+            MemeDBMsg2000 msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(ERROR, msg.getType());
+
+            // cant extract a meme for an id that doesnt exist
+            inputQ.put(new MemeDBMsg2000()
+                    .type(GET_MEME_ID)
+                    .username(getRandomName())
+                    .id(100)
+            );
+            msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(ERROR, msg.getType());
+
+            // cant store a meme that exists
+            inputQ.put(new MemeDBMsg2000()
+                    .type(STORE_MEME)
+                    .username(getRandomName())
+                    .link("testlinkstore")
+            );
+            msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(ERROR, msg.getType());
+
+            // cant cache a meme that exists
+            inputQ.put(new MemeDBMsg2000()
+                    .type(CACHE_MEME)
+                    .username(getRandomName())
+                    .link("testlink")
+            );
+            msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(ERROR, msg.getType());
+
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Test
     public void stressTest(){
         String link = "a";
 

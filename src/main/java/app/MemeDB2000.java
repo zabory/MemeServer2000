@@ -258,6 +258,7 @@ public class MemeDB2000 {
             throwables.printStackTrace();
             error("ROLLBACK. Failed to insert meme into the DB: " + tags);
             rollback();
+            return null;
         }
 
         if(insertTags(memeID, tags)){
@@ -288,6 +289,7 @@ public class MemeDB2000 {
             throwables.printStackTrace();
             error("ROLLBACK. Failed to insert meme into the cache: (" + tags + ", " + link + ", " + username + ")");
             rollback();
+            return null;
         }
 
         if(insertTags(memeID, tags)){
