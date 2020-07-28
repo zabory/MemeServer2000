@@ -11,9 +11,11 @@ module.exports = {
 				//make sure the channelID is the meme curator channel
 				if(channel == auth.channel){
 					if(data.emoji.id == auth.deny){
-						console.log("denied")
+						json = {'command':'deny'}
+						console.log(JOSN.stringify(json))
 					}else if(data.emoji.id == auth.approve){
-						console.log("approved")
+						json = {'command':'approve'}
+						console.log(JOSN.stringify(json))
 					}
 				}
 			}
