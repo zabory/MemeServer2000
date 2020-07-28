@@ -56,6 +56,12 @@ module.exports = {
 					}else{
 						data.reply('I dont see a meme here??')
 					}
+				}else{
+					//if not an allowed channel, treat it like a request
+					json = {"user":user, "channelID":channel, "command":"fetchMeme", "body":data.content}
+					
+					console.log(JOSN.stringify(json))
+					
 				}
 			}
 			

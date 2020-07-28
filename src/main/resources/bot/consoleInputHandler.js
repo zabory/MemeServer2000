@@ -24,12 +24,14 @@ module.exports = {
 					}
 				});
 			// sends message to meme channel
-			}else if(command == 'sendToQueue'){
+			}else if(command == 'sendToChannel' || command == 'sendToQueue'){
 				// sends message
-				message = bot.channels.cache.get(auth.channel).send(body).then(message => {
-					// add reactions
-					message.react(message.guild.emojis.cache.get(auth.approve))
-					message.react(message.guild.emojis.cache.get(auth.deny))
+				message = bot.channels.cache.get(channelID).send(body).then(message => {
+					if(command == 'sendToQueue'){}
+						// add reactions
+						message.react(message.guild.emojis.cache.get(auth.approve))
+						message.react(message.guild.emojis.cache.get(auth.deny))
+					}
 				});
 				
 				
