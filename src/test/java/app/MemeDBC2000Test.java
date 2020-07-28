@@ -16,6 +16,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static dataStructures.MemeDBMsg2000.MsgDBType.*;
+import static dataStructures.MemeDBMsg2000.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -205,30 +206,58 @@ public class MemeDBC2000Test {
 
     @Test
     public void stressTest(){
-        String link = "";
+        String link = "a";
 
         try {
             // run 50 STORE commands
             for(int i=0;i<50;i++){
                 inputQ.put(new MemeDBMsg2000()
                         .type(STORE_MEME)
-                        .link(link + "a")
+                        .link(link)
                         .username("Ziggy")
-                        .tags(getRandomTagList())
+                        .tags(getRandomTagList(4))
                 );
+                link += "a";
             }
 
             // run 50 CACHE commands
-            link = "";
+            link = "b";
             for(int i=0;i<50;i++){
                 inputQ.put(new MemeDBMsg2000()
                         .type(CACHE_MEME)
-                        .link(link + "b")
+                        .link(link)
                         .username(getRandomName())
-                        .tags(getRandomTagList())
+                        .tags(getRandomTagList(4))
+                );
+                link += "b";
+                outputQ.take();
+            }
+
+            // take the rest of the messages out
+            for(int i=1;i<=50;i++)
+                outputQ.take();
+
+            // perform random actions on all inserted
+            for(int i=0;i<50;i++){
+                inputQ.put(new MemeDBMsg2000()
+                        .type(getRandMemeMsg())
+                        .id(i)
+                        .tags(getRandomTagList(8))
                 );
             }
-            for(int i=0;i<100;i++)
+
+            // perform random actions on all inserted
+            for(int i=51;i<=100;i++){
+                inputQ.put(new MemeDBMsg2000()
+                        .type(getRandCurateMsg())
+                        .id(i)
+                        .username("Ziggy")
+                );
+                outputQ.take();
+            }
+
+            // take the rest of the messages out
+            for(int i=1;i<=50;i++)
                 outputQ.take();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -236,12 +265,12 @@ public class MemeDBC2000Test {
         }
     }
 
-    List<String> getRandomTagList(){
+    List<String> getRandomTagList(Integer factor){
         List<String> tags = Arrays.asList("yugioh", "dragon", "charlie", "minecraft", "art", "template", "world", "pitbull", "dog", "pirates",
                                             "bendu", "computer", "fruit", "meta", "mario", "pencil", "bread", "seals", "farts", "sunglasses");
         List<String> rettags = new ArrayList();
         Random rand = new Random();
-        for(int i=0;i<tags.size();i++){
+        for(int i=0;i<tags.size()/factor;i++){
             String pick = tags.get(rand.nextInt(tags.size()-1));
             if(!rettags.contains(pick))
                 rettags.add(pick);
@@ -253,6 +282,18 @@ public class MemeDBC2000Test {
         List<String> names = Arrays.asList("Owen", "Ethan", "Anthony", "Kat", "Mike", "BenDu", "BenShu", "BenMu", "Reba", "Charlie", "Mario");
         Random rand = new Random();
         return names.get(rand.nextInt(names.size()-1));
+    }
+
+    MsgDBType getRandMemeMsg(){
+        List<MsgDBType> msgs = Arrays.asList(GET_MEME_ID, GET_MEME_TAGS, DEMOTE_MEME);
+        Random rand = new Random();
+        return msgs.get(rand.nextInt(msgs.size()-1));
+    }
+
+    MsgDBType getRandCurateMsg(){
+        List<MsgDBType> msgs = Arrays.asList(PROMOTE_MEME, REJECT_MEME);
+        Random rand = new Random();
+        return msgs.get(rand.nextInt(msgs.size()-1));
     }
 
 }
