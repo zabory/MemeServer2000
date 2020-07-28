@@ -246,25 +246,26 @@ public class MemeDB2000 {
      */
     public Integer store(String username, String link, List<String> tags){
         errorMsg = "";
-        Integer memeID = getID();
-        try {
-            execute("INSERT INTO " + memeTableName + " (id, link, submitter, curator) VALUES (?,?,?,?)",
-                    Arrays.asList(  new Column(memeID, Column.ColType.INT),
-                                    new Column(link, Column.ColType.STR),
-                                    new Column(username, Column.ColType.STR),
-                                    new Column(username, Column.ColType.STR)
-                    ));
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            error("ROLLBACK. Failed to insert meme into the DB: " + tags);
-            rollback();
-            return null;
-        }
+        if(uniqueLink(link)){
+            Integer memeID = getID();
+            try {
+                execute("INSERT INTO " + memeTableName + " (id, link, submitter, curator) VALUES (?,?,?,?)",
+                        Arrays.asList(  new Column(memeID, Column.ColType.INT),
+                                new Column(link, Column.ColType.STR),
+                                new Column(username, Column.ColType.STR),
+                                new Column(username, Column.ColType.STR)
+                        ));
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                error("ROLLBACK. Failed to insert meme into the DB: " + tags);
+                rollback();
+                return null;
+            }
 
-        if(insertTags(memeID, tags)){
-            // All changes succeeded, commit to DB and return the ID
-            commit();
-            return memeID;
+            if(insertTags(memeID, tags)){
+                commit();
+                return memeID;
+            }
         }
 
         return null;
@@ -278,24 +279,26 @@ public class MemeDB2000 {
      * @return the id of the meme
      */
     public Integer cache(String username, String link, List<String> tags){
-        Integer memeID = getID();
-        try {
-            execute("INSERT INTO " + cacheTableName + " (id, link, submitter) VALUES (?,?,?)",
-                    Arrays.asList(  new Column(memeID, Column.ColType.INT),
-                            new Column(link, Column.ColType.STR),
-                            new Column(username, Column.ColType.STR)
-                    ));
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            error("ROLLBACK. Failed to insert meme into the cache: (" + tags + ", " + link + ", " + username + ")");
-            rollback();
-            return null;
-        }
+        if(uniqueLink(link)){
+            Integer memeID = getID();
+            try {
+                execute("INSERT INTO " + cacheTableName + " (id, link, submitter) VALUES (?,?,?)",
+                        Arrays.asList(  new Column(memeID, Column.ColType.INT),
+                                new Column(link, Column.ColType.STR),
+                                new Column(username, Column.ColType.STR)
+                        ));
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                error("ROLLBACK. Failed to insert meme into the cache: (" + tags + ", " + link + ", " + username + ")");
+                rollback();
+                return null;
+            }
 
-        if(insertTags(memeID, tags)){
-            // All changes succeeded, commit to DB and return the ID
-            commit();
-            return memeID;
+            if(insertTags(memeID, tags)){
+                // All changes succeeded, commit to DB and return the ID
+                commit();
+                return memeID;
+            }
         }
 
         return null;
@@ -494,6 +497,35 @@ public class MemeDB2000 {
             }
         }
         return true;
+    }
+
+    /**
+     * Validates the uniqueness of the link across the cache and meme tables
+     * @param link
+     * @return boolean dictating uniqueness
+     */
+    private boolean uniqueLink(String link) {
+        try {
+            ResultSet rs = executeQuery("SELECT * FROM (" +
+                    "SELECT id, link, submitter " +
+                    "FROM " + cacheTableName +
+                    " UNION " +
+                    "SELECT id, link, submitter " +
+                    "FROM " + memeTableName + ") " +
+                    "WHERE link = ?", Arrays.asList(new Column(link, Column.ColType.STR)));
+
+            if(rs != null && rs.next()) {
+                String previousSubmitter = rs.getString("submitter");
+                error("This meme was already submitted by " + previousSubmitter);
+                return false;
+            }
+            else
+                return true;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            error("Encountered an error validating uniqueness for " + link);
+            return false;
+        }
     }
 
     /**
