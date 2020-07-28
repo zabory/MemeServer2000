@@ -31,7 +31,7 @@ public class MemeDB2000 {
     private Connection conn;
     private String errorMsg;
     static String memeTableName = "memes";
-    static String cacheTableName = "cached_memes";
+    static String cacheTableName = "cache";
     static String tagLkpTableName = "tag_lkp";
     static String dbName = "meme.db";
     static List<String> tableDefs = Arrays.asList(

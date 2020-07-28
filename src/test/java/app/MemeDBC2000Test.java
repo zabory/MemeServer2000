@@ -8,7 +8,10 @@ import org.junit.Test;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -38,7 +41,7 @@ public class MemeDBC2000Test {
                 Connection conn = DriverManager.getConnection("jdbc:sqlite:C:\\sqlite\\meme.db");
                 conn.createStatement().execute("DELETE FROM memes");
                 conn.createStatement().execute("DELETE FROM tag_lkp");
-                conn.createStatement().execute("DELETE FROM cached_memes");
+                conn.createStatement().execute("DELETE FROM cache");
                 conn.close();
 
             controller.join();
@@ -199,4 +202,57 @@ public class MemeDBC2000Test {
             assertTrue(false);
         }
     }
+
+    @Test
+    public void stressTest(){
+        String link = "";
+
+        try {
+            // run 50 STORE commands
+            for(int i=0;i<50;i++){
+                inputQ.put(new MemeDBMsg2000()
+                        .type(STORE_MEME)
+                        .link(link + "a")
+                        .username("Ziggy")
+                        .tags(getRandomTagList())
+                );
+            }
+
+            // run 50 CACHE commands
+            link = "";
+            for(int i=0;i<50;i++){
+                inputQ.put(new MemeDBMsg2000()
+                        .type(CACHE_MEME)
+                        .link(link + "b")
+                        .username(getRandomName())
+                        .tags(getRandomTagList())
+                );
+            }
+            for(int i=0;i<100;i++)
+                outputQ.take();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    List<String> getRandomTagList(){
+        List<String> tags = Arrays.asList("yugioh", "dragon", "charlie", "minecraft", "art", "template", "world", "pitbull", "dog", "pirates",
+                                            "bendu", "computer", "fruit", "meta", "mario", "pencil", "bread", "seals", "farts", "sunglasses");
+        List<String> rettags = new ArrayList();
+        Random rand = new Random();
+        for(int i=0;i<tags.size();i++){
+            String pick = tags.get(rand.nextInt(tags.size()-1));
+            if(!rettags.contains(pick))
+                rettags.add(pick);
+        }
+        return rettags;
+    }
+
+    String getRandomName(){
+        List<String> names = Arrays.asList("Owen", "Ethan", "Anthony", "Kat", "Mike", "BenDu", "BenShu", "BenMu", "Reba", "Charlie", "Mario");
+        Random rand = new Random();
+        return names.get(rand.nextInt(names.size()-1));
+    }
+
 }

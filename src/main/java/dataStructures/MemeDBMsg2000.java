@@ -12,15 +12,14 @@ public class MemeDBMsg2000 {
         PROMOTE_MEME,           // Used to promote a meme to the DB from the cache
         DEMOTE_MEME,            // Used to demote a meme from the DB to the cache
         REJECT_MEME,            // Used to remove a meme from the cache
+        TERMINATE,              // Used to kill the controller and MemeDB
 
         // To MemeServer message types
         SUBMIT_ACK,             // Used to pass ACK info back to the bot after a submission (cache or store)
         APPROVE_MEME,           // Used to pass a meme to the bot to display in the approval channel
         CURATE_RESULT,          // Used to return the result of the curation back to the bot (promote, demote, or reject)
         MEME,                   // Used to pass the meme link back to the bot
-
-        ERROR,
-        TERMINATE
+        ERROR                   // Used to pass an error string back to main
     }
 
     private MsgDBType type;
