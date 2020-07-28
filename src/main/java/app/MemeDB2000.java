@@ -283,9 +283,9 @@ public class MemeDB2000 {
      * Promote a meme from the cache to meme table
      * @param id of the meme
      * @param curatorName name of curator
-     * @return
+     * @return name of user who submitted the meme or null in case of error
      */
-    public Boolean promote(Integer id, String curatorName){
+    public String promote(Integer id, String curatorName){
         String link, username;
 
         // Get the link
@@ -300,7 +300,7 @@ public class MemeDB2000 {
         } catch (Exception e) {
             e.printStackTrace();
             error("Failed to find a meme with an ID of " + id);
-            return false;
+            return null;
         }
 
         // Put it into the memedb
@@ -316,7 +316,7 @@ public class MemeDB2000 {
                 throwables.printStackTrace();
                 error("Failed to promote meme to MemeDB: (" + id + ", " + link + ", " + username + ", " + curatorName + ")");
                 rollback();
-                return false;
+                return null;
             }
 
         }
@@ -328,20 +328,20 @@ public class MemeDB2000 {
             throwables.printStackTrace();
             error("Failed to remove meme from cache: (" + id + ", " + link + ", " + username + ")");
             rollback();
-            return false;
+            return null;
         }
 
-        // All changes succeeded, commit to DB and return true
+        // All changes succeeded, commit to DB and return the submitter
         commit();
-        return true;
+        return username;
     }
 
     /**
      * Demote a meme from the meme to cache table
      * @param id of the meme
-     * @return
+     * @return name of user who submitted the meme or null in case of error
      */
-    public Boolean demote(Integer id) {
+    public String demote(Integer id) {
         String link = null, username = null, curator = null;
         // Get the link
         try {
@@ -354,7 +354,7 @@ public class MemeDB2000 {
         } catch (SQLException e) {
             e.printStackTrace();
             error("Failed to find a meme with an ID of " + id);
-            return false;
+            return null;
         }
 
         // Put into cache
@@ -368,7 +368,7 @@ public class MemeDB2000 {
             throwables.printStackTrace();
             error("Failed to demote meme to cache: (" + id + ", " + link + ", " + username + ", " + curator + ")");
             rollback();
-            return false;
+            return null;
         }
 
         // Remove from MemeDB
@@ -378,27 +378,28 @@ public class MemeDB2000 {
             throwables.printStackTrace();
             error("Failed to remove meme from MemeDB: (" + id + ", " + link + ", " + username + ", " + curator + ")");
             rollback();
-            return false;
+            return null;
         }
 
-        // All changes succeeded, commit to DB and return true
+        // All changes succeeded, commit to DB and return the submitter
         commit();
-        return true;
+        return username;
     }
 
     /**
      * Remove a meme from the cache and all its tags
      * @param id of the meme
-     * @return the link to the meme
+     * @return the username of the submitter or null if an error occurred
      */
     public String reject(Integer id){
-        String link = null;
+        String link = null, username = null;
 
         // Get the link
         try {
-            ResultSet rs = executeQuery("SELECT link FROM " + cacheTableName + " WHERE id = ?", Arrays.asList(new Column(id, Column.ColType.INT)));
+            ResultSet rs = executeQuery("SELECT link, submitter FROM " + cacheTableName + " WHERE id = ?", Arrays.asList(new Column(id, Column.ColType.INT)));
             if(rs != null && rs.next()) {
                 link = rs.getString("link");
+                username = rs.getString("submitter");;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -426,9 +427,9 @@ public class MemeDB2000 {
             return null;
         }
 
-        // All changes succeeded, commit to DB and return true
+        // All changes succeeded, commit to DB and return the submitter
         commit();
-        return link;
+        return username;
     }
 
     /*
