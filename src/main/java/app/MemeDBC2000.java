@@ -63,6 +63,7 @@ public class MemeDBC2000 extends Thread{
                                             .type(MemeDBMsg2000.MsgDBType.SUBMIT_ACK)
                                             .id(id)
                                             .username(msg.getUsername())
+                                            .message("Stored meme to MemeDB")
                                     );
                                 }
                                 else
@@ -77,6 +78,7 @@ public class MemeDBC2000 extends Thread{
                                         .type(MemeDBMsg2000.MsgDBType.SUBMIT_ACK)
                                         .id(id)
                                         .username(msg.getUsername())
+                                        .message("Stored meme to the Cache. It is pending admin approval.")
                                 );
                             }
                             else
