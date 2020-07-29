@@ -1,5 +1,7 @@
 package app;
 
+import dataStructures.MemeDBMsg2000;
+
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -28,15 +30,44 @@ public class MemeServer2000 {
 
 		// begin loop
 		while(true){
+			try {
 			// check bot output for messages
 				// write a message to the dbInputQ
 
 			// check messages from controller
 			if(!dbOutputQ.isEmpty()){
+				MemeDBMsg2000 msg = (MemeDBMsg2000) dbOutputQ.take();
 				//	if a meme cached/curator submission ACK, send ACK to user
+
 				// 	if an approveQ meme return, send the meme to be assessed by curator
+
 				//	if a meme approved/rejection ACK, clear channel and pop approveQ
+
 				//	if a meme return for a request, send link or error to bot to post
+				switch(msg.getType()){
+					case SUBMIT_ACK:
+
+						break;
+
+					case APPROVE_MEME:
+
+						break;
+
+					case CURATE_RESULT:
+
+						break;
+
+					case MEME:
+
+						break;
+
+					case ERROR:
+
+						break;
+
+					default:
+						System.out.println("Main cannot handle a message of type: " + msg.getType().toString() + " as an output of");
+				}
 			}
 
 			// check approveQ for a new ID
@@ -44,6 +75,9 @@ public class MemeServer2000 {
 				//
 			}
 
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 
 		}
 
