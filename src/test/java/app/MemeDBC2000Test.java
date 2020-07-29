@@ -62,7 +62,7 @@ public class MemeDBC2000Test {
                     .tags(Arrays.asList("bread", "seals")));
             MemeDBMsg2000 msg = (MemeDBMsg2000) outputQ.take();
             assertEquals(SUBMIT_ACK, msg.getType());
-            assertEquals((Integer) 1, msg.getId());
+            assertEquals(null, msg.getId());
             assertEquals("Zabory", msg.getUsername());
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -136,7 +136,7 @@ public class MemeDBC2000Test {
                     .tags(Arrays.asList("bread", "seals")));
             MemeDBMsg2000 msg = (MemeDBMsg2000) outputQ.take();
             assertEquals(SUBMIT_ACK, msg.getType());
-            assertEquals((Integer) 1, msg.getId());
+            assertEquals(null, msg.getId());
             assertEquals("Zabory", msg.getUsername());
 
             inputQ.put(new MemeDBMsg2000()
@@ -163,7 +163,7 @@ public class MemeDBC2000Test {
                     .tags(Arrays.asList("bread", "seals")));
             MemeDBMsg2000 msg = (MemeDBMsg2000) outputQ.take();
             assertEquals(SUBMIT_ACK, msg.getType());
-            assertEquals((Integer) 1, msg.getId());
+            assertEquals(null, msg.getId());
             assertEquals("Zabory", msg.getUsername());
 
             inputQ.put(new MemeDBMsg2000().type(GET_MEME_ID).id(1));
@@ -187,7 +187,7 @@ public class MemeDBC2000Test {
                     .tags(Arrays.asList("bread", "seals")));
             MemeDBMsg2000 msg = (MemeDBMsg2000) outputQ.take();
             assertEquals(SUBMIT_ACK, msg.getType());
-            assertEquals((Integer) 1, msg.getId());
+            assertEquals(null, msg.getId());
             assertEquals("Zabory", msg.getUsername());
 
             inputQ.put(new MemeDBMsg2000()
