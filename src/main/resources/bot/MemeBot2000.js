@@ -26,8 +26,8 @@ bot.on('message', data => {
 });
 
 // whenever the bot sees a reaction to a message
-bot.on('messageReactionAdd', data => {
-	MRH.handle(data)
+bot.on('messageReactionAdd', (data, userdata) => {
+	MRH.handle(data, userdata)
 });
 
 // Input to program from server
