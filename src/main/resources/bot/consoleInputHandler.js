@@ -6,10 +6,8 @@ module.exports = {
 			
 			// I expect this to have some stuff
 			json = JSON.parse(input)
-			
 			user = json.user
 			command = json.command
-			channelID = json.channelID
 			body = json.body
 			
 			// sends message to user
@@ -25,8 +23,19 @@ module.exports = {
 				});
 			// sends message to meme channel
 			}else if(command == 'sendToChannel' || command == 'sendToQueue'){
+				channelID = json.channelID
+				//go through userDM channel IDs as well to get the right channel
+				message = bot.channels.cache.get(channelID)
+				
+				if(message == null){
+					bot.users.cache.array().forEach(currentUser => {
+						if(currentUser.dmChannel == channelID){
+							message = currentUser.dmChannel
+						}
+					}
+				}
 				// sends message
-				message = bot.channels.cache.get(channelID).send(body).then(message => {
+				message.send(body).then(message => {
 					if(command == 'sendToQueue'){
 						// add reactions
 						message.react(message.guild.emojis.cache.get(auth.approve))
