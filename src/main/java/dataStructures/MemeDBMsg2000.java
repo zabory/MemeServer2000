@@ -28,6 +28,7 @@ public class MemeDBMsg2000 {
     private Integer id;
     private List<String> tags;
     private String username;
+    private Long channelID;
 
     // Default
     public MemeDBMsg2000() {
@@ -37,6 +38,7 @@ public class MemeDBMsg2000 {
         this.id = null;
         this.tags = null;
         this.username = null;
+        this.channelID = null;
     }
 
     public MemeDBMsg2000 type(MsgDBType type) {
@@ -69,6 +71,11 @@ public class MemeDBMsg2000 {
         return this;
     }
 
+    public MemeDBMsg2000 channelID(Long channelID) {
+        this.channelID = channelID;
+        return this;
+    }
+
     public MsgDBType getType() {
         return type;
     }
@@ -91,5 +98,9 @@ public class MemeDBMsg2000 {
 
     public String getUsername() {
         return username;
+    }
+
+    public Long getChannelID() {
+        return channelID;
     }
 }
