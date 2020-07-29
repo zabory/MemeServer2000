@@ -86,7 +86,6 @@ public class MemeBotInterfacer2000 {
 				try {
 					if(input.size() > 0) {
 						
-						System.out.println(input.peek().toJSON().toString());
 						botOutput.write(input.poll().toJSON().toString() + "\n");
 						botOutput.flush();
 					}

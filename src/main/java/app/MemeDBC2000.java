@@ -42,7 +42,7 @@ public class MemeDBC2000 extends Thread{
                         case INITIALIZE:
                             List<Integer> ids = db.initialize();
                             for(Integer idboy : ids)
-                                inputQ.add(new MemeDBMsg2000()
+                                outputQ.add(new MemeDBMsg2000()
                                         .type(SUBMIT_ACK)
                                         .message("INITIALIZE")
                                         .id(idboy));
