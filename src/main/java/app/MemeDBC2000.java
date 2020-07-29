@@ -43,8 +43,8 @@ public class MemeDBC2000 extends Thread{
                             List<Integer> ids = db.initialize();
                             for(Integer idboy : ids)
                                 inputQ.add(new MemeDBMsg2000()
-                                        .type(GET_MEME_ID)
-                                        .message("sorry bruv im starting up the cache")
+                                        .type(SUBMIT_ACK)
+                                        .message("INITIALIZE")
                                         .id(idboy));
                             break;
 

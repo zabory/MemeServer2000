@@ -84,9 +84,11 @@ public class MemeServer2000 {
 						if(msg.getId() != null){
 							approveQ.put(msg.getId());
 						}
-						newMsg.setCommand("sendToUser");
-						newMsg.setUser(msg.getUsername());
-						newMsg.setBody(msg.getMessage());
+						if(!msg.getMessage().equals("INITIALIZE")){
+							newMsg.setCommand("sendToUser");
+							newMsg.setUser(msg.getUsername());
+							newMsg.setBody(msg.getMessage());
+						}
 						break;
 
 					case APPROVE_MEME:
