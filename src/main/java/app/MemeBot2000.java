@@ -6,13 +6,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-public class Bot {
+public class MemeBot2000 {
 	
 	private BufferedReader input;
 	private BufferedReader error;
 	private BufferedWriter output;
 	
-	public Bot() throws IOException {
+	private Process bot;
+	
+	public MemeBot2000() throws IOException {
 		
 		ProcessBuilder pb = new ProcessBuilder();
 		pb.command("cmd.exe", "/c", "node MemeBot2000.js");
@@ -20,13 +22,26 @@ public class Bot {
 		//TODO we need to find the dir of memebot
 		pb.directory(new File("src\\main\\resources\\bot"));
 		
-		Process botProcess = pb.start();
+		bot = pb.start();
 		
-		input =  new BufferedReader(new InputStreamReader(botProcess.getInputStream()));
-		error = new BufferedReader(new InputStreamReader(botProcess.getErrorStream()));
-		output = new BufferedWriter(new OutputStreamWriter(botProcess.getOutputStream()));
+		//Sleep thread, not like the server can do anything while the bot is booting up and connecting anywas
+		try {
+			Thread.sleep(3500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		input =  new BufferedReader(new InputStreamReader(bot.getInputStream()));
+		error = new BufferedReader(new InputStreamReader(bot.getErrorStream()));
+		output = new BufferedWriter(new OutputStreamWriter(bot.getOutputStream()));
 
-
+	}
+	
+	/**
+	 * Kill the bot process
+	 */
+	public void kill() {
+		bot.destroyForcibly();
 	}
 
 	/**
