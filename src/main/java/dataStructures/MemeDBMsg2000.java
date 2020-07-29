@@ -13,6 +13,7 @@ public class MemeDBMsg2000 {
         DEMOTE_MEME,            // Used to demote a meme from the DB to the cache
         REJECT_MEME,            // Used to remove a meme from the cache
         TERMINATE,              // Used to kill the controller and MemeDB
+        INITIALIZE,             // Used to send all cache meme IDS out
 
         // To MemeServer message types
         SUBMIT_ACK,             // Used to pass ACK info back to the bot after a submission (cache or store)

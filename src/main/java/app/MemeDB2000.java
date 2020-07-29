@@ -142,6 +142,24 @@ public class MemeDB2000 {
     }
 
     /**
+     * Gets all ids in the cache to load the approve Q
+     * @return
+     */
+    public List<Integer> initialize(){
+        List<Integer> retlist = new ArrayList<>();
+        try {
+            ResultSet rs = executeQuery("SELECT id FROM " + cacheTableName + ";");
+            while(rs != null && rs.next()) {
+                retlist.add(rs.getInt("id"));
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return retlist;
+    }
+
+    /**
      * Get a meme that matches the affiliated tags
      * @param tags The tags that this meme must have
      * @return  null if no meme exists with all provided tags

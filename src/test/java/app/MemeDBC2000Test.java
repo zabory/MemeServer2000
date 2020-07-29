@@ -157,13 +157,12 @@ public class MemeDBC2000Test {
     public void basicGetMemeToApproveTest(){
         try {
             inputQ.put(new MemeDBMsg2000()
-                    .type(STORE_MEME)
+                    .type(CACHE_MEME)
                     .link("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg")
                     .username("Zabory")
                     .tags(Arrays.asList("bread", "seals")));
             MemeDBMsg2000 msg = (MemeDBMsg2000) outputQ.take();
             assertEquals(SUBMIT_ACK, msg.getType());
-            assertEquals(null, msg.getId());
             assertEquals("Zabory", msg.getUsername());
 
             inputQ.put(new MemeDBMsg2000().type(GET_MEME_ID).id(1));
@@ -325,8 +324,8 @@ public class MemeDBC2000Test {
         String link = "a";
 
         try {
-            // run 50 STORE commands
-            for(int i=0;i<50;i++){
+            // run 10 STORE commands
+            for(int i=0;i<10;i++){
                 inputQ.put(new MemeDBMsg2000()
                         .type(STORE_MEME)
                         .link(link)
@@ -336,9 +335,9 @@ public class MemeDBC2000Test {
                 link += "a";
             }
 
-            // run 50 CACHE commands
+            // run 10 CACHE commands
             link = "b";
-            for(int i=0;i<50;i++){
+            for(int i=0;i<10;i++){
                 inputQ.put(new MemeDBMsg2000()
                         .type(CACHE_MEME)
                         .link(link)
@@ -350,11 +349,11 @@ public class MemeDBC2000Test {
             }
 
             // take the rest of the messages out
-            for(int i=1;i<=50;i++)
+            for(int i=1;i<=10;i++)
                 outputQ.take();
 
             // perform random actions on all inserted
-            for(int i=0;i<50;i++){
+            for(int i=0;i<10;i++){
                 inputQ.put(new MemeDBMsg2000()
                         .type(getRandMemeMsg())
                         .id(i)
@@ -363,7 +362,7 @@ public class MemeDBC2000Test {
             }
 
             // perform random actions on all inserted
-            for(int i=51;i<=100;i++){
+            for(int i=11;i<=20;i++){
                 inputQ.put(new MemeDBMsg2000()
                         .type(getRandCurateMsg())
                         .id(i)
@@ -373,7 +372,7 @@ public class MemeDBC2000Test {
             }
 
             // take the rest of the messages out
-            for(int i=1;i<=50;i++)
+            for(int i=1;i<=10;i++)
                 outputQ.take();
         } catch (InterruptedException e) {
             e.printStackTrace();

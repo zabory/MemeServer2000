@@ -2,7 +2,10 @@ package app;
 
 import dataStructures.MemeDBMsg2000;
 
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
+
+import static dataStructures.MemeDBMsg2000.MsgDBType.*;
 
 /**
  *
@@ -36,11 +39,19 @@ public class MemeDBC2000 extends Thread{
                 try {
                     msg = inputQ.take();
                     switch(msg.getType()) {
+                        case INITIALIZE:
+                            List<Integer> ids = db.initialize();
+                            for(Integer idboy : ids)
+                                inputQ.add(new MemeDBMsg2000()
+                                        .type(GET_MEME_ID)
+                                        .id(idboy));
+                            break;
+
                         case GET_MEME_ID:
                             link = db.getCache(msg.getId());
                             if(link != null){
                                 outputQ.put(new MemeDBMsg2000()
-                                        .type(MemeDBMsg2000.MsgDBType.APPROVE_MEME)
+                                        .type(APPROVE_MEME)
                                         .link(link)
                                 );
                             }
@@ -52,7 +63,7 @@ public class MemeDBC2000 extends Thread{
                             link = db.get(msg.getTags());
                             if(link != null){
                                 outputQ.put(new MemeDBMsg2000()
-                                        .type(MemeDBMsg2000.MsgDBType.MEME)
+                                        .type(MEME)
                                         .link(link)
                                         .username(msg.getUsername())
                                         .channelID(msg.getChannelID())
@@ -66,7 +77,7 @@ public class MemeDBC2000 extends Thread{
                                 id = db.store(msg.getUsername(), msg.getLink(), msg.getTags());
                                 if(id != null){
                                     outputQ.put(new MemeDBMsg2000()
-                                            .type(MemeDBMsg2000.MsgDBType.SUBMIT_ACK)
+                                            .type(SUBMIT_ACK)
                                             .username(msg.getUsername())
                                             .message("Stored meme to MemeDB")
                                     );
@@ -80,7 +91,7 @@ public class MemeDBC2000 extends Thread{
                             id = db.cache(msg.getUsername(), msg.getLink(), msg.getTags());
                             if(id != null){
                                 outputQ.put(new MemeDBMsg2000()
-                                        .type(MemeDBMsg2000.MsgDBType.SUBMIT_ACK)
+                                        .type(SUBMIT_ACK)
                                         .id(id)
                                         .username(msg.getUsername())
                                         .message("Stored meme to the Cache. It is pending admin approval.")
@@ -95,7 +106,7 @@ public class MemeDBC2000 extends Thread{
                             link = db.get(msg.getId());
                             if(link != null && username != null){
                                 outputQ.put(new MemeDBMsg2000()
-                                        .type(MemeDBMsg2000.MsgDBType.CURATE_RESULT)
+                                        .type(CURATE_RESULT)
                                         .message("This meme has been approved.")
                                         .id(msg.getId())
                                         .link(link)
@@ -111,7 +122,7 @@ public class MemeDBC2000 extends Thread{
                             username = db.demote(msg.getId());
                             if(link != null && username != null){
                                 outputQ.put(new MemeDBMsg2000()
-                                        .type(MemeDBMsg2000.MsgDBType.CURATE_RESULT)
+                                        .type(CURATE_RESULT)
                                         .message("This meme has been demoted.")
                                         .id(msg.getId())
                                         .link(link)
@@ -127,7 +138,7 @@ public class MemeDBC2000 extends Thread{
                             username = db.reject(msg.getId());
                             if(link != null && username != null){
                                 outputQ.put(new MemeDBMsg2000()
-                                        .type(MemeDBMsg2000.MsgDBType.CURATE_RESULT)
+                                        .type(CURATE_RESULT)
                                         .message("This meme has been rejected.")
                                         .id(msg.getId())
                                         .link(link)
