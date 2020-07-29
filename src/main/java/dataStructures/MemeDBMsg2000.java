@@ -16,6 +16,7 @@ public class MemeDBMsg2000 {
         INITIALIZE,             // Used to send all cache meme IDS out
 
         // To MemeServer message types
+        REPLENISH_Q,            // Used to pass cached meme ID that still hasnt been approved
         SUBMIT_ACK,             // Used to pass ACK info back to the bot after a submission (cache or store)
         APPROVE_MEME,           // Used to pass a meme to the bot to display in the approval channel
         CURATE_RESULT,          // Used to return the result of the curation back to the bot (promote, demote, or reject)

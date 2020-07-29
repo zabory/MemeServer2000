@@ -41,11 +41,11 @@ public class MemeDBC2000 extends Thread{
                     switch(msg.getType()) {
                         case INITIALIZE:
                             List<Integer> ids = db.initialize();
-                            for(Integer idboy : ids)
+                            for(Integer theid : ids){
                                 outputQ.add(new MemeDBMsg2000()
-                                        .type(SUBMIT_ACK)
-                                        .message("INITIALIZE")
-                                        .id(idboy));
+                                        .type(REPLENISH_Q)
+                                        .id(theid));
+                            }
                             break;
 
                         case GET_MEME_ID:

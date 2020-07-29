@@ -80,15 +80,17 @@ public class MemeServer2000 {
 				MemeBotMsg2000 newMsg = new MemeBotMsg2000();
 				MemeDBMsg2000 msg = dbOutputQ.take();
 				switch(msg.getType()){
+					case REPLENISH_Q:
+						approveQ.put(msg.getId());
+						break;
+
 					case SUBMIT_ACK:
 						if(msg.getId() != null){
 							approveQ.put(msg.getId());
 						}
-						if(!msg.getMessage().equals("INITIALIZE")){
-							newMsg.setCommand("sendToUser");
-							newMsg.setUser(msg.getUsername());
-							newMsg.setBody(msg.getMessage());
-						}
+						newMsg.setCommand("sendToUser");
+						newMsg.setUser(msg.getUsername());
+						newMsg.setBody(msg.getMessage());
 						break;
 
 					case APPROVE_MEME:
