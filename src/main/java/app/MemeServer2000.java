@@ -33,7 +33,8 @@ public class MemeServer2000 {
 		// approveQ
 		BlockingQueue<Integer> approveQ = new LinkedBlockingQueue<Integer>();
 		Integer lastID = null;
-		
+
+		dbInputQ.add(new MemeDBMsg2000().type(INITIALIZE));
 		botInputQ.add(new MemeBotMsg2000().command("clearQueue"));
 
 		// begin loop
@@ -42,9 +43,7 @@ public class MemeServer2000 {
 
 			// check bot output for messages
 			if(!botOutputQ.isEmpty()){
-				
-			
-				
+
 				MemeDBMsg2000 newMsg = null;
 				
 				MemeBotMsg2000 msg = botOutputQ.take();

@@ -44,6 +44,7 @@ public class MemeDBC2000 extends Thread{
                             for(Integer idboy : ids)
                                 inputQ.add(new MemeDBMsg2000()
                                         .type(GET_MEME_ID)
+                                        .message("sorry bruv im starting up the cache")
                                         .id(idboy));
                             break;
 
