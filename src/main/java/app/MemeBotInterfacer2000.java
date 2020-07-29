@@ -113,7 +113,11 @@ public class MemeBotInterfacer2000 {
 					e1.printStackTrace();
 				}
 				try {
-					output.add(new MemeBotMsg2000(new JSONObject(botInput.readLine())));
+					JSONObject in = new JSONObject(botInput.readLine());
+					if(in.has("body")) {
+						in.put("body", in.getString("body").toLowerCase());
+					}
+					output.add(new MemeBotMsg2000(in));
 				} catch (JSONException | IOException e) {
 					e.printStackTrace();
 				}
