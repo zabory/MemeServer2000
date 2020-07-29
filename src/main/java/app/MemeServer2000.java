@@ -33,6 +33,8 @@ public class MemeServer2000 {
 		// approveQ
 		BlockingQueue<Integer> approveQ = new LinkedBlockingQueue<Integer>();
 		Integer lastID = null;
+		
+		botInputQ.add(new MemeBotMsg2000().command("clearQueue"));
 
 		// begin loop
 		while(true){
@@ -41,15 +43,19 @@ public class MemeServer2000 {
 			// check bot output for messages
 			if(!botOutputQ.isEmpty()){
 				
+			
+				
 				MemeDBMsg2000 newMsg = null;
 				
 				MemeBotMsg2000 msg = botOutputQ.take();
 				switch(msg.getCommand()){
 					case "deny":
 						newMsg = new MemeDBMsg2000().type(REJECT_MEME).id(approveQ.take()).username(msg.getUser());
+						botInputQ.add(new MemeBotMsg2000().command("clearQueue"));
 						break;
 					case "approve":
 						newMsg = new MemeDBMsg2000().type(PROMOTE_MEME).id(approveQ.take()).username(msg.getUser());
+						botInputQ.add(new MemeBotMsg2000().command("clearQueue"));
 						break;
 					case "fetchMeme":
 						newMsg = new MemeDBMsg2000().type(GET_MEME_TAGS).tags(Arrays.asList(msg.getBody().split(" "))).username(msg.getUser()).channelID(msg.getChannelID());
@@ -112,7 +118,7 @@ public class MemeServer2000 {
 					case ERROR:
 						newMsg.setCommand("sendToUser");
 						newMsg.setUser(msg.getUsername());
-						newMsg.setBody(msg.getMessage() + msg.getTags().toString());
+						newMsg.setBody(msg.getMessage() + msg.getTags());
 						break;
 
 					default:

@@ -26,12 +26,18 @@ public class MemeDBC2000 extends Thread{
         Boolean status = true;
         MemeDBMsg2000 msg = null;
         while(true){
+        	try {
+				Thread.sleep(250);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
             if(!inputQ.isEmpty()){
                 try {
                     msg = inputQ.take();
                     switch(msg.getType()) {
                         case GET_MEME_ID:
-                            link = db.get(msg.getId());
+                            link = db.getCache(msg.getId());
                             if(link != null){
                                 outputQ.put(new MemeDBMsg2000()
                                         .type(MemeDBMsg2000.MsgDBType.APPROVE_MEME)

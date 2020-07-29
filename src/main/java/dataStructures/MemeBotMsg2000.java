@@ -87,7 +87,7 @@ public class MemeBotMsg2000 {
 		j.put("user", user);
 		j.put("command", command);
 		j.put("body", body);
-		j.put("channelID", channelID);
+		j.put("channelID", channelID + "");
 		j.put("admin", admin);
 		j.put("url", url);
 		return j;

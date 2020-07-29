@@ -35,7 +35,6 @@ public class MemeBot2000 {
 		error = new BufferedReader(new InputStreamReader(bot.getErrorStream()));
 		output = new BufferedWriter(new OutputStreamWriter(bot.getOutputStream()));
 
-
 	}
 	
 	/**

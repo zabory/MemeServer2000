@@ -78,7 +78,15 @@ public class MemeBotInterfacer2000 {
 		public void run() {
 			while(true) {
 				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				try {
 					if(input.size() > 0) {
+						
+						System.out.println(input.peek().toJSON().toString());
 						botOutput.write(input.poll().toJSON().toString() + "\n");
 						botOutput.flush();
 					}
@@ -99,6 +107,12 @@ public class MemeBotInterfacer2000 {
 		public void run() {
 			while (true) {
 				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				try {
 					output.add(new MemeBotMsg2000(new JSONObject(botInput.readLine())));
 				} catch (JSONException | IOException e) {
 					e.printStackTrace();
@@ -115,19 +129,21 @@ public class MemeBotInterfacer2000 {
 	 */
 	private class ErrorInputThread extends Thread{
 		public void run() {
-			String error = "";
 			String input = "";
 			while(input != null) {
 				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				try {
 					input = botErrorInput.readLine();
-					if(input != null) {
-						error += input + "\n";
-					}
+					System.out.println(input);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			output.add(new MemeBotMsg2000().body("ERROR:\n" + error));
 		}
 	}
 
