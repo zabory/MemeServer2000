@@ -273,6 +273,47 @@ public class MemeDBC2000Test {
             msg = (MemeDBMsg2000) outputQ.take();
             assertEquals(ERROR, msg.getType());
 
+            // cant store a meme that exists in the cache
+            inputQ.put(new MemeDBMsg2000()
+                    .type(STORE_MEME)
+                    .username(getRandomName())
+                    .link("testlink")
+            );
+            msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(ERROR, msg.getType());
+
+            // cant cache a meme that exists
+            inputQ.put(new MemeDBMsg2000()
+                    .type(CACHE_MEME)
+                    .username(getRandomName())
+                    .link("testlinkstore")
+            );
+            msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(ERROR, msg.getType());
+
+            // cant promote a meme that isnt in the cache
+            inputQ.put(new MemeDBMsg2000()
+                    .type(PROMOTE_MEME)
+                    .id(100)
+            );
+            msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(ERROR, msg.getType());
+
+            // cant demote a meme that isnt in the meme table
+            inputQ.put(new MemeDBMsg2000()
+                    .type(DEMOTE_MEME)
+                    .id(100)
+            );
+            msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(ERROR, msg.getType());
+
+            // cant reject a meme that isnt in the cache
+            inputQ.put(new MemeDBMsg2000()
+                    .type(REJECT_MEME)
+                    .id(100)
+            );
+            msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(ERROR, msg.getType());
 
         } catch (Exception e){
             e.printStackTrace();
