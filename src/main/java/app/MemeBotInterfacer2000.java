@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.json.JSONException;
@@ -35,9 +36,9 @@ public class MemeBotInterfacer2000 {
 	//actual bot
 	private MemeBot2000 bot;
 	
-	public MemeBotInterfacer2000(LinkedBlockingQueue<MemeBotMsg2000> input) {
-		this.input = input;
-		output = new LinkedBlockingQueue<MemeBotMsg2000>(100);
+	public MemeBotInterfacer2000(BlockingQueue<MemeBotMsg2000> botInputQ, BlockingQueue<MemeBotMsg2000> botOutputQ) {
+		this.input = botInputQ;
+		this.output = botOutputQ;
 		
 		try {
 			//launch bot

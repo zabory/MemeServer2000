@@ -35,7 +35,6 @@ public class MemeDBC2000 extends Thread{
                             if(link != null){
                                 outputQ.put(new MemeDBMsg2000()
                                         .type(MemeDBMsg2000.MsgDBType.APPROVE_MEME)
-                                        .message("Curate me pls")
                                         .link(link)
                                 );
                             }
@@ -50,6 +49,7 @@ public class MemeDBC2000 extends Thread{
                                         .type(MemeDBMsg2000.MsgDBType.MEME)
                                         .link(link)
                                         .username(msg.getUsername())
+                                        .channelID(msg.getChannelID())
                                 );
                             }
                             else
