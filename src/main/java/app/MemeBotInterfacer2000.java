@@ -37,7 +37,7 @@ public class MemeBotInterfacer2000 {
 	
 	public MemeBotInterfacer2000(LinkedBlockingQueue<MemeBotMsg2000> input) {
 		this.input = input;
-		output = new LinkedBlockingQueue<MemeBotMsg2000>();
+		output = new LinkedBlockingQueue<MemeBotMsg2000>(100);
 		
 		try {
 			//launch bot
