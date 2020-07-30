@@ -82,11 +82,14 @@ public class MemeServer2000 {
 				switch(msg.getType()){
 					case REPLENISH_Q:
 						approveQ.put(msg.getId());
+						newMsg.setCommand("qCount");
+						newMsg.setChannelID(approveQ.size());
 						break;
 
 					case SUBMIT_ACK:
 						if(msg.getId() != null){
 							approveQ.put(msg.getId());
+							newMsg.setChannelID(approveQ.size());
 						}
 						newMsg.setCommand("sendToUser");
 						newMsg.setUser(msg.getUsername());
