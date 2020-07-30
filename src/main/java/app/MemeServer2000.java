@@ -1,5 +1,6 @@
 package app;
 
+import dataStructures.Logger;
 import dataStructures.MemeBotMsg2000;
 import dataStructures.MemeDBMsg2000;
 
@@ -21,6 +22,9 @@ import static dataStructures.MemeDBMsg2000.MsgDBType.*;
  */
 public class MemeServer2000 {
 	public static void main(String[] args) throws IOException {
+		//logger
+		Logger logger = new Logger();
+		
 		// put bot stuff here
 		BlockingQueue<MemeBotMsg2000> botOutputQ = new LinkedBlockingQueue<MemeBotMsg2000>(100);
 		BlockingQueue<MemeBotMsg2000> botInputQ = new LinkedBlockingQueue<MemeBotMsg2000>(100);
@@ -40,7 +44,7 @@ public class MemeServer2000 {
 		dbInputQ.add(new MemeDBMsg2000().type(INITIALIZE));
 		
 		
-		println("Controllers started, meme queue cleared. We're ready to GO!");
+		logger.println("Controllers started, meme queue cleared. We're ready to GO!");
 
 		// begin loop
 		while(true){
@@ -54,21 +58,21 @@ public class MemeServer2000 {
 				MemeBotMsg2000 msg = botOutputQ.take();
 				switch(msg.getCommand()){
 					case "deny":
-						println("Meme denied from discord bot");
+						logger.println("Meme denied from discord bot");
 						newMsg = new MemeDBMsg2000().type(REJECT_MEME).id(approveQ.take()).username(msg.getUser());
 						botInputQ.add(new MemeBotMsg2000().command("clearQueue"));
 						break;
 					case "approve":
-						println("Meme approved from discord bot");
+						logger.println("Meme approved from discord bot");
 						newMsg = new MemeDBMsg2000().type(PROMOTE_MEME).id(approveQ.take()).username(msg.getUser());
 						botInputQ.add(new MemeBotMsg2000().command("clearQueue"));
 						break;
 					case "fetchMeme":
-						println("Fetching meme for " + msg.getUser());
+						logger.println("Fetching meme for " + msg.getUser());
 						newMsg = new MemeDBMsg2000().type(GET_MEME_TAGS).tags(Arrays.asList(msg.getBody().split(","))).username(msg.getUser()).channelID(msg.getChannelID());
 						break;
 					case "submitMeme":
-						println("Meme submitted by " + msg.getUser());
+						logger.println("Meme submitted by " + msg.getUser());
 						newMsg = new MemeDBMsg2000().link(msg.getUrl()).tags(Arrays.asList(msg.getBody().split(","))).username(msg.getUser()).channelID(msg.getChannelID());
 						if(msg.isAdmin()) {
 							newMsg.type(STORE_MEME);
@@ -90,7 +94,7 @@ public class MemeServer2000 {
 				MemeDBMsg2000 msg = dbOutputQ.take();
 				switch(msg.getType()){
 					case REPLENISH_Q:
-						println("Replenishing meme queue");
+						logger.println("Replenishing meme queue");
 						approveQ.put(msg.getId());
 						continue;
 
@@ -111,7 +115,7 @@ public class MemeServer2000 {
 						break;
 
 					case APPROVE_MEME:
-						println("Sending meme to be approved");
+						logger.println("Sending meme to be approved");
 						newMsg.setCommand("sendToQueue");
 						newMsg.setBody(msg.getLink());
 						newMsg.setChannelID(736022204281520169L);
@@ -130,7 +134,7 @@ public class MemeServer2000 {
 						break;
 
 					case MEME:
-						println("Sending meme to " + msg.getChannelID() + ", requested by " + msg.getUsername());
+						logger.println("Sending meme to " + msg.getChannelID() + ", requested by " + msg.getUsername());
 						newMsg.setCommand("sendToChannel");
 						newMsg.setUser(msg.getUsername());
 						newMsg.setBody(msg.getLink());
@@ -165,24 +169,6 @@ public class MemeServer2000 {
 
 		}
 
-	}
-	
-	public static void println(String message) {
-		println(log_level.INFO, message);
-	}
-	
-	public static void println(log_level logLevel, String message) {
-		Date currentDate = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat(" MM/dd HH:mm:ss ");
-		
-		System.out.println("[" + logLevel + "]" + sdf.format(currentDate) + "\t" + message);
-	}
-	
-	enum log_level{
-		INFO,
-		WARNING,
-		ERROR,
-		FATAL
 	}
 
 }
