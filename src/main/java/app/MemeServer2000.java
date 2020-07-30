@@ -57,10 +57,10 @@ public class MemeServer2000 {
 						botInputQ.add(new MemeBotMsg2000().command("clearQueue"));
 						break;
 					case "fetchMeme":
-						newMsg = new MemeDBMsg2000().type(GET_MEME_TAGS).tags(Arrays.asList(msg.getBody().split(" "))).username(msg.getUser()).channelID(msg.getChannelID());
+						newMsg = new MemeDBMsg2000().type(GET_MEME_TAGS).tags(Arrays.asList(msg.getBody().split(","))).username(msg.getUser()).channelID(msg.getChannelID());
 						break;
 					case "submitMeme":
-						newMsg = new MemeDBMsg2000().link(msg.getUrl()).tags(Arrays.asList(msg.getBody().split(" "))).username(msg.getUser()).channelID(msg.getChannelID());
+						newMsg = new MemeDBMsg2000().link(msg.getUrl()).tags(Arrays.asList(msg.getBody().split(","))).username(msg.getUser()).channelID(msg.getChannelID());
 						if(msg.isAdmin()) {
 							newMsg.type(STORE_MEME);
 						}else {
