@@ -27,3 +27,4 @@ auth.json
 /.classpath
 /.project
 /doc/
+/logs/
