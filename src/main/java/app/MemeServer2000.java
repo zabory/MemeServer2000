@@ -168,10 +168,21 @@ public class MemeServer2000 {
 	}
 	
 	public static void println(String message) {
+		println(log_level.INFO, message);
+	}
+	
+	public static void println(log_level logLevel, String message) {
 		Date currentDate = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("[yyyy-dd-MM] HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat(" MM/dd HH:mm:ss ");
 		
-		System.out.println(sdf.format(currentDate) + "\t" + message);
+		System.out.println("[" + logLevel + "]" + sdf.format(currentDate) + "\t" + message);
+	}
+	
+	enum log_level{
+		INFO,
+		WARNING,
+		ERROR,
+		FATAL
 	}
 
 }

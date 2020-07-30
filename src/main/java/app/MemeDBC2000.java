@@ -32,7 +32,7 @@ public class MemeDBC2000 extends Thread{
         	try {
 				Thread.sleep(250);
 			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
+				
 				e1.printStackTrace();
 			}
             if(!inputQ.isEmpty()){

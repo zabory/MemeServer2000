@@ -19,7 +19,6 @@ public class MemeBot2000 {
 		ProcessBuilder pb = new ProcessBuilder();
 		pb.command("cmd.exe", "/c", "node MemeBot2000.js");
 		
-		//TODO we need to find the dir of memebot
 		pb.directory(new File("src\\main\\resources\\bot"));
 		
 		bot = pb.start();
