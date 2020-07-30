@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class Logger {
 	
-	enum level{
+	public enum level{
 		INFO,
 		WARNING,
 		ERROR,
@@ -19,60 +19,94 @@ public class Logger {
 	
 	private File outputFile;
 	private PrintWriter output;
+	private String logName;
+	private long messageCount;
+	private boolean consoleOutput;
 	
 	public Logger() {
-		//file name
-		outputFile = new File("logs\\currentLog.txt");
-		//if it already exists, rename it to something else
-		if(outputFile.exists()) {
-			String logFileCreationDate = "";
+		this("latest");
+	}
+	
+	public Logger(String loggerFileName) {
+		consoleOutput = true;
+		messageCount = 0L;
+		logName = loggerFileName;
+		// file name
+		outputFile = new File("logs\\" + logName + ".txt");
+		// if it already exists, rename it to something else
+		if (outputFile.exists()) {
+			String newName = "";
 			try {
-				//get date of log file creation
+				// get date of log file creation
 				Scanner input = new Scanner(outputFile);
-				logFileCreationDate = input.nextLine().replace("Log created at ", "");
+				newName = input.nextLine().replace("Log created at ", "");
+				newName = (logName.equals("latest") ? "log-" : logName + "-") + newName;
 				input.close();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
-			
-			outputFile.renameTo(new File("logs\\" + logFileCreationDate + ".txt"));
+
+			outputFile.renameTo(new File("logs\\" + newName + ".txt"));
 		}
-		
-		//create file
+
+		// create file
 		try {
 			outputFile.getParentFile().mkdirs();
 			outputFile.createNewFile();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		try {
 			output = new PrintWriter(outputFile);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+
 		Date currentDate = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-HH-mm");
-		
+
 		output.println("Log created at " + sdf.format(currentDate));
 		output.flush();
-		
-	}	
-	
+
+	}
 	
 	public void println(String message) {
 		println(level.INFO, message);
 	}
 	
 	public void println(level logLevel, String message) {
+		messageCount++;
 		Date currentDate = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat(" MM/dd HH:mm:ss ");
-		String outputMessage = "[" + logLevel + "]" + sdf.format(currentDate) + "\t" + message;
 		
-		System.out.println(outputMessage);
+		String tabCount = logLevel == level.WARNING ? "\t" : "\t\t";
+		
+		String outputMessage = "[" + logLevel + "]" + sdf.format(currentDate) + tabCount + message;
+		
+		if(consoleOutput) System.out.println(outputMessage);
 		
 		output.println(outputMessage);
 		output.flush();
+	}
+	
+	public String getLogName() {
+		return logName;
+	}
+	
+	public long getMessageCount() {
+		return messageCount;
+	}
+	
+	public void setConsoleOutput(boolean cpo) {
+		consoleOutput = cpo;
+	}
+	
+	public File getOutputFile() {
+		return outputFile;
+	}
+	
+	public void close() {
+		output.close();
 	}
 }
