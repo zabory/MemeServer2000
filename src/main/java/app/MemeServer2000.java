@@ -82,9 +82,7 @@ public class MemeServer2000 {
 				switch(msg.getType()){
 					case REPLENISH_Q:
 						approveQ.put(msg.getId());
-						newMsg.setCommand("qCount");
-						newMsg.setChannelID(approveQ.size());
-						break;
+						continue;
 
 					case SUBMIT_ACK:
 						if(msg.getId() != null){
@@ -139,6 +137,7 @@ public class MemeServer2000 {
 				MemeDBMsg2000 approveMsg = new MemeDBMsg2000().type(GET_MEME_ID).id(approveQ.peek());
 				lastID = approveMsg.getId();
 				dbInputQ.add(approveMsg);
+				botInputQ.add(new MemeBotMsg2000().command("queueSize").channelID(approveQ.size()));
 			}
 
 			} catch (InterruptedException e) {
