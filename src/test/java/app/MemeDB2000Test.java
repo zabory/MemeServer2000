@@ -5,8 +5,7 @@ import org.junit.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -163,4 +162,37 @@ public class MemeDB2000Test {
         assertEquals(null, memebase.store("Ziggy", link2, Arrays.asList("server", "diagram")));
     }
 
+    @Test
+    public void getTags() {
+        Integer ID1 = 1, ID2 = 2, ID3 = 3, ID4 = 4;
+        String link1 = "https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg",
+                link2 = "https://cdn.discordapp.com/attachments/647667357879107584/736409444577050764/MemeBot2000.jpg",
+                link3 = "https://cdn.discordapp.com/attachments/647667357879107584/735864874932109322/xvOzIkw.jpeg",
+                link4 = "https://cdn.discordapp.com/attachments/647667357879107584/735864874932109322/xvOzIke.jpeg";
+        assertEquals(ID1, memebase.cache("Ziggy", link1, Arrays.asList("meta", "books")));
+        assertEquals(ID2, memebase.cache("Ziggy", link2, Arrays.asList("server", "diagram")));
+        assertEquals(ID3, memebase.cache("Ziggy", link3, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
+        assertEquals(ID4, memebase.cache("Ziggy", link4, Arrays.asList("fake", "books", "cat", "server")));
+
+        Set<String> tagSet = new HashSet<String>();
+        tagSet.add("meta");
+        tagSet.add("books");
+        tagSet.add("diagram");
+        tagSet.add("oracle");
+        tagSet.add("sql");
+        tagSet.add("dog");
+        tagSet.add("animal");
+        tagSet.add("test");
+        tagSet.add("fake");
+        tagSet.add("cat");
+        tagSet.add("server");
+        List<String> tags = memebase.getTags();
+        assertEquals(11, tags.size());
+        for(String tag : tags){
+            if(tagSet.contains(tag))
+                tagSet.remove(tag);
+            else
+                assertTrue(false);
+        }
+    }
 }

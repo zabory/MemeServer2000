@@ -14,9 +14,11 @@ public class MemeDBMsg2000 {
         REJECT_MEME,            // Used to remove a meme from the cache
         TERMINATE,              // Used to kill the controller and MemeDB
         INITIALIZE,             // Used to send all cache meme IDS out
+        GET_TAGS,               // Used to get all available tags in the DB
 
         // To MemeServer message types
         REPLENISH_Q,            // Used to pass cached meme ID that still hasnt been approved
+        ALL_TAGS,               // Used to pass all tags available back to the bot
         SUBMIT_ACK,             // Used to pass ACK info back to the bot after a submission (cache or store)
         APPROVE_MEME,           // Used to pass a meme to the bot to display in the approval channel
         CURATE_RESULT,          // Used to return the result of the curation back to the bot (promote, demote, or reject)

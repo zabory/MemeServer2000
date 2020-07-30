@@ -155,6 +155,8 @@ public class MemeDB2000 {
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            error("Failed retrieving all ids from the cache");
+            return null;
         }
         return retlist;
     }
@@ -233,6 +235,26 @@ public class MemeDB2000 {
             error("No meme exists in MemeDB with ID: " + id);
         }
         return link;
+    }
+
+    /**
+     * Returns all tags existing
+     * @return
+     */
+    public List<String> getTags(){
+        List<String> retList = new ArrayList<>();
+        errorMsg = "";
+        try {
+            ResultSet rs = executeQuery("SELECT DISTINCT tag FROM " + tagLkpTableName);
+            while(rs != null && rs.next()) {
+                retList.add(rs.getString("tag"));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            error("Failed getting all tags");
+            return null;
+        }
+        return retList;
     }
 
     /**

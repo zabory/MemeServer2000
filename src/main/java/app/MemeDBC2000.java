@@ -44,8 +44,17 @@ public class MemeDBC2000 extends Thread{
                             for(Integer theid : ids){
                                 outputQ.add(new MemeDBMsg2000()
                                         .type(REPLENISH_Q)
-                                        .id(theid));
+                                        .id(theid)
+                                );
                             }
+                            break;
+
+                        case GET_TAGS:
+                            List<String> tags = db.getTags();
+                            outputQ.add(new MemeDBMsg2000()
+                                    .type(ALL_TAGS)
+                                    .tags(tags)
+                            );
                             break;
 
                         case GET_MEME_ID:

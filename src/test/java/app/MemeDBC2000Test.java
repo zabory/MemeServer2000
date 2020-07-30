@@ -8,10 +8,7 @@ import org.junit.Test;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -196,6 +193,49 @@ public class MemeDBC2000Test {
             msg = (MemeDBMsg2000) outputQ.take();
             assertEquals(MEME, msg.getType());
             assertEquals("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg", msg.getLink());
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    public void basicGetTagsTest(){
+        try {
+            String link = "a";
+            for(int i=0;i<10;i++){
+                inputQ.put(new MemeDBMsg2000()
+                        .type(STORE_MEME)
+                        .link(link)
+                        .username("Ziggy")
+                        .tags(Arrays.asList("dog", "cat"))
+                );
+                link += "a";
+            }
+            inputQ.put(new MemeDBMsg2000()
+                    .type(STORE_MEME)
+                    .link("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg")
+                    .username("Zabory")
+                    .tags(Arrays.asList("bread", "seals")));
+            for(int i=0;i<11;i++)
+                outputQ.take();
+
+            inputQ.put(new MemeDBMsg2000().type(GET_TAGS));
+            MemeDBMsg2000 msg = (MemeDBMsg2000) outputQ.take();
+            assertEquals(ALL_TAGS, msg.getType());
+            assertEquals(4, msg.getTags().size());
+            Set<String> tagSet = new HashSet<String>();
+            tagSet.add("bread");
+            tagSet.add("seals");
+            tagSet.add("cat");
+            tagSet.add("dog");
+            for(String tag : msg.getTags()){
+                if(tagSet.contains(tag))
+                    tagSet.remove(tag);
+                else
+                    assertTrue(false);
+            }
 
         } catch (InterruptedException e) {
             e.printStackTrace();
