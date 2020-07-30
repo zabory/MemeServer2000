@@ -49,7 +49,9 @@ public class MemeServer2000 {
 		// begin loop
 		while(true){
 			try {
-
+					
+				Thread.sleep(250);
+				
 			// check bot output for messages
 			if(!botOutputQ.isEmpty()){
 

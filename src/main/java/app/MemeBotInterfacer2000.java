@@ -22,9 +22,9 @@ import dataStructures.MemeBotMsg2000;
 public class MemeBotInterfacer2000 {
 	
 	//input from main thread
-	private Queue<MemeBotMsg2000> input;
+	private BlockingQueue<MemeBotMsg2000> input;
 	//output to main thread
-	private Queue<MemeBotMsg2000> output;
+	private BlockingQueue<MemeBotMsg2000> output;
 	
 	//input from bot
 	private BufferedReader botInput;
@@ -70,25 +70,20 @@ public class MemeBotInterfacer2000 {
 	
 	/**
 	 * Class to handle out to the bot's input thread
+	 * 
 	 * @author Ben Shabowski
 	 * @version 2000
 	 * @since 2000
 	 */
 	private class BotOutputThread extends Thread {
 		public void run() {
-			while(true) {
+			while (true) {
 				try {
-					Thread.sleep(250);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-				try {
-					if(input.size() > 0) {
-						
-						botOutput.write(input.poll().toJSON().toString() + "\n");
-						botOutput.flush();
-					}
-				} catch (IOException e) {
+					
+					botOutput.write(input.take().toJSON().toString() + "\n");
+					botOutput.flush();
+
+				} catch (IOException | InterruptedException e) {
 					System.out.println(e);
 				}
 			}
@@ -104,12 +99,6 @@ public class MemeBotInterfacer2000 {
 	private class BotInputThread extends Thread {
 		public void run() {
 			while (true) {
-				try {
-					Thread.sleep(250);
-				} catch (InterruptedException e1) {
-					
-					e1.printStackTrace();
-				}
 				try {
 					JSONObject in = new JSONObject(botInput.readLine());
 					if(in.has("body")) {
@@ -133,12 +122,6 @@ public class MemeBotInterfacer2000 {
 		public void run() {
 			String input = "";
 			while(input != null) {
-				try {
-					Thread.sleep(250);
-				} catch (InterruptedException e1) {
-					
-					e1.printStackTrace();
-				}
 				try {
 					input = botErrorInput.readLine();
 					System.out.println(input);
