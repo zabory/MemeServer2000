@@ -23,10 +23,17 @@ public class Logger {
 	private long messageCount;
 	private boolean consoleOutput;
 	
+	/**
+	 * Creates a logger with file name of 'latest'
+	 */
 	public Logger() {
 		this("latest");
 	}
 	
+	/**
+	 * Creates a logger with a specific file name
+	 * @param loggerFileName
+	 */
 	public Logger(String loggerFileName) {
 		consoleOutput = true;
 		messageCount = 0L;
@@ -71,10 +78,19 @@ public class Logger {
 
 	}
 	
+	/**
+	 * Prints a message with level INFO
+	 * @param message
+	 */
 	public void println(String message) {
 		println(level.INFO, message);
 	}
 	
+	/**
+	 * Prints a message with a specific log level
+	 * @param logLevel
+	 * @param message
+	 */
 	public void println(level logLevel, String message) {
 		messageCount++;
 		Date currentDate = new Date();
@@ -106,6 +122,9 @@ public class Logger {
 		return outputFile;
 	}
 	
+	/**
+	 * Closes output stream to file
+	 */
 	public void close() {
 		output.close();
 	}
