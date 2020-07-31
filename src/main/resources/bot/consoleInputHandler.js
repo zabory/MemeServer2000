@@ -2,7 +2,7 @@
 
 module.exports = {
 		
-		handle: function(bot, input auth){
+		handle: function(bot, input, auth){
 			
 			// I expect this to have some stuff
 			json = JSON.parse(input)

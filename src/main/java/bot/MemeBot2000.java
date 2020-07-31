@@ -7,12 +7,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-@Configuration
-@PropertySource("")
 public class MemeBot2000 {
 	
 	private BufferedReader input;
@@ -21,22 +17,13 @@ public class MemeBot2000 {
 	
 	private Process bot;
 	
-	@Value("${token}")
-	private String botToken;
-	
-	@Value("${channel}")
-	private String approvalChannel;
-	
-	@Value("${helpChannel}")
-	private String helpChannel;
-	
-	@Value("${approveEmoji}")
-	private String approveEmoji;
-	
-	@Value("${denyEmoji}")
-	private String denyEmoji;
-	
 	public MemeBot2000() {
+		
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+		context.scan("bot");
+		context.refresh();
+		MemeBotConfigLoader3000 botConfig = context.getBean(MemeBotConfigLoader3000.class);
+		context.close();
 		
 		ProcessBuilder pb = new ProcessBuilder();
 		pb.command("cmd.exe", "/c", "node MemeBot2000.js");
@@ -49,13 +36,6 @@ public class MemeBot2000 {
 			e1.printStackTrace();
 		}
 		
-		//Sleep thread, not like the server can do anything while the bot is booting up and connecting anywas
-		try {
-			Thread.sleep(3500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
 		input =  new BufferedReader(new InputStreamReader(bot.getInputStream()));
 		error = new BufferedReader(new InputStreamReader(bot.getErrorStream()));
 		output = new BufferedWriter(new OutputStreamWriter(bot.getOutputStream()));
@@ -65,11 +45,11 @@ public class MemeBot2000 {
 			JSONObject json = new JSONObject();
 			
 			json.put("command", "start");
-			json.put("token", botToken);
-			json.put("channel", approvalChannel);
-			json.put("helpChannel", helpChannel);
-			json.put("approve", approveEmoji);
-			json.put("deny", denyEmoji);
+			json.put("token", botConfig.getBotToken());
+			json.put("channel", botConfig.getApprovalChannel());
+			json.put("helpChannel", botConfig.getHelpChannel());
+			json.put("approve", botConfig.getApproveEmoji());
+			json.put("deny", botConfig.getDenyEmoji());
 			
 			output.write(json.toString() + "\n");
 			output.flush();
@@ -77,8 +57,16 @@ public class MemeBot2000 {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		// Sleep thread, not like the server can do anything while the bot is booting up
+		// and connecting anywas
+		try {
+			Thread.sleep(3500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	/**
 	 * Kill the bot process
 	 */

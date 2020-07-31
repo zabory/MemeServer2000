@@ -15,7 +15,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import static datastructures.MemeDBMsg2000.MsgDBType.*;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 
 /**
  * 
@@ -25,7 +24,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @since 2000
  * 
  */
-@ComponentScan({"bot"})
+
 @SpringBootApplication
 public class MemeSwitchboard3000 {
 	public static void main(String[] args) throws IOException {
@@ -94,6 +93,9 @@ public class MemeSwitchboard3000 {
 						}else {
 							newMsg.type(CACHE_MEME);
 						}
+						break;
+					case "print":
+						logger.println(msg.getBody());
 						break;
 					default:
 						System.out.println("Main cannot handle " + msg.getCommand() + " message from the bot. :(");

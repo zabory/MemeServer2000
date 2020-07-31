@@ -36,6 +36,7 @@ public class MemeBotInterfacer2000 {
 	private MemeBot2000 bot;
 	
 	public MemeBotInterfacer2000(BlockingQueue<MemeBotMsg2000> botInputQ, BlockingQueue<MemeBotMsg2000> botOutputQ) {
+				
 		this.input = botInputQ;
 		this.output = botOutputQ;
 		
@@ -93,9 +94,18 @@ public class MemeBotInterfacer2000 {
 		public void run() {
 			while (true) {
 				try {
-					JSONObject in = new JSONObject(botInput.readLine());
-					if(in.has("body")) {
-						in.put("body", in.getString("body").toLowerCase());
+					String input = botInput.readLine();
+					JSONObject in;
+					
+					if(input.charAt(0) == '{') {
+						in = new JSONObject(botInput.readLine());
+						if(in.has("body")) {
+							in.put("body", in.getString("body").toLowerCase());
+						}
+					}else {
+						in = new JSONObject();
+						in.put("body", input);
+						in.put("command", "print");
 					}
 					output.add(new MemeBotMsg2000(in));
 				} catch (JSONException | IOException e) {
