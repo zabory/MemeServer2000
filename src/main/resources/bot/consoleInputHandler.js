@@ -84,6 +84,11 @@ module.exports = {
 					}
 				});
 				
+			}else if(command == 'clearHelpChannel'){
+				helpChannel = bot.channels.cache.get(auth.helpChannel)
+				helpChannel.bulkDelete(100)
+				helpChannel.send('Tag list\n=================\n')
+				helpChannel.send('Command list\n=================\n')
 			}
 			
 		}
