@@ -242,16 +242,29 @@ public class MemeDB2000 {
      * @return
      */
     public List<String> getTags(){
+        return getTags(null);
+    }
+
+    /**
+     * Return all tags or all tags that have id
+     * @param id
+     * @return
+     */
+    public List<String> getTags(Integer id){
         List<String> retList = new ArrayList<>();
         errorMsg = "";
         try {
-            ResultSet rs = executeQuery("SELECT DISTINCT tag FROM " + tagLkpTableName);
+            ResultSet rs;
+            if(id == null)
+                rs = executeQuery("SELECT DISTINCT tag FROM " + tagLkpTableName);
+            else
+                rs = executeQuery("SELECT tag FROM " + tagLkpTableName + " WHERE id = ?", Arrays.asList(new Column(id, Column.ColType.INT)));
             while(rs != null && rs.next()) {
                 retList.add(rs.getString("tag"));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-            error("Failed getting all tags");
+            error("Failed getting tags");
             return null;
         }
         return retList;

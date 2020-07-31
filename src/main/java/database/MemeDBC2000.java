@@ -51,10 +51,12 @@ public class MemeDBC2000 extends Thread{
 
                     case GET_MEME_ID:
                         link = db.getCache(msg.getId());
+                        tags = db.getTags(msg.getId());
                         if(link != null){
                             outputQ.put(new MemeDBMsg2000()
                                     .type(APPROVE_MEME)
                                     .link(link)
+                                    .tags(tags)
                             );
                         }
                         else

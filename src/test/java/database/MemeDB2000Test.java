@@ -194,5 +194,19 @@ public class MemeDB2000Test {
             else
                 assertTrue(false);
         }
+
+        tagSet = new HashSet<String>();
+        tagSet.add("books");
+        tagSet.add("fake");
+        tagSet.add("cat");
+        tagSet.add("server");
+        tags = memebase.getTags(ID4);
+        assertEquals(4, tags.size());
+        for(String tag : tags){
+            if(tagSet.contains(tag))
+                tagSet.remove(tag);
+            else
+                assertTrue(false);
+        }
     }
 }
