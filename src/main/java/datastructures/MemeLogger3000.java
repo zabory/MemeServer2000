@@ -11,10 +11,10 @@ import java.util.Scanner;
 public class MemeLogger3000 {
 	
 	public enum level{
-		INFO,
-		WARNING,
-		ERROR,
-		FATAL
+		INFO,		// Info about whats happening
+		WARNING,	// May have detected an issue
+		ERROR,		// An issue has occurred, but system stays alive
+		FATAL		// An issue has occurred and the system will have to restart or crash
 	}
 	
 	private File outputFile;
