@@ -4,12 +4,9 @@ import bot.MemeBotInterfacer2000;
 import datastructures.MemeLogger3000;
 import datastructures.MemeBotMsg2000;
 import datastructures.MemeDBMsg2000;
-import db.MemeDBC2000;
+import database.MemeDBC2000;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import static datastructures.MemeDBMsg2000.MsgDBType.*;

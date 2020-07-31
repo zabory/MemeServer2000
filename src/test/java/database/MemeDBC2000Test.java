@@ -1,4 +1,4 @@
-package db;
+package database;
 
 import datastructures.MemeDBMsg2000;
 import org.junit.After;

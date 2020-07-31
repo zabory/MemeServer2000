@@ -1,6 +1,5 @@
-package db;
+package database;
 
-import db.MemeDB2000;
 import org.junit.*;
 
 import java.sql.Connection;
