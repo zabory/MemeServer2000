@@ -139,7 +139,7 @@ public class MemeDBC2000Test {
             inputQ.put(new MemeDBMsg2000()
                     .type(DEMOTE_MEME).id(1));
             msg = (MemeDBMsg2000) outputQ.take();
-            assertEquals(CURATE_RESULT, msg.getType());
+            assertEquals(REPLENISH_Q, msg.getType());
             assertEquals((Integer) 1, msg.getId());
             assertEquals("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg", msg.getLink());
             assertEquals("Zabory", msg.getUsername());

@@ -88,10 +88,6 @@ public class MemeDBReader3000 extends Thread{
                         newMsg.setBody(msg.getMessage());
                         break;
 
-                    case DEMOTE_ACK:
-
-                        break;
-
                     case MEME:
                         logger.println("Sending meme to " + msg.getChannelID() + ", requested by " + msg.getUsername());
                         newMsg.setCommand("sendToChannel");
