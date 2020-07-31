@@ -26,7 +26,7 @@ public class MemeBotReader3000 extends Thread{
     public void run(){
         MemeDBMsg2000 newMsg = new MemeDBMsg2000();
         MemeBotMsg2000 msg;
-        LinkedList<String> tags = new LinkedList<>();
+        LinkedList<String> tags;
         while(true){
             try {
                 msg = botOutputQ.take();
@@ -61,6 +61,9 @@ public class MemeBotReader3000 extends Thread{
                         }else {
                             newMsg.type(CACHE_MEME);
                         }
+                        break;
+                    case "print":
+                        logger.println(msg.getBody());
                         break;
                     default:
                         logger.println("Main cannot handle " + msg.getCommand() + " message from the bot. :(");
