@@ -43,12 +43,6 @@ module.exports = {
 							json = {'user':user, 'admin':adminRole, 'channelID':channel, 'url':url, 'body': tags, 'command': 'submitMeme'}
 							console.log(JSON.stringify(json))
 						
-							if(json.admin){
-								//data.reply('Meme submitted to the database')
-							}else{
-								//data.reply('Meme has been submitted to be revied by a curator')
-							}
-						
 						}else{
 							data.reply('Give me tags! Give me taaaags!')
 						}

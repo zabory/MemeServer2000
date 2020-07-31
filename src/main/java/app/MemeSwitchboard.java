@@ -113,7 +113,11 @@ public class MemeSwitchboard {
 
 					case ALL_TAGS:
 						newMsg.setCommand("sendAllTags");
-						newMsg.setBody(msg.getTags().toString());
+						String tagList = "";
+						for(String e : msg.getTags()) {
+							tagList += e + ",";
+						}
+						newMsg.setBody(tagList);
 						break;
 
 					case SUBMIT_ACK:
@@ -131,7 +135,12 @@ public class MemeSwitchboard {
 						newMsg.setCommand("sendToQueue");
 						newMsg.setBody(msg.getLink());
 						newMsg.setChannelID(736022204281520169L);
+						
 						MemeBotMsg2000 tagMessage = new MemeBotMsg2000().channelID(736022204281520169L).body(msg.getTags().toArray() + "").command("sendToChannel");
+						botInputQ.add(tagMessage);
+						
+						MemeBotMsg2000 queueCountMessage = new MemeBotMsg2000().channelID(736022204281520169L).body("Queue count " + approveQ.size()).command("sendToChannel");
+						botInputQ.add(queueCountMessage);
 						botInputQ.add(tagMessage);
 						break;
 

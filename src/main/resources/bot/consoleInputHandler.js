@@ -55,8 +55,24 @@ module.exports = {
 					}
 				});
 			}else if(command == 'sendAllTags'){
+				tagList = json.body
+				helpChannel = bot.channels.cache.get(auth.helpChannel)
+				
+				helpChannel.messages.cache.array().forEach(currentMessage => {
+					if(currentMessage.content.includes('Tag list')){
+						currentMessage.edit('Tag list\n' + tagList.replace(',', '\n'))
+					}
+				});
 				
 			}else if(comand == 'queueSize'){
+				queueSize = json.body
+				helpChannel = bot.channels.cache.get(auth.channel)
+				
+				helpChannel.messages.cache.array().forEach(currentMessage => {
+					if(currentMessage.content.includes('Queue size ')){
+						currentMessage.edit('Queue size ' + queueSize)
+					}
+				});
 				
 			}
 			
