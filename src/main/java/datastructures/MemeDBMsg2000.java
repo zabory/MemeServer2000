@@ -21,7 +21,8 @@ public class MemeDBMsg2000 {
         ALL_TAGS,               // Used to pass all tags available back to the bot
         SUBMIT_ACK,             // Used to pass ACK info back to the bot after a submission (cache or store)
         APPROVE_MEME,           // Used to pass a meme to the bot to display in the approval channel
-        CURATE_RESULT,          // Used to return the result of the curation back to the bot (promote, demote, or reject)
+        DEMOTE_ACK,             // Used to ACK that a meme was demoted. Either admin command or initialization
+        CURATE_RESULT,          // Used to return the result of the curation back to the bot (promote or reject)
         MEME,                   // Used to pass the meme link back to the bot
         ERROR                   // Used to pass an error string back to main
     }

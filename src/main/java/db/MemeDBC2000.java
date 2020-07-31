@@ -124,8 +124,7 @@ public class MemeDBC2000 extends Thread{
                         username = db.demote(msg.getId());
                         if(link != null && username != null){
                             outputQ.put(new MemeDBMsg2000()
-                                    .type(CURATE_RESULT)
-                                    .message("This meme has been demoted.")
+                                    .type(DEMOTE_ACK)
                                     .id(msg.getId())
                                     .link(link)
                                     .username(username)
