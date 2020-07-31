@@ -105,7 +105,6 @@ public class MemeServer2000 {
 						approveQ.put(msg.getId());
 						continue;
 
-						//TODO handle this on bot side
 					case ALL_TAGS:
 						newMsg.setCommand("sendAllTags");
 						newMsg.setBody(msg.getTags().toString());
@@ -166,8 +165,7 @@ public class MemeServer2000 {
 				MemeDBMsg2000 approveMsg = new MemeDBMsg2000().type(GET_MEME_ID).id(approveQ.peek());
 				lastID = approveMsg.getId();
 				dbInputQ.add(approveMsg);
-				// TODO handle this on bot side
-				botInputQ.add(new MemeBotMsg2000().command("queueSize").channelID(approveQ.size()));
+				botInputQ.add(new MemeBotMsg2000().command("queueSize").body(approveQ.size() + ""));
 			}
 
 			} catch (InterruptedException e) {
