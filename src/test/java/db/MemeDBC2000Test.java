@@ -1,6 +1,6 @@
-package app;
+package db;
 
-import dataStructures.MemeDBMsg2000;
+import datastructures.MemeDBMsg2000;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,8 +12,8 @@ import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static dataStructures.MemeDBMsg2000.MsgDBType.*;
-import static dataStructures.MemeDBMsg2000.*;
+import static datastructures.MemeDBMsg2000.MsgDBType.*;
+import static datastructures.MemeDBMsg2000.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

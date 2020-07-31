@@ -1,4 +1,4 @@
-package dataStructures;
+package datastructures;
 
 import org.json.JSONObject;
 

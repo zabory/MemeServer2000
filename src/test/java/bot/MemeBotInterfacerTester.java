@@ -1,6 +1,4 @@
-package app;
-
-import static org.junit.Assert.*;
+package bot;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -11,7 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
-import dataStructures.MemeBotMsg2000;
+import datastructures.MemeBotMsg2000;
 
 public class MemeBotInterfacerTester {
 	

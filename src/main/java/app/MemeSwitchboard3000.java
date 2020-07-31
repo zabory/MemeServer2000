@@ -1,18 +1,18 @@
 package app;
 
-import dataStructures.Logger;
-import dataStructures.MemeBotMsg2000;
-import dataStructures.MemeDBMsg2000;
+import bot.MemeBotInterfacer2000;
+import datastructures.Logger;
+import datastructures.MemeBotMsg2000;
+import datastructures.MemeDBMsg2000;
+import db.MemeDBC2000;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import static dataStructures.MemeDBMsg2000.MsgDBType.*;
+import static datastructures.MemeDBMsg2000.MsgDBType.*;
 
 /**
  * 
@@ -51,9 +51,9 @@ public class MemeSwitchboard3000 {
 		// begin loop
 		while(true){
 			try {
-					
+
 				Thread.sleep(250);
-				
+
 			// check bot output for messages
 			if(!botOutputQ.isEmpty()){
 

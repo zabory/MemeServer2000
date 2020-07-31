@@ -1,11 +1,11 @@
-package app;
+package db;
 
-import dataStructures.MemeDBMsg2000;
+import datastructures.MemeDBMsg2000;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
-import static dataStructures.MemeDBMsg2000.MsgDBType.*;
+import static datastructures.MemeDBMsg2000.MsgDBType.*;
 
 /**
  *
@@ -16,7 +16,7 @@ public class MemeDBC2000 extends Thread{
     private BlockingQueue<MemeDBMsg2000> outputQ;
     private BlockingQueue<MemeDBMsg2000> inputQ;
 
-    MemeDBC2000(String filePath, BlockingQueue inQ, BlockingQueue outQ){
+    public MemeDBC2000(String filePath, BlockingQueue inQ, BlockingQueue outQ){
         db = new MemeDB2000(filePath);
         db.open();
         outputQ = outQ;

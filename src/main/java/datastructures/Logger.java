@@ -1,4 +1,4 @@
-package dataStructures;
+package datastructures;
 
 import java.io.File;
 import java.io.FileNotFoundException;
