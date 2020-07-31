@@ -75,11 +75,17 @@ public class MemeServer2000 {
 					case "fetchMeme":
 						logger.println("Fetching meme for " + msg.getUser());
 						tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getBody().split(","))));
+						tags.forEach(e -> {
+							tags.set(tags.indexOf(e), e.replace("\"", "").replace(";", "").replace("[", "").replace("]", ""));
+						});
 						newMsg = new MemeDBMsg2000().type(GET_MEME_TAGS).tags(new LinkedList<String>(tags)).username(msg.getUser()).channelID(msg.getChannelID());
 						break;
 					case "submitMeme":
 						logger.println("Meme submitted by " + msg.getUser());
 						tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getBody().split(","))));
+						tags.forEach(e -> {
+							tags.set(tags.indexOf(e), e.replace("\"", "").replace(";", "").replace("[", "").replace("]", ""));
+						});
 						newMsg = new MemeDBMsg2000().link(msg.getUrl()).tags(tags).username(msg.getUser()).channelID(msg.getChannelID());
 						if(msg.isAdmin()) {
 							newMsg.type(STORE_MEME);
