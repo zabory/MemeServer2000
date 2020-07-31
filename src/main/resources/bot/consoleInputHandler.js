@@ -1,17 +1,17 @@
-var auth = require('./auth.json');
+
 
 module.exports = {
 		
-		handle: function(bot, input){
+		handle: function(bot, input, auth){
 			
 			// I expect this to have some stuff
 			json = JSON.parse(input)
-			user = json.user
 			command = json.command
-			body = json.body
 			
 			// sends message to user
 			if(command == 'sendToUser'){
+				user = json.user
+				body = json.body
 				// find and open user dm
 				bot.users.cache.array().forEach(currentUser => {
 					if(user == currentUser.username){
@@ -23,6 +23,7 @@ module.exports = {
 				});
 			// sends message to meme channel
 			}else if(command == 'sendToChannel' || command == 'sendToQueue'){
+				body = json.body
 				channelID = json.channelID
 	
 				//go through userDM channel IDs as well to get the right channel
@@ -90,6 +91,7 @@ module.exports = {
 				helpChannel.send('Tag list\n=================\n')
 				helpChannel.send('Command list\n=================\n')
 			}
+			
 			
 		}
 }

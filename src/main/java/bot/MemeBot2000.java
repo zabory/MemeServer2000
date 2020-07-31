@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
+import org.json.JSONObject;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 public class MemeBot2000 {
 	
 	private BufferedReader input;
@@ -13,16 +16,19 @@ public class MemeBot2000 {
 	private BufferedWriter output;
 	
 	private Process bot;
-	private ProcessBuilder pb;
 	
 	public MemeBot2000() {
+		
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+		context.scan("bot");
+		context.refresh();
+		MemeBotConfigLoader3000 botConfig = context.getBean(MemeBotConfigLoader3000.class);
+		context.close();
 		
 		ProcessBuilder pb = new ProcessBuilder();
 		pb.command("cmd.exe", "/c", "node MemeBot2000.js");
 		
 		pb.directory(new File("src\\main\\resources\\bot"));
-		
-		this.pb = pb;
 		
 		try {
 			bot = pb.start();
@@ -30,30 +36,37 @@ public class MemeBot2000 {
 			e1.printStackTrace();
 		}
 		
-		//Sleep thread, not like the server can do anything while the bot is booting up and connecting anywas
+		input =  new BufferedReader(new InputStreamReader(bot.getInputStream()));
+		error = new BufferedReader(new InputStreamReader(bot.getErrorStream()));
+		output = new BufferedWriter(new OutputStreamWriter(bot.getOutputStream()));
+
+		try {
+			
+			JSONObject json = new JSONObject();
+			
+			json.put("command", "start");
+			json.put("token", botConfig.getBotToken());
+			json.put("channel", botConfig.getApprovalChannel());
+			json.put("helpChannel", botConfig.getHelpChannel());
+			json.put("approve", botConfig.getApproveEmoji());
+			json.put("deny", botConfig.getDenyEmoji());
+			
+			output.write(json.toString() + "\n");
+			output.flush();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// Sleep thread, not like the server can do anything while the bot is booting up
+		// and connecting anywas
 		try {
 			Thread.sleep(3500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
-		input =  new BufferedReader(new InputStreamReader(bot.getInputStream()));
-		error = new BufferedReader(new InputStreamReader(bot.getErrorStream()));
-		output = new BufferedWriter(new OutputStreamWriter(bot.getOutputStream()));
+	}
 
-	}
-	
-	/**
-	 * Start the bot process
-	 */
-	public void start() {
-		try {
-			bot = pb.start();
-		}catch(IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	/**
 	 * Kill the bot process
 	 */

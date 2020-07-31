@@ -1,7 +1,7 @@
-var auth = require('./auth.json');
+
 
 module.exports = {
-		handle : function(data, userData){
+		handle : function(data, userData, auth){
 			
 			//we need this because the bot adds the reactions on to the picture the first time, so only do this if more than the bot reacts
 			if(data.users.cache.array().length > 1){

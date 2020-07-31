@@ -16,6 +16,7 @@ public class MemeBotMsg2000 {
 	private long channelID;
 	private boolean admin;
 	private String url;
+	private JSONObject json;
 
 	/**
 	 * Create a message from variables
@@ -73,6 +74,8 @@ public class MemeBotMsg2000 {
 			admin = jObject.getBoolean("admin");
 		}
 		
+		json = jObject;
+		
 //		 jObject.getString("body").toLowerCase(),
 //				jObject.getLong("channelID"));
 	}
@@ -92,6 +95,10 @@ public class MemeBotMsg2000 {
 		j.put("url", url);
 		return j;
 	}
+	
+	public String toString() {
+		return json.toString();
+	}
 
 	public String getUser() {
 		return user;
@@ -102,7 +109,11 @@ public class MemeBotMsg2000 {
 	}
 
 	public String getCommand() {
-		return command;
+		if(command != null) {
+			return command;
+		}else {
+			return "print";
+		}
 	}
 
 	public void setCommand(String command) {
