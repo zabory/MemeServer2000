@@ -18,6 +18,32 @@ const consoleInput = readline.createInterface({
 // set activity of the bot
 bot.on('ready', () => {
 	bot.user.setActivity("Someone get this man a meme")
+	//post the tags list if none exists
+	helpChannel = bot.channels.cache.get(auth.helpChannel)
+	
+	foundTagsMessage = false
+	
+	helpChannel.messages.cache.array().forEach(currentMessage => {
+		if(currentMessage.content.includes('Tag list')){
+			foundTagsMessage = true;
+		}
+	});
+	
+	if(!foundTagsMessage){
+		helpChannel.send('Tag list\n=================\n')
+	}
+	
+	foundCommandsMessage = false
+	
+	helpChannel.messages.cache.array().forEach(currentMessage => {
+		if(currentMessage.content.includes('Command list')){
+			foundCommandsMessage = true;
+		}
+	});
+	
+	if(!foundCommandsMessage){
+		helpChannel.send('Command list\n=================\n')
+	}
 });
 
 // whenever the bot gets a message

@@ -60,17 +60,27 @@ module.exports = {
 				
 				helpChannel.messages.cache.array().forEach(currentMessage => {
 					if(currentMessage.content.includes('Tag list')){
-						currentMessage.edit('Tag list\n' + tagList.replace(',', '\n'))
+						currentMessage.edit('Tag list\n=================\n' + tagList.replace(',', '\n'))
 					}
 				});
 				
-			}else if(comand == 'queueSize'){
+			}else if(command == 'queueSize'){
 				queueSize = json.body
 				helpChannel = bot.channels.cache.get(auth.channel)
 				
 				helpChannel.messages.cache.array().forEach(currentMessage => {
 					if(currentMessage.content.includes('Queue size ')){
 						currentMessage.edit('Queue size ' + queueSize)
+					}
+				});
+				
+			}else if(command == 'sendAllCommands'){
+				tagList = json.body
+				helpChannel = bot.channels.cache.get(auth.helpChannel)
+				
+				helpChannel.messages.cache.array().forEach(currentMessage => {
+					if(currentMessage.content.includes('Command list')){
+						currentMessage.edit('Command list\n=================\n' + tagList.replace(',', '\n'))
 					}
 				});
 				
