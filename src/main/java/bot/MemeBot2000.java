@@ -6,6 +6,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+
+@Configuration
+@PropertySource("")
 public class MemeBot2000 {
 	
 	private BufferedReader input;
@@ -13,7 +20,21 @@ public class MemeBot2000 {
 	private BufferedWriter output;
 	
 	private Process bot;
-	private ProcessBuilder pb;
+	
+	@Value("${token}")
+	private String botToken;
+	
+	@Value("${channel}")
+	private String approvalChannel;
+	
+	@Value("${helpChannel}")
+	private String helpChannel;
+	
+	@Value("${approveEmoji}")
+	private String approveEmoji;
+	
+	@Value("${denyEmoji}")
+	private String denyEmoji;
 	
 	public MemeBot2000() {
 		
@@ -21,8 +42,6 @@ public class MemeBot2000 {
 		pb.command("cmd.exe", "/c", "node MemeBot2000.js");
 		
 		pb.directory(new File("src\\main\\resources\\bot"));
-		
-		this.pb = pb;
 		
 		try {
 			bot = pb.start();
@@ -41,15 +60,21 @@ public class MemeBot2000 {
 		error = new BufferedReader(new InputStreamReader(bot.getErrorStream()));
 		output = new BufferedWriter(new OutputStreamWriter(bot.getOutputStream()));
 
-	}
-	
-	/**
-	 * Start the bot process
-	 */
-	public void start() {
 		try {
-			bot = pb.start();
-		}catch(IOException e) {
+			
+			JSONObject json = new JSONObject();
+			
+			json.put("command", "start");
+			json.put("token", botToken);
+			json.put("channel", approvalChannel);
+			json.put("helpChannel", helpChannel);
+			json.put("approve", approveEmoji);
+			json.put("deny", denyEmoji);
+			
+			output.write(json.toString() + "\n");
+			output.flush();
+			
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

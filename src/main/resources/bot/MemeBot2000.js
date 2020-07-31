@@ -2,7 +2,7 @@ var Discord = require('discord.js');
 var logger = require('winston');
 var readline = require('readline');
 
-var auth = require('./auth.json');
+var auth = {};
 
 var MRH = require('./messageReactionHandler.js')
 var OMH = require('./onMessageHandler.js')
@@ -48,17 +48,31 @@ bot.on('ready', () => {
 
 // whenever the bot gets a message
 bot.on('message', data => {
-	OMH.handle(bot, data)
+	OMH.handle(bot, data, auth)
 });
 
 // whenever the bot sees a reaction to a message
 bot.on('messageReactionAdd', (data, userdata) => {
-	MRH.handle(data, userdata)
+	MRH.handle(data, userdata, auth)
 });
 
 // Input to program from server
 consoleInput.on('line', input => {
-	CIH.handle(bot, input)
+	
+	json = JSON.parse(input)
+	command = json.command
+	
+	if(command == 'start'){
+		auth['token'] = input.token
+		auth['channel'] = input.channel
+		auth['helpChannel'] = input.helpChannel
+		auth['approve'] = input.approve
+		auth['deny'] = input.deny
+		
+		bot.login(auth.token)
+		
+	}else{
+		CIH.handle(bot, input, auth)
+	}
+	
 });
-
-bot.login(auth.token)

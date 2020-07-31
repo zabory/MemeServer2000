@@ -1,8 +1,8 @@
-var auth = require('./auth.json');
+
 
 module.exports = {
 		
-		handle: function(bot, data){
+		handle: function(bot, data, auth){
 			
 			
 			// get username of sent message

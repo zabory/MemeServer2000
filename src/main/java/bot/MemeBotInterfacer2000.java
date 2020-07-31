@@ -52,13 +52,7 @@ public class MemeBotInterfacer2000 {
 		new ErrorInputThread().start();
 		new BotOutputThread().start();
 	}
-	
-	/**
-	 * Starts the bot
-	 */
-	public void startBot() {
-		bot.start();
-	}
+
 	
 	/**
 	 * Kills the bot

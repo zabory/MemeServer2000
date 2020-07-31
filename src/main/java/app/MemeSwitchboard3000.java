@@ -14,6 +14,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import static datastructures.MemeDBMsg2000.MsgDBType.*;
 
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+
 /**
  * 
  * @author Ben Shabowski
@@ -22,6 +25,8 @@ import static datastructures.MemeDBMsg2000.MsgDBType.*;
  * @since 2000
  * 
  */
+@ComponentScan({"bot"})
+@SpringBootApplication
 public class MemeSwitchboard3000 {
 	public static void main(String[] args) throws IOException {
 		//logger
