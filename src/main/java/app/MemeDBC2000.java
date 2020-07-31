@@ -24,163 +24,150 @@ public class MemeDBC2000 extends Thread{
     }
 
     public void run(){
-        String link = null, username = null;
-        Integer id = null;
-        Boolean status = true;
-        MemeDBMsg2000 msg = null;
+        String link, username;
+        Integer id ;
+        MemeDBMsg2000 msg = new MemeDBMsg2000();
         while(true){
-        	try {
-				Thread.sleep(250);
-			} catch (InterruptedException e1) {
-				
-				e1.printStackTrace();
-			}
-            if(!inputQ.isEmpty()){
-                try {
-                    msg = inputQ.take();
-                    switch(msg.getType()) {
-                        case INITIALIZE:
-                            List<Integer> ids = db.initialize();
-                            for(Integer theid : ids){
-                                outputQ.add(new MemeDBMsg2000()
-                                        .type(REPLENISH_Q)
-                                        .id(theid)
-                                );
-                            }
-                            break;
-
-                        case GET_TAGS:
-                            List<String> tags = db.getTags();
+            try {
+                msg = inputQ.take();
+                switch(msg.getType()) {
+                    case INITIALIZE:
+                        List<Integer> ids = db.initialize();
+                        for(Integer theid : ids){
                             outputQ.add(new MemeDBMsg2000()
-                                    .type(ALL_TAGS)
-                                    .tags(tags)
+                                    .type(REPLENISH_Q)
+                                    .id(theid)
                             );
-                            break;
+                        }
+                        break;
 
-                        case GET_MEME_ID:
-                            link = db.getCache(msg.getId());
-                            if(link != null){
-                                outputQ.put(new MemeDBMsg2000()
-                                        .type(APPROVE_MEME)
-                                        .link(link)
-                                );
-                            }
-                            else
-                                getDBError(msg, false);
-                            break;
+                    case GET_TAGS:
+                        List<String> tags = db.getTags();
+                        outputQ.add(new MemeDBMsg2000()
+                                .type(ALL_TAGS)
+                                .tags(tags)
+                        );
+                        break;
 
-                        case GET_MEME_TAGS:
-                            link = db.get(msg.getTags());
-                            if(link != null){
-                                outputQ.put(new MemeDBMsg2000()
-                                        .type(MEME)
-                                        .link(link)
-                                        .username(msg.getUsername())
-                                        .channelID(msg.getChannelID())
-                                );
-                            }
-                            else
-                                getDBError(msg, false);
-                            break;
+                    case GET_MEME_ID:
+                        link = db.getCache(msg.getId());
+                        if(link != null){
+                            outputQ.put(new MemeDBMsg2000()
+                                    .type(APPROVE_MEME)
+                                    .link(link)
+                            );
+                        }
+                        else
+                            getDBError(msg, false);
+                        break;
 
-                        case STORE_MEME:
-                                id = db.store(msg.getUsername(), msg.getLink(), msg.getTags());
-                                if(id != null){
-                                    outputQ.put(new MemeDBMsg2000()
-                                            .type(SUBMIT_ACK)
-                                            .username(msg.getUsername())
-                                            .message("Stored meme to MemeDB")
-                                    );
-                                }
-                                else
-                                    getDBError(msg, false);
+                    case GET_MEME_TAGS:
+                        link = db.get(msg.getTags());
+                        if(link != null){
+                            outputQ.put(new MemeDBMsg2000()
+                                    .type(MEME)
+                                    .link(link)
+                                    .username(msg.getUsername())
+                                    .channelID(msg.getChannelID())
+                            );
+                        }
+                        else
+                            getDBError(msg, false);
+                        break;
 
-                            break;
-
-                        case CACHE_MEME:
-                            id = db.cache(msg.getUsername(), msg.getLink(), msg.getTags());
+                    case STORE_MEME:
+                            id = db.store(msg.getUsername(), msg.getLink(), msg.getTags());
                             if(id != null){
                                 outputQ.put(new MemeDBMsg2000()
                                         .type(SUBMIT_ACK)
-                                        .id(id)
                                         .username(msg.getUsername())
-                                        .message("Stored meme to the Cache. It is pending admin approval.")
+                                        .message("Stored meme to MemeDB")
                                 );
                             }
                             else
                                 getDBError(msg, false);
-                            break;
 
-                        case PROMOTE_MEME:
-                            username = db.promote(msg.getId(), msg.getUsername());
-                            link = db.get(msg.getId());
-                            if(link != null && username != null){
-                                outputQ.put(new MemeDBMsg2000()
-                                        .type(CURATE_RESULT)
-                                        .message("This meme has been approved.")
-                                        .id(msg.getId())
-                                        .link(link)
-                                        .username(username)
-                                );
-                            }
-                            else
-                                getDBError(msg, false);
-                            break;
+                        break;
 
-                        case DEMOTE_MEME:
-                            link = db.get(msg.getId());
-                            username = db.demote(msg.getId());
-                            if(link != null && username != null){
-                                outputQ.put(new MemeDBMsg2000()
-                                        .type(CURATE_RESULT)
-                                        .message("This meme has been demoted.")
-                                        .id(msg.getId())
-                                        .link(link)
-                                        .username(username)
-                                );
-                            }
-                            else
-                                getDBError(msg, false);
-                            break;
+                    case CACHE_MEME:
+                        id = db.cache(msg.getUsername(), msg.getLink(), msg.getTags());
+                        if(id != null){
+                            outputQ.put(new MemeDBMsg2000()
+                                    .type(SUBMIT_ACK)
+                                    .id(id)
+                                    .username(msg.getUsername())
+                                    .message("Stored meme to the Cache. It is pending admin approval.")
+                            );
+                        }
+                        else
+                            getDBError(msg, false);
+                        break;
 
-                        case REJECT_MEME:
-                            link = db.getCache(msg.getId());
-                            username = db.reject(msg.getId());
-                            if(link != null && username != null){
-                                outputQ.put(new MemeDBMsg2000()
-                                        .type(CURATE_RESULT)
-                                        .message("This meme has been rejected.")
-                                        .id(msg.getId())
-                                        .link(link)
-                                        .username(username)
-                                );
-                            }
-                            else
-                                getDBError(msg, false);
-                            break;
+                    case PROMOTE_MEME:
+                        username = db.promote(msg.getId(), msg.getUsername());
+                        link = db.get(msg.getId());
+                        if(link != null && username != null){
+                            outputQ.put(new MemeDBMsg2000()
+                                    .type(CURATE_RESULT)
+                                    .message("This meme has been approved.")
+                                    .id(msg.getId())
+                                    .link(link)
+                                    .username(username)
+                            );
+                        }
+                        else
+                            getDBError(msg, false);
+                        break;
 
-                        case TERMINATE:
-                            db.close();
-                            return;
+                    case DEMOTE_MEME:
+                        link = db.get(msg.getId());
+                        username = db.demote(msg.getId());
+                        if(link != null && username != null){
+                            outputQ.put(new MemeDBMsg2000()
+                                    .type(CURATE_RESULT)
+                                    .message("This meme has been demoted.")
+                                    .id(msg.getId())
+                                    .link(link)
+                                    .username(username)
+                            );
+                        }
+                        else
+                            getDBError(msg, false);
+                        break;
 
-                        default:
-                            System.out.println("MemeDBC cannot handle a message of type: " + msg.getType().toString());
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    System.out.println("Cannot output error to outputQ.\n" +
-                            "Msg type: " + msg.getType() +
-                            "Tags: " + msg.getTags() +
-                            "Username: " + msg.getUsername() +
-                            "ID: " + msg.getId());
-                    db.close();
-                    return;
+                    case REJECT_MEME:
+                        link = db.getCache(msg.getId());
+                        username = db.reject(msg.getId());
+                        if(link != null && username != null){
+                            outputQ.put(new MemeDBMsg2000()
+                                    .type(CURATE_RESULT)
+                                    .message("This meme has been rejected.")
+                                    .id(msg.getId())
+                                    .link(link)
+                                    .username(username)
+                            );
+                        }
+                        else
+                            getDBError(msg, false);
+                        break;
+
+                    case TERMINATE:
+                        db.close();
+                        return;
+
+                    default:
+                        System.out.println("MemeDBC cannot handle a message of type: " + msg.getType().toString());
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                System.out.println("Cannot output error to outputQ.\n" +
+                        "Msg type: " + msg.getType() +
+                        "Tags: " + msg.getTags() +
+                        "Username: " + msg.getUsername() +
+                        "ID: " + msg.getId());
+                db.close();
+                return;
             }
-            link = null;
-            username = null;
-            id = null;
-            status = true;
         }
     }
 
