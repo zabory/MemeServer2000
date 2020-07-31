@@ -54,6 +54,10 @@ module.exports = {
 						channel.bulkDelete(100)
 					}
 				});
+			}else if(command == 'sendAllTags'){
+				
+			}else if(comand == 'queueSize'){
+				
 			}
 			
 		}
