@@ -22,7 +22,7 @@ import static dataStructures.MemeDBMsg2000.MsgDBType.*;
  * @since 2000
  * 
  */
-public class MemeSwitchboard {
+public class MemeSwitchboard3000 {
 	public static void main(String[] args) throws IOException {
 		//logger
 		Logger logger = new Logger();
