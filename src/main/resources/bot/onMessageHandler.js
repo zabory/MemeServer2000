@@ -22,6 +22,12 @@ module.exports = {
 				});
 				
 				if(allowedChannel){
+					if(data.content.includes('!meme')){
+						//if not an allowed channel, treat it like a request
+						json = {"user":user, "channelID":channel, "command":"fetchMeme", "body":data.content.replace("!request ", "")}
+						
+						console.log(JSON.stringify(json))
+					}else{
 					if(data.attachments.size > 0){
 						url = data.attachments.array()[0].url
 					
@@ -50,6 +56,7 @@ module.exports = {
 					}else{
 						data.reply('I dont see a meme here??')
 					}
+				}
 				}else{
 					if(data.content.includes('!meme')){
 					//if not an allowed channel, treat it like a request
