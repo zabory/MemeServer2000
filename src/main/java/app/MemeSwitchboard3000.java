@@ -1,7 +1,7 @@
 package app;
 
 import bot.MemeBotInterfacer2000;
-import datastructures.Logger;
+import datastructures.MemeLogger3000;
 import datastructures.MemeBotMsg2000;
 import datastructures.MemeDBMsg2000;
 import db.MemeDBC2000;
@@ -25,7 +25,7 @@ import static datastructures.MemeDBMsg2000.MsgDBType.*;
 public class MemeSwitchboard3000 {
 	public static void main(String[] args) throws IOException {
 		//logger
-		Logger logger = new Logger();
+		MemeLogger3000 logger = new MemeLogger3000();
 		
 		// put bot stuff here
 		BlockingQueue<MemeBotMsg2000> botOutputQ = new LinkedBlockingQueue<MemeBotMsg2000>(100);
@@ -51,15 +51,12 @@ public class MemeSwitchboard3000 {
 		// begin loop
 		while(true){
 			try {
-
-				Thread.sleep(250);
-
 			// check bot output for messages
 			if(!botOutputQ.isEmpty()){
 
 				MemeDBMsg2000 newMsg = null;
 				LinkedList<String> tags;
-				
+
 				MemeBotMsg2000 msg = botOutputQ.take();
 				switch(msg.getCommand()){
 					case "deny":
@@ -96,9 +93,9 @@ public class MemeSwitchboard3000 {
 					default:
 						System.out.println("Main cannot handle " + msg.getCommand() + " message from the bot. :(");
 				}
-				
+
 				dbInputQ.add(newMsg);
-				
+
 			}
 
 			// check messages from controller
