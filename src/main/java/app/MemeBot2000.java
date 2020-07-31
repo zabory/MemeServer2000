@@ -13,15 +13,22 @@ public class MemeBot2000 {
 	private BufferedWriter output;
 	
 	private Process bot;
+	private ProcessBuilder pb;
 	
-	public MemeBot2000() throws IOException {
+	public MemeBot2000() {
 		
 		ProcessBuilder pb = new ProcessBuilder();
 		pb.command("cmd.exe", "/c", "node MemeBot2000.js");
 		
 		pb.directory(new File("src\\main\\resources\\bot"));
 		
-		bot = pb.start();
+		this.pb = pb;
+		
+		try {
+			bot = pb.start();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		
 		//Sleep thread, not like the server can do anything while the bot is booting up and connecting anywas
 		try {
@@ -34,6 +41,17 @@ public class MemeBot2000 {
 		error = new BufferedReader(new InputStreamReader(bot.getErrorStream()));
 		output = new BufferedWriter(new OutputStreamWriter(bot.getOutputStream()));
 
+	}
+	
+	/**
+	 * Start the bot process
+	 */
+	public void start() {
+		try {
+			bot = pb.start();
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**

@@ -40,25 +40,25 @@ public class MemeBotInterfacer2000 {
 		this.input = botInputQ;
 		this.output = botOutputQ;
 		
-		try {
-			//launch bot
-			bot = new MemeBot2000();
-			
-			//get bot streams
-			botInput = bot.getBotOutput();
-			botErrorInput = bot.getBotErrorOutput();
-			botOutput = bot.getBotConsoleInput();
-			
-			//start all threads
-			new BotInputThread().start();
-			new ErrorInputThread().start();
-			new BotOutputThread().start();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("Could not start bot, exiting program very ungracefully");
-			System.exit(1);
-		}
+		//launch bot
+		bot = new MemeBot2000();
+		
+		//get bot streams
+		botInput = bot.getBotOutput();
+		botErrorInput = bot.getBotErrorOutput();
+		botOutput = bot.getBotConsoleInput();
+		
+		//start all threads
+		new BotInputThread().start();
+		new ErrorInputThread().start();
+		new BotOutputThread().start();
+	}
+	
+	/**
+	 * Starts the bot
+	 */
+	public void startBot() {
+		bot.start();
 	}
 	
 	/**
