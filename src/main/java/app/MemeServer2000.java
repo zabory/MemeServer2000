@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import static dataStructures.MemeDBMsg2000.MsgDBType.*;
@@ -56,6 +58,7 @@ public class MemeServer2000 {
 			if(!botOutputQ.isEmpty()){
 
 				MemeDBMsg2000 newMsg = null;
+				LinkedList<String> tags;
 				
 				MemeBotMsg2000 msg = botOutputQ.take();
 				switch(msg.getCommand()){
@@ -71,11 +74,13 @@ public class MemeServer2000 {
 						break;
 					case "fetchMeme":
 						logger.println("Fetching meme for " + msg.getUser());
-						newMsg = new MemeDBMsg2000().type(GET_MEME_TAGS).tags(Arrays.asList(msg.getBody().split(","))).username(msg.getUser()).channelID(msg.getChannelID());
+						tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getBody().split(","))));
+						newMsg = new MemeDBMsg2000().type(GET_MEME_TAGS).tags(new LinkedList<String>(tags)).username(msg.getUser()).channelID(msg.getChannelID());
 						break;
 					case "submitMeme":
 						logger.println("Meme submitted by " + msg.getUser());
-						newMsg = new MemeDBMsg2000().link(msg.getUrl()).tags(Arrays.asList(msg.getBody().split(","))).username(msg.getUser()).channelID(msg.getChannelID());
+						tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getBody().split(","))));
+						newMsg = new MemeDBMsg2000().link(msg.getUrl()).tags(tags).username(msg.getUser()).channelID(msg.getChannelID());
 						if(msg.isAdmin()) {
 							newMsg.type(STORE_MEME);
 						}else {
