@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
 
-public class Logger {
+public class MemeLogger3000 {
 	
 	public enum level{
 		INFO,
@@ -26,7 +26,7 @@ public class Logger {
 	/**
 	 * Creates a logger with file name of 'latest'
 	 */
-	public Logger() {
+	public MemeLogger3000() {
 		this("latest");
 	}
 	
@@ -34,7 +34,7 @@ public class Logger {
 	 * Creates a logger with a specific file name
 	 * @param loggerFileName
 	 */
-	public Logger(String loggerFileName) {
+	public MemeLogger3000(String loggerFileName) {
 		consoleOutput = true;
 		messageCount = 0L;
 		logName = loggerFileName;

@@ -14,18 +14,17 @@ import org.junit.rules.TestName;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import datastructures.Logger;
-import datastructures.Logger.level;
+import datastructures.MemeLogger3000.level;
 
-public class LoggerTester {
+public class MemeLogger3000Test {
 	
-	static Logger logger;
+	static MemeLogger3000 logger;
 	
 	@Rule public TestName name = new TestName();
 	
 	@Before
 	public void before() {
-		logger = new Logger(name.getMethodName());
+		logger = new MemeLogger3000(name.getMethodName());
 		System.out.println("Output of test " + name.getMethodName() + "\n================================================================");
 	}
 	

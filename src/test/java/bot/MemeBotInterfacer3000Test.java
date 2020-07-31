@@ -11,7 +11,7 @@ import org.junit.rules.TestName;
 
 import datastructures.MemeBotMsg2000;
 
-public class MemeBotInterfacerTester {
+public class MemeBotInterfacer3000Test {
 	
 	static MemeBotInterfacer2000 MBI;
 	static BlockingQueue<MemeBotMsg2000> botOutputQ;
