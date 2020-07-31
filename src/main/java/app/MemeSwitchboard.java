@@ -18,11 +18,11 @@ import static dataStructures.MemeDBMsg2000.MsgDBType.*;
  * 
  * @author Ben Shabowski
  * @author Jacob Marszalek
- * @version 2000
+ * @version 3000
  * @since 2000
  * 
  */
-public class MemeServer2000 {
+public class MemeSwitchboard {
 	public static void main(String[] args) throws IOException {
 		//logger
 		Logger logger = new Logger();
