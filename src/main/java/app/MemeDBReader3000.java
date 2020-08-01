@@ -36,12 +36,13 @@ public class MemeDBReader3000 extends Thread{
                 msg = dbOutputQ.take();
                 switch(msg.getType()){
                     case REPLENISH_Q:
-                        logger.println("Replenishing meme queue");
+                        logger.println("Meme ID of " + msg.getId() + " was put into pending approval.");
                         approveQ.put(msg.getId());
                         sendMsg = false;
                         break;
 
                     case ALL_TAGS:
+                        logger.println("Sending all tags to bot");
                         newMsg.setCommand("sendAllTags");
                         String tagList = "";
                         for(String e : msg.getTags()) {
@@ -51,6 +52,7 @@ public class MemeDBReader3000 extends Thread{
                         break;
 
                     case SUBMIT_ACK:
+                        logger.println("Received ACK for meme of ID " + msg.getId());
                         if(msg.getId() != null){
                             approveQ.put(msg.getId());
                             newMsg.setChannelID(approveQ.size());
@@ -61,7 +63,7 @@ public class MemeDBReader3000 extends Thread{
                         break;
 
                     case APPROVE_MEME:
-                        logger.println("Sending meme to be approved");
+                        logger.println("Sending meme ID " + msg.getId() + " to be approved");
                         newMsg.setCommand("sendToQueue");
                         newMsg.setBody(msg.getLink());
                         newMsg.setChannelID(approvalChannelID);
@@ -75,6 +77,7 @@ public class MemeDBReader3000 extends Thread{
                         break;
 
                     case CURATE_RESULT:
+                        logger.println("Received curation result for meme of ID " + msg.getId());
                         approveQ.take();
                         botInputQ.add(new MemeBotMsg2000().command("clearQueue"));
                         MemeBotMsg2000 newNewMsg = new MemeBotMsg2000();
@@ -103,7 +106,7 @@ public class MemeDBReader3000 extends Thread{
                         break;
 
                     default:
-                        System.out.println("Main cannot handle a message of type: " + msg.getType().toString() + " as an output of the DB");
+                        logger.println("Main cannot handle a message of type: " + msg.getType().toString() + " as an output of the DB");
                 }
                 if(sendMsg)
                     botInputQ.add(newMsg);
@@ -116,7 +119,7 @@ public class MemeDBReader3000 extends Thread{
                     botInputQ.put(new MemeBotMsg2000().command("queueSize").body(approveQ.size() + ""));
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.println(MemeLogger3000.level.ERROR, getStackTrace().toString());
             }
         }
     }

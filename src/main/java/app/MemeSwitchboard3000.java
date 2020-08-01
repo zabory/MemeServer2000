@@ -36,23 +36,23 @@ public class MemeSwitchboard3000 {
 		BlockingQueue<MemeDBMsg2000> dbOutputQ = new LinkedBlockingQueue<MemeDBMsg2000>(qCapacity);
 		BlockingQueue<MemeDBMsg2000> dbInputQ = new LinkedBlockingQueue<MemeDBMsg2000>(qCapacity);
 
-		// construct the bot controller and output reader
+		logger.println("Constructing classes to connect to the bot...");
 		MemeBotInterfacer2000 memeBotInterfacer = new MemeBotInterfacer2000(botInputQ, botOutputQ);
 		MemeBotReader3000 botReader = new MemeBotReader3000(logger, botOutputQ, dbInputQ);
 
-		// construct to DB controller and output reader
+		logger.println("Constructing classes to connect to the DB...");
 		MemeDBC2000 dbController = new MemeDBC2000("C:\\MemeDBFolder2000\\", dbInputQ, dbOutputQ);
 		MemeDBReader3000 dbReader = new MemeDBReader3000(logger, botInputQ, dbOutputQ, dbInputQ);
 
-		// spin up the threads running the controllers and readers
+		logger.println("Spinning up threads for controllers and readers...");
 		dbController.start();
 		dbReader.start();
 		botReader.start();
 
-		// initialize the DB and bot
+		logger.println("Initializing DB and bot...");
 		botInputQ.add(new MemeBotMsg2000().command("clearQueue"));
 		dbInputQ.add(new MemeDBMsg2000().type(INITIALIZE));
 
-		logger.println("Controllers started, meme queue cleared. We're ready to GO!");
+		logger.println("We're ready to GO!");
 	}
 }
