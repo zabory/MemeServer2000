@@ -92,13 +92,26 @@ public class MemeLogger3000 {
 	 * @param message
 	 */
 	public void println(level logLevel, String message) {
+		String classTag = "";
+		int spaceFactor = 24;
+		for(StackTraceElement element : Thread.currentThread().getStackTrace()){
+			if(!element.getClassName().equals(Thread.currentThread().getStackTrace()[0].getClassName())) {
+				String className = element.getClassName().replaceAll(".*\\.", "");
+				classTag = " ".repeat((spaceFactor - className.length())%2==0 ? (spaceFactor - className.length())/2 : ((spaceFactor - className.length())/2)+1)
+						+ className + " ".repeat((spaceFactor - className.length())/2);
+			}
+		}
+
 		messageCount++;
 		Date currentDate = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat(" MM/dd HH:mm:ss ");
 		
 		String tabCount = logLevel == level.WARNING ? "\t" : "\t\t";
 		
-		String outputMessage = "[" + logLevel + "]" + sdf.format(currentDate) + tabCount + message;
+		String outputMessage = "[ " + logLevel + " ] "
+							+ "[ " + classTag + " ] "
+							+ "[" + sdf.format(currentDate) + "]"
+							+ tabCount + message;
 		
 		if(consoleOutput) System.out.println(outputMessage);
 		
