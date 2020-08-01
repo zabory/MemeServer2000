@@ -50,10 +50,6 @@ bot.on('ready', () => {
 		}
 	});
 	
-	if(!foundTagsMessage){
-		helpChannel.send('Tag list\n=================\n')
-	}
-	
 	foundCommandsMessage = false
 	
 	helpChannel.messages.cache.array().forEach(currentMessage => {
@@ -62,8 +58,18 @@ bot.on('ready', () => {
 		}
 	});
 	
+	bot.guilds.cache.array()[0].channels.cache.array().forEach(channel => {
+		if(channel.type == 'text' && channel.id == auth.helpChannel){
+			channel.bulkDelete(100)
+		}
+	});
+	
 	if(!foundCommandsMessage){
 		helpChannel.send('Command list\n=================\n')
+	}
+	
+	if(!foundTagsMessage){
+		helpChannel.send('Tag list\n=================\n')
 	}
 });
 

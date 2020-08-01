@@ -49,7 +49,7 @@ public class MemeBotReader3000 extends Thread{
                         newMsg = new MemeDBMsg2000().type(GET_MEME_TAGS).tags(new LinkedList<String>(tags)).username(msg.getUser()).channelID(msg.getChannelID());
                         break;
                     case "submitMeme":
-                        logger.println("Meme submitted by " + msg.getUser());
+                        logger.println("Meme submitted by " + msg.getUser() + " with a channel ID of " + msg.getChannelID());
                         tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getBody().split(","))));
                         LinkedList<String> finalTags = tags;
                         tags.forEach(e -> {

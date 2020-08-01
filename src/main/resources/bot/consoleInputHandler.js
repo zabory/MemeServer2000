@@ -27,22 +27,22 @@ module.exports = {
 				channelID = json.channelID
 	
 				//go through userDM channel IDs as well to get the right channel
-				message = bot.channels.cache.get(channelID)
+				authChannel = bot.channels.cache.get(channelID)
 				
-				if(message == null){
+				if(authChannel == null){
 					bot.users.cache.array().forEach(currentUser => {
 						if(currentUser.dmChannel == channelID){
-							message = currentUser.dmChannel
+							authChannel = currentUser.dmChannel
 						}
 					});
 				}
 				
 				// sends message
-				message.send(body).then(messageT => {
+				authChannel.send(body).then(message => {
 					if(command == 'sendToQueue'){
 						// add reactions
-						messageT.react(message.guild.emojis.cache.get(auth.approve))
-						messageT.react(message.guild.emojis.cache.get(auth.deny))
+						message.react(message.guild.emojis.cache.get(auth.approve))
+						message.react(message.guild.emojis.cache.get(auth.deny))
 					}
 					
 				});
