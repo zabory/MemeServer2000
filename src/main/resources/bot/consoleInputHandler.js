@@ -41,8 +41,11 @@ module.exports = {
 				authChannel.send(body).then(message => {
 					if(command == 'sendToQueue'){
 						// add reactions
-						message.react(message.guild.emojis.cache.get(auth.approve))
-						message.react(message.guild.emojis.cache.get(auth.deny))
+						message.guild.emojis.cache.array().forEach(emoji => {
+							if(emoji.name=='check' || emoji.name=='x_'){
+								message.react(emoji)
+							}
+						});
 					}
 					
 				});
