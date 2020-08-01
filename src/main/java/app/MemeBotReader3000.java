@@ -68,7 +68,7 @@ public class MemeBotReader3000 extends Thread{
                     default:
                         logger.println("Main cannot handle " + msg.getCommand() + " message from the bot. :(");
                 }
-                dbInputQ.add(newMsg);
+                dbInputQ.put(newMsg);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

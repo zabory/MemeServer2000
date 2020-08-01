@@ -55,6 +55,7 @@ public class MemeDBC2000 extends Thread{
                         if(link != null){
                             outputQ.put(new MemeDBMsg2000()
                                     .type(APPROVE_MEME)
+                                    .id(msg.getId())
                                     .link(link)
                                     .tags(tags)
                             );
@@ -69,6 +70,7 @@ public class MemeDBC2000 extends Thread{
                             outputQ.put(new MemeDBMsg2000()
                                     .type(MEME)
                                     .link(link)
+                                    .id(msg.getId())
                                     .username(msg.getUsername())
                                     .channelID(msg.getChannelID())
                             );

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
+import app.MemeConfigLoader3000;
 import org.json.JSONObject;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -20,9 +21,9 @@ public class MemeBot2000 {
 	public MemeBot2000() {
 		
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		context.scan("bot");
+		context.scan("app");
 		context.refresh();
-		MemeBotConfigLoader3000 botConfig = context.getBean(MemeBotConfigLoader3000.class);
+		MemeConfigLoader3000 botConfig = context.getBean(MemeConfigLoader3000.class);
 		context.close();
 		
 		ProcessBuilder pb = new ProcessBuilder();

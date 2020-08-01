@@ -3,6 +3,7 @@ package app;
 import datastructures.MemeBotMsg2000;
 import datastructures.MemeDBMsg2000;
 import datastructures.MemeLogger3000;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -16,7 +17,12 @@ public class MemeDBReader3000 extends Thread{
     private BlockingQueue<MemeDBMsg2000> dbOutputQ, dbInputQ;
 
     MemeDBReader3000(MemeLogger3000 logger, BlockingQueue<MemeBotMsg2000> botInputQ, BlockingQueue<MemeDBMsg2000> dbOutputQ, BlockingQueue<MemeDBMsg2000> dbInputQ){
-        this.approvalChannelID = 736022204281520169L;
+
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        context.scan("app");
+        context.refresh();
+        MemeConfigLoader3000 botConfig = context.getBean(MemeConfigLoader3000.class);
+        this.approvalChannelID = Long.parseLong(botConfig.getApprovalChannel());
         this.logger = logger;
         this.botInputQ = botInputQ;
         this.dbOutputQ = dbOutputQ;
@@ -25,12 +31,12 @@ public class MemeDBReader3000 extends Thread{
 
     public void run(){
         BlockingQueue<Integer> approveQ = new LinkedBlockingQueue<>(100);
-        MemeBotMsg2000 newMsg = new MemeBotMsg2000();
         MemeDBMsg2000 msg;
         Integer lastID = null;
         boolean sendMsg;
 
         while(true) {
+            MemeBotMsg2000 newMsg = new MemeBotMsg2000();
             sendMsg = true;
             try {
                 msg = dbOutputQ.take();
@@ -67,24 +73,23 @@ public class MemeDBReader3000 extends Thread{
                         newMsg.setCommand("sendToQueue");
                         newMsg.setBody(msg.getLink());
                         newMsg.setChannelID(approvalChannelID);
+                        String tags = "**Tags**:\n";
+                        for(int i=0;i<msg.getTags().size();i++)
+                            tags += i + ": " + msg.getTags().get(i) + "\n";
 
-                        MemeBotMsg2000 tagMessage = new MemeBotMsg2000().channelID(approvalChannelID).body(msg.getTags().toArray() + "").command("sendToChannel");
-                        botInputQ.add(tagMessage);
-
-                        MemeBotMsg2000 queueCountMessage = new MemeBotMsg2000().channelID(approvalChannelID).body("Queue count " + approveQ.size()).command("sendToChannel");
-                        botInputQ.add(queueCountMessage);
-                        botInputQ.add(tagMessage);
+                        MemeBotMsg2000 approveMsgHeader = new MemeBotMsg2000().channelID(approvalChannelID).body("@everyone\n**Queue count**: " + (approveQ.size()-1) + "\n" + tags).command("sendToChannel");
+                        botInputQ.put(approveMsgHeader);
                         break;
 
                     case CURATE_RESULT:
                         logger.println("Received curation result for meme of ID " + msg.getId());
                         approveQ.take();
-                        botInputQ.add(new MemeBotMsg2000().command("clearQueue"));
+                        botInputQ.put(new MemeBotMsg2000().command("clearQueue"));
                         MemeBotMsg2000 newNewMsg = new MemeBotMsg2000();
                         newNewMsg.setCommand("sendToUser");
                         newNewMsg.setBody(msg.getLink());
                         newNewMsg.setUser(msg.getUsername());
-                        botInputQ.add(newNewMsg);
+                        botInputQ.put(newNewMsg);
 
                         newMsg.setCommand("sendToUser");
                         newMsg.setUser(msg.getUsername());
@@ -109,7 +114,7 @@ public class MemeDBReader3000 extends Thread{
                         logger.println("Main cannot handle a message of type: " + msg.getType().toString() + " as an output of the DB");
                 }
                 if(sendMsg)
-                    botInputQ.add(newMsg);
+                    botInputQ.put(newMsg);
 
                 // check approveQ for a new ID
                 if(!approveQ.isEmpty() && approveQ.peek() != lastID){

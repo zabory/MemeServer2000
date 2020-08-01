@@ -1,4 +1,4 @@
-package bot;
+package app;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -7,7 +7,7 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @PropertySource("classpath:MemeBot.properties")
 @PropertySource("classpath:MemeBotTest.properties")
-public class MemeBotConfigLoader3000 {
+public class MemeConfigLoader3000 {
 
 	@Value("${auth.token}")
 	private String botToken;
