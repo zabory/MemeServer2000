@@ -24,7 +24,7 @@ public class MemeDBReader3000 extends Thread{
     }
 
     public void run(){
-        BlockingQueue<Integer> approveQ = new LinkedBlockingQueue<>();
+        BlockingQueue<Integer> approveQ = new LinkedBlockingQueue<>(100);
         MemeBotMsg2000 newMsg = new MemeBotMsg2000();
         MemeDBMsg2000 msg;
         Integer lastID = null;
