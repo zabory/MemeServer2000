@@ -10,10 +10,10 @@ module.exports = {
 				channel = data.message.channel.id
 				//make sure the channelID is the meme curator channel
 				if(channel == auth.channel){
-					if(data.emoji.id == auth.deny){
+					if(data.emoji.name == 'x_'){
 						json = {'command':'deny', 'user':user}
 						console.log(JSON.stringify(json))
-					}else if(data.emoji.id == auth.approve){
+					}else if(data.emoji.name == 'check'){
 						json = {'command':'approve', 'user':user}
 						console.log(JSON.stringify(json))
 					}
