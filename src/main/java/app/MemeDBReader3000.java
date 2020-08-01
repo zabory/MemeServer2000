@@ -55,11 +55,13 @@ public class MemeDBReader3000 extends Thread{
                         break;
 
                     case SUBMIT_ACK:
-                        logger.println("Received ACK for meme of ID " + msg.getId());
                         if(msg.getId() != null){
+                            logger.println("Received ACK for cached meme of ID " + msg.getId());
                             approveQ.put(msg.getId());
                             newMsg.setChannelID(approveQ.size());
                         }
+                        else
+                            logger.println("Received ACK for meme submitted by " + msg.getUsername());
                         newMsg.setCommand("sendToUser");
                         newMsg.setUser(msg.getUsername());
                         newMsg.setBody(msg.getMessage());
