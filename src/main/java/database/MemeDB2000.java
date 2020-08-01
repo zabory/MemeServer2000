@@ -54,8 +54,8 @@ public class MemeDB2000 {
         this.tagLkpTableName = config.getTagLkpTableName();
         tableDefs = Arrays.asList(
                 config.getMemeTableDef().replace("memeTableName", memeTableName),
-                config.getMemeTableDef().replace("cacheTableName", cacheTableName),
-                config.getMemeTableDef().replace("tagLkpTableName", tagLkpTableName)
+                config.getCacheTableDef().replace("cacheTableName", cacheTableName),
+                config.getTagLkpTableDef().replace("tagLkpTableName", tagLkpTableName)
         );
         headID = 0;
         conn = null;
@@ -83,6 +83,7 @@ public class MemeDB2000 {
             conn = DriverManager.getConnection(db);
             conn.setAutoCommit(false);
             execute(tableDefs);
+            commit();
         }
         catch(SQLException throwables){
             throwables.printStackTrace();
@@ -101,7 +102,7 @@ public class MemeDB2000 {
             return false;
         }
 
-        // Select the max ID from memeDB
+        // Select the max ID from cache
         try {
             rs = executeQuery("SELECT MAX(id) m FROM " + cacheTableName + ";");
             if(rs != null && rs.next())

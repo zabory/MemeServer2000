@@ -39,6 +39,9 @@ public class MemeConfigLoader3000 {
 	@Value("${memeTableDef}")
 	private String memeTableDef;
 
+	@Value("${cacheTableDef}")
+	private String cacheTableDef;
+
 	@Value("${tagLkpTableDef}")
 	private String tagLkpTableDef;
 
@@ -80,6 +83,10 @@ public class MemeConfigLoader3000 {
 
 	public String getMemeTableDef() {
 		return memeTableDef;
+	}
+
+	public String getCacheTableDef() {
+		return cacheTableDef;
 	}
 
 	public String getTagLkpTableDef() {

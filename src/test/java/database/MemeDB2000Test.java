@@ -43,7 +43,6 @@ public class MemeDB2000Test {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
     }
 
     @Test
