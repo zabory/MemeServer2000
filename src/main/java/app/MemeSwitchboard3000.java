@@ -12,6 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import static datastructures.MemeDBMsg2000.MsgDBType.*;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * 
@@ -36,13 +37,20 @@ public class MemeSwitchboard3000 {
 		BlockingQueue<MemeDBMsg2000> dbOutputQ = new LinkedBlockingQueue<MemeDBMsg2000>(qCapacity);
 		BlockingQueue<MemeDBMsg2000> dbInputQ = new LinkedBlockingQueue<MemeDBMsg2000>(qCapacity);
 
+		logger.println("Loading the config...");
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+		context.scan("app");
+		context.refresh();
+		MemeConfigLoader3000 config = context.getBean(MemeConfigLoader3000.class);
+		context.close();
+
 		logger.println("Constructing classes to connect to the bot...");
-		MemeBotInterfacer2000 memeBotInterfacer = new MemeBotInterfacer2000(botInputQ, botOutputQ);
+		MemeBotInterfacer2000 memeBotInterfacer = new MemeBotInterfacer2000(config, botInputQ, botOutputQ);
 		MemeBotReader3000 botReader = new MemeBotReader3000(logger, botOutputQ, dbInputQ);
 
 		logger.println("Constructing classes to connect to the DB...");
 		MemeDBC2000 dbController = new MemeDBC2000("C:\\MemeDBFolder2000\\", dbInputQ, dbOutputQ);
-		MemeDBReader3000 dbReader = new MemeDBReader3000(logger, botInputQ, dbOutputQ, dbInputQ);
+		MemeDBReader3000 dbReader = new MemeDBReader3000(logger, config, botInputQ, dbOutputQ, dbInputQ);
 
 		logger.println("Spinning up threads for controllers and readers...");
 		dbController.start();

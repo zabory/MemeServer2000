@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
+import app.MemeConfigLoader3000;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,13 +36,13 @@ public class MemeBotInterfacer2000 {
 	//actual bot
 	private MemeBot2000 bot;
 	
-	public MemeBotInterfacer2000(BlockingQueue<MemeBotMsg2000> botInputQ, BlockingQueue<MemeBotMsg2000> botOutputQ) {
+	public MemeBotInterfacer2000(MemeConfigLoader3000 config, BlockingQueue<MemeBotMsg2000> botInputQ, BlockingQueue<MemeBotMsg2000> botOutputQ) {
 				
 		this.input = botInputQ;
 		this.output = botOutputQ;
 		
 		//launch bot
-		bot = new MemeBot2000();
+		bot = new MemeBot2000(config);
 		
 		//get bot streams
 		botInput = bot.getBotOutput();

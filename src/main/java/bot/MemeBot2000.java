@@ -18,13 +18,7 @@ public class MemeBot2000 {
 	
 	private Process bot;
 	
-	public MemeBot2000() {
-		
-		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		context.scan("app");
-		context.refresh();
-		MemeConfigLoader3000 botConfig = context.getBean(MemeConfigLoader3000.class);
-		context.close();
+	public MemeBot2000(MemeConfigLoader3000 botConfig) {
 		
 		ProcessBuilder pb = new ProcessBuilder();
 		pb.command("cmd.exe", "/c", "node MemeBot2000.js");

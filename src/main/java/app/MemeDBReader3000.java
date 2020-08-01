@@ -13,16 +13,13 @@ import static datastructures.MemeDBMsg2000.MsgDBType.*;
 public class MemeDBReader3000 extends Thread{
     private Long approvalChannelID;
     private MemeLogger3000 logger;
+    private MemeConfigLoader3000 config;
     private BlockingQueue<MemeBotMsg2000> botInputQ;
     private BlockingQueue<MemeDBMsg2000> dbOutputQ, dbInputQ;
 
-    MemeDBReader3000(MemeLogger3000 logger, BlockingQueue<MemeBotMsg2000> botInputQ, BlockingQueue<MemeDBMsg2000> dbOutputQ, BlockingQueue<MemeDBMsg2000> dbInputQ){
-
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-        context.scan("app");
-        context.refresh();
-        MemeConfigLoader3000 botConfig = context.getBean(MemeConfigLoader3000.class);
-        this.approvalChannelID = Long.parseLong(botConfig.getApprovalChannel());
+    MemeDBReader3000(MemeLogger3000 logger, MemeConfigLoader3000 config, BlockingQueue<MemeBotMsg2000> botInputQ, BlockingQueue<MemeDBMsg2000> dbOutputQ, BlockingQueue<MemeDBMsg2000> dbInputQ){
+        this.config = config;
+        this.approvalChannelID = Long.parseLong(config.getApprovalChannel());
         this.logger = logger;
         this.botInputQ = botInputQ;
         this.dbOutputQ = dbOutputQ;
@@ -77,7 +74,7 @@ public class MemeDBReader3000 extends Thread{
                         for(int i=0;i<msg.getTags().size();i++)
                             tags += i + ": " + msg.getTags().get(i) + "\n";
 
-                        MemeBotMsg2000 approveMsgHeader = new MemeBotMsg2000().channelID(approvalChannelID).body("@everyone\n**Queue count**: " + (approveQ.size()-1) + "\n" + tags).command("sendToChannel");
+                        MemeBotMsg2000 approveMsgHeader = new MemeBotMsg2000().channelID(approvalChannelID).body("**Queue count**: " + (approveQ.size()-1) + "\n" + tags).command("sendToChannel");
                         botInputQ.put(approveMsgHeader);
                         break;
 
