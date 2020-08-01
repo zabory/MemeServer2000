@@ -44,7 +44,7 @@ public class MemeBotReader3000 extends Thread{
                         tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getBody().split(","))));
                         LinkedList<String> finalTags1 = tags;
                         tags.forEach(e -> {
-                            finalTags1.set(finalTags1.indexOf(e), e.replace("\"", "").replace(";", "").replace("[", "").replace("]", ""));
+                            finalTags1.set(finalTags1.indexOf(e), e.trim().replace("\"", "").replace(";", "").replace("[", "").replace("]", ""));
                         });
                         newMsg = new MemeDBMsg2000().type(GET_MEME_TAGS).tags(new LinkedList<String>(tags)).username(msg.getUser()).channelID(msg.getChannelID());
                         break;
@@ -53,7 +53,7 @@ public class MemeBotReader3000 extends Thread{
                         tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getBody().split(","))));
                         LinkedList<String> finalTags = tags;
                         tags.forEach(e -> {
-                            finalTags.set(finalTags.indexOf(e), e.replace("\"", "").replace(";", "").replace("[", "").replace("]", ""));
+                            finalTags.set(finalTags.indexOf(e), e.trim().replace("\"", "").replace(";", "").replace("[", "").replace("]", ""));
                         });
                         newMsg = new MemeDBMsg2000().link(msg.getUrl()).tags(tags).username(msg.getUser()).channelID(msg.getChannelID());
                         if(msg.isAdmin()) {
