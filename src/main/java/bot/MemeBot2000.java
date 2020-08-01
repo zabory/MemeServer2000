@@ -8,7 +8,6 @@ import java.io.OutputStreamWriter;
 
 import app.MemeConfigLoader3000;
 import org.json.JSONObject;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class MemeBot2000 {
 	

@@ -1,9 +1,12 @@
 package database;
 
+import app.MemeConfigLoader3000;
 import datastructures.MemeDBMsg2000;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,14 +23,23 @@ import static org.junit.Assert.assertTrue;
 public class MemeDBC2000Test {
     static MemeDBC2000 controller;
     static BlockingQueue inputQ, outputQ;
+    static MemeConfigLoader3000 config;
+
+    @BeforeClass
+    public static void construct(){
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        context.scan("app");
+        context.refresh();
+        config = context.getBean(MemeConfigLoader3000.class);
+        context.close();
+    }
 
     @Before
     public void before(){
         // connect to the db
-        String db = "C:\\sqlite\\";
         inputQ = new LinkedBlockingQueue(100);
         outputQ = new LinkedBlockingQueue(100);
-        controller = new MemeDBC2000(db, inputQ, outputQ);
+        controller = new MemeDBC2000(config, inputQ, outputQ);
         controller.start();
     }
 
@@ -36,11 +48,11 @@ public class MemeDBC2000Test {
         try {
             inputQ.put(new MemeDBMsg2000().type(TERMINATE));
 
-                Connection conn = DriverManager.getConnection("jdbc:sqlite:C:\\sqlite\\meme.db");
-                conn.createStatement().execute("DELETE FROM memes");
-                conn.createStatement().execute("DELETE FROM tag_lkp");
-                conn.createStatement().execute("DELETE FROM cache");
-                conn.close();
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + config.getDatabaseLocation());
+            conn.createStatement().execute("DELETE FROM " + config.getMemeTableName());
+            conn.createStatement().execute("DELETE FROM " + config.getCacheTableName());
+            conn.createStatement().execute("DELETE FROM " + config.getTagLkpTableName());
+            conn.close();
 
             controller.join();
         } catch (InterruptedException | SQLException e) {

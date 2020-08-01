@@ -1,5 +1,7 @@
 package database;
 
+import app.MemeConfigLoader3000;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,33 +28,13 @@ public class MemeDB2000 {
         }
     }
 
+    private MemeConfigLoader3000 config;
     private String db;
+    static String memeTableName, cacheTableName, tagLkpTableName;
+    static List<String> tableDefs;
     private Integer headID;
     private Connection conn;
     private String errorMsg;
-    static String memeTableName = "memes";
-    static String cacheTableName = "cache";
-    static String tagLkpTableName = "tag_lkp";
-    static String dbName = "meme.db";
-    static List<String> tableDefs = Arrays.asList(
-            "CREATE TABLE IF NOT EXISTS " + memeTableName + " (" +
-                    "id integer PRIMARY KEY UNIQUE," +
-                    "link text UNIQUE NOT NULL," +
-                    "submitter text NOT NULL," +
-                    "curator text NOT NULL" +
-                    ");",
-
-            "CREATE TABLE IF NOT EXISTS " + tagLkpTableName + " (" +
-                    "id integer," +
-                    "tag text NOT NULL" +
-                    ");",
-
-            "CREATE TABLE IF NOT EXISTS " + cacheTableName + " (" +
-                    "id integer PRIMARY KEY UNIQUE," +
-                    "link text UNIQUE NOT NULL," +
-                    "submitter text NOT NULL" +
-                    ");"
-    );
 
     /*
      *
@@ -62,10 +44,19 @@ public class MemeDB2000 {
 
     /**
      * Constructor
-     * @param filePath The true path where to store this DB
+     * @param config the config object
      */
-    MemeDB2000(String filePath) {
-        this.db = "jdbc:sqlite:" + filePath + dbName;
+    MemeDB2000(MemeConfigLoader3000 config) {
+        this.config = config;
+        this.db = "jdbc:sqlite:" + config.getDatabaseLocation();
+        this.memeTableName = config.getMemeTableName();
+        this.cacheTableName = config.getCacheTableName();
+        this.tagLkpTableName = config.getTagLkpTableName();
+        tableDefs = Arrays.asList(
+                config.getMemeTableDef().replace("memeTableName", memeTableName),
+                config.getMemeTableDef().replace("cacheTableName", cacheTableName),
+                config.getMemeTableDef().replace("tagLkpTableName", tagLkpTableName)
+        );
         headID = 0;
         conn = null;
         errorMsg = "";

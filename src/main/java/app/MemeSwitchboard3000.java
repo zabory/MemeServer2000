@@ -49,7 +49,7 @@ public class MemeSwitchboard3000 {
 		MemeBotReader3000 botReader = new MemeBotReader3000(logger, botOutputQ, dbInputQ);
 
 		logger.println("Constructing classes to connect to the DB...");
-		MemeDBC2000 dbController = new MemeDBC2000("C:\\MemeDBFolder2000\\", dbInputQ, dbOutputQ);
+		MemeDBC2000 dbController = new MemeDBC2000(config, dbInputQ, dbOutputQ);
 		MemeDBReader3000 dbReader = new MemeDBReader3000(logger, config, botInputQ, dbOutputQ, dbInputQ);
 
 		logger.println("Spinning up threads for controllers and readers...");

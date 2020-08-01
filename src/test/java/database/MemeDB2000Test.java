@@ -1,6 +1,8 @@
 package database;
 
+import app.MemeConfigLoader3000;
 import org.junit.*;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,12 +13,16 @@ import static org.junit.Assert.*;
 
 public class MemeDB2000Test {
     static MemeDB2000 memebase;
+    static MemeConfigLoader3000 config;
 
     @BeforeClass
     public static void construct(){
-        // connect to the db
-        String db = "C:\\sqlite\\";
-        memebase = new MemeDB2000(db);
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        context.scan("app");
+        context.refresh();
+        config = context.getBean(MemeConfigLoader3000.class);
+        context.close();
+        memebase = new MemeDB2000(config);
     }
 
     @Before
@@ -29,10 +35,10 @@ public class MemeDB2000Test {
         assertTrue(memebase.close());
         // cleanup the DB after a test
         try {
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:C:\\sqlite\\meme.db");
-            conn.createStatement().execute("DELETE FROM " + memebase.memeTableName);
-            conn.createStatement().execute("DELETE FROM " + memebase.tagLkpTableName);
-            conn.createStatement().execute("DELETE FROM " + memebase.cacheTableName);
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + config.getDatabaseLocation());
+            conn.createStatement().execute("DELETE FROM " + config.getMemeTableName());
+            conn.createStatement().execute("DELETE FROM " + config.getCacheTableName());
+            conn.createStatement().execute("DELETE FROM " + config.getTagLkpTableName());
             conn.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();

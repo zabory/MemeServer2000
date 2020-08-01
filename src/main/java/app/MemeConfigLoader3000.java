@@ -20,9 +20,27 @@ public class MemeConfigLoader3000 {
 	
 	@Value("${approveEmoji}")
 	private String approveEmoji;
-	
+
 	@Value("${denyEmoji}")
 	private String denyEmoji;
+
+	@Value("${database}")
+	private String databaseLocation;
+
+	@Value("${memeTableName}")
+	private String memeTableName;
+
+	@Value("${cacheTableName}")
+	private String cacheTableName;
+
+	@Value("${tagLkpTableName}")
+	private String tagLkpTableName;
+
+	@Value("${memeTableDef}")
+	private String memeTableDef;
+
+	@Value("${tagLkpTableDef}")
+	private String tagLkpTableDef;
 
 	public String getBotToken() {
 		return botToken;
@@ -43,5 +61,28 @@ public class MemeConfigLoader3000 {
 	public String getDenyEmoji() {
 		return denyEmoji;
 	}
-	
+
+	public String getDatabaseLocation() {
+		return databaseLocation;
+	}
+
+	public String getMemeTableName() {
+		return memeTableName;
+	}
+
+	public String getCacheTableName() {
+		return cacheTableName;
+	}
+
+	public String getTagLkpTableName() {
+		return tagLkpTableName;
+	}
+
+	public String getMemeTableDef() {
+		return memeTableDef;
+	}
+
+	public String getTagLkpTableDef() {
+		return tagLkpTableDef;
+	}
 }

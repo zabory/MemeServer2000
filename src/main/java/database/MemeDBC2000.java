@@ -1,5 +1,6 @@
 package database;
 
+import app.MemeConfigLoader3000;
 import datastructures.MemeDBMsg2000;
 
 import java.util.List;
@@ -13,14 +14,16 @@ import static datastructures.MemeDBMsg2000.MsgDBType.*;
  */
 public class MemeDBC2000 extends Thread{
     private MemeDB2000 db;
+    private MemeConfigLoader3000 config;
     private BlockingQueue<MemeDBMsg2000> outputQ;
     private BlockingQueue<MemeDBMsg2000> inputQ;
 
-    public MemeDBC2000(String filePath, BlockingQueue inQ, BlockingQueue outQ){
-        db = new MemeDB2000(filePath);
+    public MemeDBC2000(MemeConfigLoader3000 config, BlockingQueue inQ, BlockingQueue outQ){
+        db = new MemeDB2000(config);
         db.open();
-        outputQ = outQ;
-        inputQ = inQ;
+        this.config = config;
+        this.outputQ = outQ;
+        this.inputQ = inQ;
     }
 
     public void run(){
