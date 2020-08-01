@@ -94,19 +94,17 @@ public class MemeBotInterfacer2000 {
 		public void run() {
 			while (true) {
 				try {
-					String input = botInput.readLine();
+					String input = botInput.readLine();					
 					JSONObject in;
 					
 					if(input.charAt(0) == '{') {
-						in = new JSONObject(botInput.readLine());
-						if(in.has("body")) {
-							in.put("body", in.getString("body").toLowerCase());
-						}
+						in = new JSONObject(input);
 					}else {
 						in = new JSONObject();
 						in.put("body", input);
 						in.put("command", "print");
 					}
+					
 					output.add(new MemeBotMsg2000(in));
 				} catch (JSONException | IOException e) {
 					e.printStackTrace();

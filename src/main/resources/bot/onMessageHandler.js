@@ -4,10 +4,9 @@ module.exports = {
 		
 		handle: function(bot, data, auth){
 			
-			
 			// get username of sent message
 			user = data.author.username
-			if(user != 'MemeBot2000'){
+			if(user != 'MemeBot2000' && user != 'MemeBotTester'){
 				
 				// get the channel id
 				channel = data.channel.id
@@ -60,7 +59,7 @@ module.exports = {
 				}else{
 					if(data.content.includes('!meme')){
 					//if not an allowed channel, treat it like a request
-					json = {"user":user, "channelID":channel, "command":"fetchMeme", "body":data.content.replace("!request ", "")}
+					json = {"user":user, "channelID":channel, "command":"fetchMeme", "body":data.content.replace("!meme ", "")}
 					
 					console.log(JSON.stringify(json))
 				}
