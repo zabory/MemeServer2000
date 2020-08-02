@@ -75,7 +75,7 @@ bot.on('ready', () => {
 
 // whenever the bot gets a message
 bot.on('message', data => {
-	OMH.handle(bot, data)
+	OMH.handle(bot, data, auth)
 });
 
 // whenever the bot sees a reaction to a message

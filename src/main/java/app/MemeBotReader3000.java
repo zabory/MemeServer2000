@@ -38,7 +38,7 @@ public class MemeBotReader3000 extends Thread{
                         newMsg = new MemeDBMsg2000().type(REJECT_MEME).username(msg.getUser()).id(approveQ.peek());
                         break;
                     case "approve":
-                        logger.println("Meme approved from discord bot by " + msg.getUser());
+                        logger.println("Meme approved from discord bot by " + msg.getUser() + " with tags of " + msg.getTags());
                         tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getTags().split("\\s*,\\s*"))));
                         LinkedList<String> finalTags2 = tags;
                         tags.forEach(e -> {

@@ -8,6 +8,8 @@ module.exports = {
 			
 			json = {'command':'approve', 'approvedTags' : '', 'user':user}
 			
+			
+			
 			/**
 			 * TODO
 			 * ====
@@ -22,15 +24,47 @@ module.exports = {
 			bot.guilds.cache.array()[0].channels.cache.array().forEach(ch => {
 				if(ch.name == 'meme-approval'){
 					ch.messages.cache.array()[2].reactions.cache.array().forEach(reaction =>{
-						//console.log(reaction.count)
+						if(reaction.count < 2){
+							if(reaction.emoji.name == 'one'){
+								number = 1
+							}else if(reaction.emoji.name == 'two'){
+								number = 2
+							}else if(reaction.emoji.name == 'three'){
+								number = 3
+							}else if(reaction.emoji.name == 'four'){
+								number = 4
+							}else if(reaction.emoji.name == 'five'){
+								number = 5
+							}else if(reaction.emoji.name == 'six'){
+								number = 6
+							}else if(reaction.emoji.name == 'seven'){
+								number = 7
+							}else if(reaction.emoji.name == 'eight'){
+								number = 8
+							}else if(reaction.emoji.name == 'nine'){
+								number = 9
+							}else if(reaction.emoji.name == 'ten'){
+								number = 10
+							}else{
+								number = 11
+							}
+							
+							if(number != 11){
+								tagsMessage = ch.messages.cache.array()[1]
+								json.approvedTags = json.approvedTags + ',' + tagsMessage.content.split('\n')[number].replace(number + ': ', '')
+							}
+						}
 					});
 				}
 			});
 			
-			
 			//add admin tags to list
-			if(addedTags){
-				json[approvedTags] = json.approvedTags + ',' + tags
+			if(addedTags == true){
+				json.approvedTags = json.approvedTags + ',' + tags
+			}
+			
+			if(json.approvedTags.charAt(0) == ','){
+				json.approvedTags = json.approvedTags.replace(',', '')
 			}
 			
 			//send it

@@ -51,6 +51,7 @@ public class MemeBotMsg2000 {
 	 * @param jObject JSON object of the message
 	 */
 	public MemeBotMsg2000(JSONObject jObject) {
+		
 		if(jObject.has("user")) {
 			user = jObject.getString("user");
 		}
@@ -75,8 +76,8 @@ public class MemeBotMsg2000 {
 			admin = jObject.getBoolean("admin");
 		}
 		
-		if(jObject.has("tags")) {
-			tags = jObject.getString("tags");
+		if(jObject.has("approvedTags")) {
+			tags = jObject.getString("approvedTags");
 		}
 		
 		json = jObject;
