@@ -16,18 +16,19 @@ public class MemeDBReader3000 extends Thread{
     private MemeConfigLoader3000 config;
     private BlockingQueue<MemeBotMsg2000> botInputQ;
     private BlockingQueue<MemeDBMsg2000> dbOutputQ, dbInputQ;
+    private BlockingQueue<Integer> approveQ;
 
-    MemeDBReader3000(MemeLogger3000 logger, MemeConfigLoader3000 config, BlockingQueue<MemeBotMsg2000> botInputQ, BlockingQueue<MemeDBMsg2000> dbOutputQ, BlockingQueue<MemeDBMsg2000> dbInputQ){
+    MemeDBReader3000(MemeLogger3000 logger, MemeConfigLoader3000 config, BlockingQueue<MemeBotMsg2000> botInputQ, BlockingQueue<MemeDBMsg2000> dbOutputQ, BlockingQueue<MemeDBMsg2000> dbInputQ, BlockingQueue<Integer> approveQ){
         this.config = config;
         this.approvalChannelID = Long.parseLong(config.getApprovalChannel());
         this.logger = logger;
         this.botInputQ = botInputQ;
         this.dbOutputQ = dbOutputQ;
         this.dbInputQ = dbInputQ;
+        this.approveQ = approveQ;
     }
 
     public void run(){
-        BlockingQueue<Integer> approveQ = new LinkedBlockingQueue<>(100);
         MemeDBMsg2000 msg;
         Integer lastID = null;
         boolean sendMsg;
@@ -84,11 +85,7 @@ public class MemeDBReader3000 extends Thread{
                         logger.println("Received curation result for meme of ID " + msg.getId());
                         approveQ.take();
                         botInputQ.put(new MemeBotMsg2000().command("clearQueue"));
-                        MemeBotMsg2000 newNewMsg = new MemeBotMsg2000();
-                        newNewMsg.setCommand("sendToUser");
-                        newNewMsg.setBody(msg.getLink());
-                        newNewMsg.setUser(msg.getUsername());
-                        botInputQ.put(newNewMsg);
+                        botInputQ.put(new MemeBotMsg2000().command("sendToUser").body(msg.getLink()).user(msg.getUsername()));
 
                         newMsg.setCommand("sendToUser");
                         newMsg.setUser(msg.getUsername());

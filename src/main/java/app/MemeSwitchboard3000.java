@@ -36,6 +36,7 @@ public class MemeSwitchboard3000 {
 		BlockingQueue<MemeBotMsg2000> botInputQ = new LinkedBlockingQueue<MemeBotMsg2000>(qCapacity);
 		BlockingQueue<MemeDBMsg2000> dbOutputQ = new LinkedBlockingQueue<MemeDBMsg2000>(qCapacity);
 		BlockingQueue<MemeDBMsg2000> dbInputQ = new LinkedBlockingQueue<MemeDBMsg2000>(qCapacity);
+		BlockingQueue<Integer> approveQ = new LinkedBlockingQueue<Integer>(qCapacity);
 
 		logger.println("Loading the config...");
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
@@ -46,11 +47,11 @@ public class MemeSwitchboard3000 {
 
 		logger.println("Constructing classes to connect to the bot...");
 		MemeBotInterfacer2000 memeBotInterfacer = new MemeBotInterfacer2000(config, botInputQ, botOutputQ);
-		MemeBotReader3000 botReader = new MemeBotReader3000(logger, botOutputQ, dbInputQ);
+		MemeBotReader3000 botReader = new MemeBotReader3000(logger, botOutputQ, dbInputQ, approveQ);
 
 		logger.println("Constructing classes to connect to the DB...");
 		MemeDBC2000 dbController = new MemeDBC2000(config, dbInputQ, dbOutputQ);
-		MemeDBReader3000 dbReader = new MemeDBReader3000(logger, config, botInputQ, dbOutputQ, dbInputQ);
+		MemeDBReader3000 dbReader = new MemeDBReader3000(logger, config, botInputQ, dbOutputQ, dbInputQ, approveQ);
 
 		logger.println("Spinning up threads for controllers and readers...");
 		dbController.start();

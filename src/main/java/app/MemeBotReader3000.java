@@ -15,12 +15,14 @@ import static datastructures.MemeDBMsg2000.MsgDBType.*;
 public class MemeBotReader3000 extends Thread{
     private BlockingQueue<MemeBotMsg2000> botOutputQ;
     private BlockingQueue<MemeDBMsg2000> dbInputQ;
+    private BlockingQueue<Integer> approveQ;
     private MemeLogger3000 logger;
 
-    MemeBotReader3000(MemeLogger3000 logger, BlockingQueue<MemeBotMsg2000> botOutputQ, BlockingQueue<MemeDBMsg2000> dbInputQ){
+    MemeBotReader3000(MemeLogger3000 logger, BlockingQueue<MemeBotMsg2000> botOutputQ, BlockingQueue<MemeDBMsg2000> dbInputQ, BlockingQueue<Integer> approveQ){
         this.logger = logger;
         this.botOutputQ = botOutputQ;
         this.dbInputQ = dbInputQ;
+        this.approveQ = approveQ;
     }
 
     public void run(){
@@ -33,11 +35,11 @@ public class MemeBotReader3000 extends Thread{
                 switch(msg.getCommand()){
                     case "deny":
                         logger.println("Meme denied from discord bot");
-                        newMsg = new MemeDBMsg2000().type(REJECT_MEME).username(msg.getUser());
+                        newMsg = new MemeDBMsg2000().type(REJECT_MEME).username(msg.getUser()).id(approveQ.peek());
                         break;
                     case "approve":
                         logger.println("Meme approved from discord bot");
-                        newMsg = new MemeDBMsg2000().type(PROMOTE_MEME).username(msg.getUser());
+                        newMsg = new MemeDBMsg2000().type(PROMOTE_MEME).username(msg.getUser()).id(approveQ.peek());
                         break;
                     case "fetchMeme":
                         logger.println("Fetching meme for " + msg.getUser());
