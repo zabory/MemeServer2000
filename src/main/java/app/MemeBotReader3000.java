@@ -34,11 +34,11 @@ public class MemeBotReader3000 extends Thread{
                 msg = botOutputQ.take();
                 switch(msg.getCommand()){
                     case "deny":
-                        logger.println("Meme denied from discord bot");
+                        logger.println("Meme denied from discord bot by " + msg.getUser());
                         newMsg = new MemeDBMsg2000().type(REJECT_MEME).username(msg.getUser()).id(approveQ.peek());
                         break;
                     case "approve":
-                        logger.println("Meme approved from discord bot");
+                        logger.println("Meme approved from discord bot by " + msg.getUser());
                         newMsg = new MemeDBMsg2000().type(PROMOTE_MEME).username(msg.getUser()).id(approveQ.peek());
                         break;
                     case "fetchMeme":
