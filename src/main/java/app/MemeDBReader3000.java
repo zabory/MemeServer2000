@@ -65,7 +65,7 @@ public class MemeDBReader3000 extends Thread{
                         logger.println("Sending meme ID " + msg.getId() + " to be approved");
                         String tags = "**Tags**:\n";
                         for(int i=0;i<msg.getTags().size();i++)
-                            tags += i + ": " + msg.getTags().get(i) + "\n";
+                            tags += (i+1) + ": " + msg.getTags().get(i) + "\n";
 
                         botInputQ.put(new MemeBotMsg2000().channelID(approvalChannelID).body("**Queue count**: " + (approveQ.size())).command("sendToChannel"));
                         botInputQ.put(new MemeBotMsg2000().channelID(approvalChannelID).body(tags).command("sendToChannel"));
