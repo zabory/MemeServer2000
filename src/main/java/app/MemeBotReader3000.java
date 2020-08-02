@@ -39,7 +39,12 @@ public class MemeBotReader3000 extends Thread{
                         break;
                     case "approve":
                         logger.println("Meme approved from discord bot by " + msg.getUser());
-                        newMsg = new MemeDBMsg2000().type(PROMOTE_MEME).username(msg.getUser()).id(approveQ.peek());
+                        tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getTags().split("\\s*,\\s*"))));
+                        LinkedList<String> finalTags2 = tags;
+                        tags.forEach(e -> {
+                            finalTags2.set(finalTags2.indexOf(e), e.trim().replace("\"", "").replace(";", "").replace("[", "").replace("]", ""));
+                        });
+                        newMsg = new MemeDBMsg2000().type(PROMOTE_MEME).username(msg.getUser()).id(approveQ.peek()).tags(new LinkedList<String>(tags));
                         break;
                     case "fetchMeme":
                         logger.println("Fetching meme for " + msg.getUser());

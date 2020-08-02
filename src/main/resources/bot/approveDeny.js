@@ -6,22 +6,38 @@ module.exports = {
 		 */
 		handle: function(bot, addedTags, tags){
 			
-			
-			
-			
-			
+			json = {'command':'approve', 'approvedTags' : '', 'user':'zabory'}
 			
 			/**
-			 * command = approve to show we are approving
-			 * newTags : text to send if we are adding new tags (aka body of the message)
-			 * tag<x> : boolean to say if we are removing the tag or not (true is remove tag)
-			 * {'command':'approve', 'newTags':'', 'tag1':true...}
+			 * TODO
+			 * ====
+			 * go through tags that got sent with meme, match them up with the react numbers
+			 * if a tag got reacted to, then dont add it to tag list
+			 * add admin tags to list
+			 * send it
 			 */
-		
+			
+			//go through tags that got sent with meme
+			
+			
+			//if a tag got reacted to, dont add it to the list
+			
+			//add admin tags to list
+			if(addedTags){
+				json[approvedTags] = json.approvedTags + ',' + tags
+			}
+			
+			//send it
+			console.log(JSON.stringify(json))
 		}
 }
 
 
+/**
+ * command : 'approve'
+ * approvedTags : comma delimited list of approved tags
+ * user: user who approved the meme
+ */
 
 //json = {'command':'deny', 'user':userData.username}
 //console.log(JSON.stringify(json))

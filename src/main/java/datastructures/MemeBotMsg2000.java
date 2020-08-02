@@ -17,7 +17,7 @@ public class MemeBotMsg2000 {
 	private boolean admin;
 	private String url;
 	private JSONObject json;
-	private boolean[] tagDeny;
+	private String tags;
 	/**
 	 * Create a message from variables
 	 * 
@@ -28,24 +28,21 @@ public class MemeBotMsg2000 {
 	 * @param admin If the message comes from a user with admin
 	 * @param url embedded URL of an image
 	 */
-	public MemeBotMsg2000(String user, String command, String body, long channelID, boolean admin, String url, boolean...tagValues) {
+	public MemeBotMsg2000(String user, String command, String body, long channelID, boolean admin, String url, String tags) {
 		this.user = user;
 		this.command = command;
 		this.body = body.toLowerCase();
 		this.channelID = channelID;
 		this.admin = admin;
 		this.url = url;
-		tagDeny = new boolean[10];
-		for(int i = 0; i < tagValues.length; i++) {
-			tagDeny[i] = tagValues[i];
-		}
+		this.tags = tags;
 	}
 
 	/**
 	 * Default constructor for class, setting everything to the default value
 	 */
 	public MemeBotMsg2000() {
-		this("", "", "", 0, false, "");
+		this("", "", "", 0, false, "", "");
 	}
 
 	/**
@@ -78,10 +75,8 @@ public class MemeBotMsg2000 {
 			admin = jObject.getBoolean("admin");
 		}
 		
-		for(int i = 0; tagDeny != null && i < tagDeny.length; i++) {
-			if(jObject.has("tag" + (i + 1))) {
-				tagDeny[i] = jObject.getBoolean("tag" + (i + 1));
-			}
+		if(jObject.has("tags")) {
+			tags = jObject.getString("tags");
 		}
 		
 		json = jObject;
@@ -100,9 +95,7 @@ public class MemeBotMsg2000 {
 		j.put("channelID", channelID + "");
 		j.put("admin", admin);
 		j.put("url", url);
-		for(int i = 0; i < tagDeny.length; i++) {
-			j.put("tag" + (i + 1), tagDeny[i]);
-		}
+		j.put("tags", tags);
 		return j;
 	}
 	
@@ -125,10 +118,6 @@ public class MemeBotMsg2000 {
 			return "print";
 		}
 	}
-	
-	public boolean[] getTagDeny() {
-		return tagDeny;
-	}
 
 	public void setCommand(String command) {
 		this.command = command;
@@ -136,6 +125,14 @@ public class MemeBotMsg2000 {
 
 	public String getBody() {
 		return body;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
 	}
 
 	public void setBody(String body) {
@@ -193,6 +190,11 @@ public class MemeBotMsg2000 {
 	
 	public MemeBotMsg2000 url(String url) {
 		this.url = url;
+		return this;
+	}
+	
+	public MemeBotMsg2000 tags(String tags) {
+		this.tags = tags;
 		return this;
 	}
 

@@ -47,9 +47,37 @@ module.exports = {
 							}
 						});
 						
-						message.guild.emojis.cache.array().forEach(emoji => {
-							if(emoji.name=='one' || emoji.name=='two'){
-								message.react(emoji)
+						//TODO add reactions based off the tags sent
+						message.channel.messages.cache.array().forEach(currentMessage => {
+							if(currentMessage.content.includes('Tags')){
+								tagCount = currentMessage.content.split('\n').length
+								for(i = 0; i < tagCount; i++){
+									if(i == 0){
+										message.guild.emojis.cache.array().forEach(emoji => {
+											if(emoji.name=='zero'){
+												message.react(emoji)
+											}
+										});
+									}else if(i == 1){
+										message.guild.emojis.cache.array().forEach(emoji => {
+											if(emoji.name=='one'){
+												message.react(emoji)
+											}
+										});
+									}else if(i == 2){
+										message.guild.emojis.cache.array().forEach(emoji => {
+											if(emoji.name=='two'){
+												message.react(emoji)
+											}
+										});
+									}else if(i == 3){
+										message.guild.emojis.cache.array().forEach(emoji => {
+											if(emoji.name=='three'){
+												message.react(emoji)
+											}
+										});
+									}
+								}
 							}
 						});
 					}

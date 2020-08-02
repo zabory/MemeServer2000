@@ -1,7 +1,7 @@
 var AD = require('./approveDeny.js')
 
 module.exports = {
-		handle : function(data, userData, bot){
+		handle : function(data, userData, bot, auth){
 			
 			//we need this because the bot adds the reactions on to the picture the first time, so only do this if more than the bot reacts
 			if(data.users.cache.array().length > 1){
