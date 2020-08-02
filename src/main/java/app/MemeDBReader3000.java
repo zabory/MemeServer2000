@@ -66,7 +66,8 @@ public class MemeDBReader3000 extends Thread{
                         for(int i=0;i<msg.getTags().size();i++)
                             tags += i + ": " + msg.getTags().get(i) + "\n";
 
-                        botInputQ.put(new MemeBotMsg2000().channelID(approvalChannelID).body("**Queue count**: " + (approveQ.size()-1) + "\n" + tags).command("sendToChannel"));
+                        botInputQ.put(new MemeBotMsg2000().channelID(approvalChannelID).body("**Queue count**: " + (approveQ.size()-1)).command("sendToChannel"));
+                        botInputQ.put(new MemeBotMsg2000().channelID(approvalChannelID).body(tags).command("sendToChannel"));
                         botInputQ.put(new MemeBotMsg2000().command("sendToQueue").body(msg.getLink()).channelID(approvalChannelID));
                         break;
 
