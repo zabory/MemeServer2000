@@ -4,9 +4,9 @@ module.exports = {
 		 * addedTags: boolean if we are adding tags or not
 		 * tags: tags to be added
 		 */
-		handle: function(bot, addedTags, tags){
+		handle: function(bot, addedTags, tags, user){
 			
-			json = {'command':'approve', 'approvedTags' : '', 'user':'zabory'}
+			json = {'command':'approve', 'approvedTags' : '', 'user':user}
 			
 			/**
 			 * TODO

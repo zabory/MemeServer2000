@@ -6,6 +6,7 @@ module.exports = {
 			
 			// get username of sent message
 			user = data.author.username
+			
 			if(user != 'MemeBot2000' && user != 'MemeBotTester'){
 				
 				// get the channel id
@@ -67,7 +68,7 @@ module.exports = {
 					
 					console.log(JSON.stringify(json))
 				}else{
-					AD.handle(bot, true, data)
+					AD.handle(bot, true, data, user)
 				}
 				}
 			}

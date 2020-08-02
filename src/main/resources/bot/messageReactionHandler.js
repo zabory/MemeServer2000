@@ -14,7 +14,7 @@ module.exports = {
 						json = {'command':'deny', 'user':userData.username}
 						console.log(JSON.stringify(json))
 					}else if(data.emoji.name == 'check'){
-						AD.handle(bot, false, "")
+						AD.handle(bot, false, "", userData.username)
 					}
 				}
 			}
