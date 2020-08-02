@@ -22,7 +22,7 @@ module.exports = {
 				});
 				
 				if(allowedChannel){
-					if(data.content.includes('!meme')){
+					if(data.content.includes('!meme') || data.content.includes('!request')){
 						//if not an allowed channel, treat it like a request
 						json = {"user":user, "channelID":channel, "command":"fetchMeme", "body":data.content.replace("!request ", "").replace("!meme ", "")}
 						
@@ -60,11 +60,14 @@ module.exports = {
 					}
 				}
 				}else{
+					//block for IN the meme approval channel
 					if(data.content.includes('!meme') || data.content.includes('!request')){
 					//if not an allowed channel, treat it like a request
 					json = {"user":user, "channelID":channel, "command":"fetchMeme", "body":data.content.replace("!meme ", "").replace("!request ", "")}
 					
 					console.log(JSON.stringify(json))
+				}else{
+					AD.handle(bot, true, data)
 				}
 				}
 			}

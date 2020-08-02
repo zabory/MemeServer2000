@@ -80,5 +80,5 @@ bot.on('message', data => {
 
 // whenever the bot sees a reaction to a message
 bot.on('messageReactionAdd', (data, messageData) => {
-	MRH.handle(data, messageData, auth)
+	MRH.handle(data, messageData, bot)
 });

@@ -46,6 +46,12 @@ module.exports = {
 								message.react(emoji)
 							}
 						});
+						
+						message.guild.emojis.cache.array().forEach(emoji => {
+							if(emoji.name=='one' || emoji.name=='two'){
+								message.react(emoji)
+							}
+						});
 					}
 					
 				});
