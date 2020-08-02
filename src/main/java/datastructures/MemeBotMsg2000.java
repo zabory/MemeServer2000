@@ -17,7 +17,7 @@ public class MemeBotMsg2000 {
 	private boolean admin;
 	private String url;
 	private JSONObject json;
-
+	private boolean[] tagDeny;
 	/**
 	 * Create a message from variables
 	 * 
@@ -28,13 +28,17 @@ public class MemeBotMsg2000 {
 	 * @param admin If the message comes from a user with admin
 	 * @param url embedded URL of an image
 	 */
-	public MemeBotMsg2000(String user, String command, String body, long channelID, boolean admin, String url) {
+	public MemeBotMsg2000(String user, String command, String body, long channelID, boolean admin, String url, boolean...tagValues) {
 		this.user = user;
 		this.command = command;
 		this.body = body.toLowerCase();
 		this.channelID = channelID;
 		this.admin = admin;
 		this.url = url;
+		tagDeny = new boolean[10];
+		for(int i = 0; i < tagValues.length; i++) {
+			tagDeny[i] = tagValues[i];
+		}
 	}
 
 	/**
@@ -74,10 +78,13 @@ public class MemeBotMsg2000 {
 			admin = jObject.getBoolean("admin");
 		}
 		
-		json = jObject;
+		for(int i = 0; tagDeny != null && i < tagDeny.length; i++) {
+			if(jObject.has("tag" + (i + 1))) {
+				tagDeny[i] = jObject.getBoolean("tag" + (i + 1));
+			}
+		}
 		
-//		 jObject.getString("body").toLowerCase(),
-//				jObject.getLong("channelID"));
+		json = jObject;
 	}
 
 	/**
@@ -93,6 +100,9 @@ public class MemeBotMsg2000 {
 		j.put("channelID", channelID + "");
 		j.put("admin", admin);
 		j.put("url", url);
+		for(int i = 0; i < tagDeny.length; i++) {
+			j.put("tag" + (i + 1), tagDeny[i]);
+		}
 		return j;
 	}
 	
@@ -114,6 +124,10 @@ public class MemeBotMsg2000 {
 		}else {
 			return "print";
 		}
+	}
+	
+	public boolean[] getTagDeny() {
+		return tagDeny;
 	}
 
 	public void setCommand(String command) {

@@ -1,8 +1,8 @@
-
+var AD = require('./approveDeny.js')
 
 module.exports = {
 		
-		handle: function(bot, data, auth){
+		handle: function(bot, data){
 			
 			// get username of sent message
 			user = data.author.username
@@ -14,6 +14,7 @@ module.exports = {
 				// lets make sure the bot doesnt process messages from other channels
 				allowedChannel = true
 				
+				//make sure its not meme approval
 				bot.guilds.cache.array()[0].channels.cache.array().forEach(ch => {
 					if(data.channel.name == ch.name && data.channel.name != 'meme-approval'){
 						allowedChannel = false;
@@ -23,15 +24,17 @@ module.exports = {
 				if(allowedChannel){
 					if(data.content.includes('!meme')){
 						//if not an allowed channel, treat it like a request
-						json = {"user":user, "channelID":channel, "command":"fetchMeme", "body":data.content.replace("!request ", "")}
+						json = {"user":user, "channelID":channel, "command":"fetchMeme", "body":data.content.replace("!request ", "").replace("!meme ", "")}
 						
 						console.log(JSON.stringify(json))
 					}else{
+						
 					if(data.attachments.size > 0){
 						url = data.attachments.array()[0].url
 					
 						// message content should end up being the tags
 						tags = data.content
+						
 						if(tags != ""){
 							// checks if user has the admin role
 							adminRole = false
@@ -59,7 +62,7 @@ module.exports = {
 				}else{
 					if(data.content.includes('!meme') || data.content.includes('!request')){
 					//if not an allowed channel, treat it like a request
-					json = {"user":user, "channelID":channel, "command":"fetchMeme", "body":data.content.replace("!meme ", "")}
+					json = {"user":user, "channelID":channel, "command":"fetchMeme", "body":data.content.replace("!meme ", "").replace("!request ", "")}
 					
 					console.log(JSON.stringify(json))
 				}

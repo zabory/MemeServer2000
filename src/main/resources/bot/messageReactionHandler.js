@@ -1,4 +1,4 @@
-
+var AD = require('./approveDeny.js')
 
 module.exports = {
 		handle : function(data, userData, auth){

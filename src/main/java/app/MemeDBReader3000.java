@@ -3,6 +3,8 @@ package app;
 import datastructures.MemeBotMsg2000;
 import datastructures.MemeDBMsg2000;
 import datastructures.MemeLogger3000;
+import datastructures.MemeLogger3000.level;
+
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.concurrent.BlockingQueue;
@@ -88,6 +90,7 @@ public class MemeDBReader3000 extends Thread{
                         break;
 
                     case ERROR:
+                    	logger.println(level.ERROR, msg.getMessage() + msg.getTags());
                         botInputQ.put(new MemeBotMsg2000().command("sendToUser").body(msg.getMessage() + msg.getTags()).user(msg.getUsername()));
                         break;
 
