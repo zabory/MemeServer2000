@@ -248,9 +248,9 @@ public class MemeDB2000 {
         try {
             ResultSet rs;
             if(id == null)
-                rs = executeQuery("SELECT DISTINCT tag FROM " + tagLkpTableName);
+                rs = executeQuery("SELECT DISTINCT tag FROM (SELECT tag, link FROM " + tagLkpTableName + " t LEFT JOIN " + memeTableName + " m ON t.id = m.id) WHERE link IS NOT NULL ORDER BY tag ASC");
             else
-                rs = executeQuery("SELECT tag FROM " + tagLkpTableName + " WHERE id = ?", Arrays.asList(new Column(id, Column.ColType.INT)));
+                rs = executeQuery("SELECT tag FROM " + tagLkpTableName + " WHERE id = ? ORDER BY tag ASC", Arrays.asList(new Column(id, Column.ColType.INT)));
             while(rs != null && rs.next()) {
                 retList.add(rs.getString("tag"));
             }

@@ -174,9 +174,9 @@ public class MemeDB2000Test {
                 link2 = "https://cdn.discordapp.com/attachments/647667357879107584/736409444577050764/MemeBot2000.jpg",
                 link3 = "https://cdn.discordapp.com/attachments/647667357879107584/735864874932109322/xvOzIkw.jpeg",
                 link4 = "https://cdn.discordapp.com/attachments/647667357879107584/735864874932109322/xvOzIke.jpeg";
-        assertEquals(ID1, memebase.cache("Ziggy", link1, Arrays.asList("meta", "books")));
-        assertEquals(ID2, memebase.cache("Ziggy", link2, Arrays.asList("server", "diagram")));
-        assertEquals(ID3, memebase.cache("Ziggy", link3, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
+        assertEquals(ID1, memebase.store("Ziggy", link1, Arrays.asList("meta", "books")));
+        assertEquals(ID2, memebase.store("Ziggy", link2, Arrays.asList("server", "diagram")));
+        assertEquals(ID3, memebase.store("Ziggy", link3, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
         assertEquals(ID4, memebase.cache("Ziggy", link4, Arrays.asList("fake", "books", "cat", "server")));
 
         Set<String> tagSet = new HashSet<String>();
@@ -188,11 +188,9 @@ public class MemeDB2000Test {
         tagSet.add("dog");
         tagSet.add("animal");
         tagSet.add("test");
-        tagSet.add("fake");
-        tagSet.add("cat");
         tagSet.add("server");
         List<String> tags = memebase.getTags();
-        assertEquals(11, tags.size());
+        assertEquals(9, tags.size());
         for(String tag : tags){
             if(tagSet.contains(tag))
                 tagSet.remove(tag);
@@ -213,5 +211,8 @@ public class MemeDB2000Test {
             else
                 assertTrue(false);
         }
+
+
+
     }
 }

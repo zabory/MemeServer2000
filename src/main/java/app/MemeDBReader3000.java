@@ -45,9 +45,9 @@ public class MemeDBReader3000 extends Thread{
                         logger.println("Sending all tags to bot");
                         String tagList = "";
                         for(String e : msg.getTags()) {
-                            tagList += e + ",";
+                            tagList += e + ", ";
                         }
-                        botInputQ.put(new MemeBotMsg2000().command("sendAllTags").body(tagList));
+                        botInputQ.put(new MemeBotMsg2000().command("sendAllTags").body(tagList.substring(0, tagList.length()-2)));
                         break;
 
                     case SUBMIT_ACK:
@@ -78,6 +78,7 @@ public class MemeDBReader3000 extends Thread{
                         botInputQ.put(new MemeBotMsg2000().command("clearQueue"));
                         botInputQ.put(new MemeBotMsg2000().command("sendToUser").body(msg.getLink()).user(msg.getUsername()));
                         botInputQ.put(new MemeBotMsg2000().command("sendToUser").body(msg.getMessage()).user(msg.getUsername()));
+                        dbInputQ.put(new MemeDBMsg2000().type(GET_TAGS));
                         break;
 
                     case MEME:

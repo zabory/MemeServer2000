@@ -29,6 +29,7 @@ public class MemeDBC2000 extends Thread{
     public void run(){
         String link, username;
         Integer id ;
+        List<String> tags;
         MemeDBMsg2000 msg = new MemeDBMsg2000();
         while(true){
             try {
@@ -42,10 +43,17 @@ public class MemeDBC2000 extends Thread{
                                     .id(theid)
                             );
                         }
+
+                        tags = db.getTags();
+                        outputQ.add(new MemeDBMsg2000()
+                                .type(ALL_TAGS)
+                                .tags(tags)
+                        );
+
                         break;
 
                     case GET_TAGS:
-                        List<String> tags = db.getTags();
+                        tags = db.getTags();
                         outputQ.add(new MemeDBMsg2000()
                                 .type(ALL_TAGS)
                                 .tags(tags)
