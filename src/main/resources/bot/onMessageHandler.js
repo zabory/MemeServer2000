@@ -57,7 +57,7 @@ module.exports = {
 					}
 				}
 				}else{
-					if(data.content.includes('!meme')){
+					if(data.content.includes('!meme') || data.content.includes('!request')){
 					//if not an allowed channel, treat it like a request
 					json = {"user":user, "channelID":channel, "command":"fetchMeme", "body":data.content.replace("!meme ", "")}
 					
