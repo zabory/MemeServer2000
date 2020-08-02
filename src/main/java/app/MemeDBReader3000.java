@@ -47,7 +47,8 @@ public class MemeDBReader3000 extends Thread{
                         for(String e : msg.getTags()) {
                             tagList += e + ",";
                         }
-                        botInputQ.put(new MemeBotMsg2000().command("sendAllTags").body(tagList.substring(0, tagList.length()-2)));
+                        if(!tagList.equals(""))
+                            botInputQ.put(new MemeBotMsg2000().command("sendAllTags").body(tagList.substring(0, tagList.length()-1)));
                         break;
 
                     case SUBMIT_ACK:

@@ -238,10 +238,10 @@ public class MemeDBC2000Test {
             assertEquals(ALL_TAGS, msg.getType());
             assertEquals(4, msg.getTags().size());
             Set<String> tagSet = new HashSet<String>();
-            tagSet.add("bread");
-            tagSet.add("seals");
-            tagSet.add("cat");
-            tagSet.add("dog");
+            tagSet.add("bread (1)");
+            tagSet.add("seals (1)");
+            tagSet.add("cat (10)");
+            tagSet.add("dog (10)");
             for(String tag : msg.getTags()){
                 if(tagSet.contains(tag))
                     tagSet.remove(tag);

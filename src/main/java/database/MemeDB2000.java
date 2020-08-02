@@ -247,12 +247,17 @@ public class MemeDB2000 {
         errorMsg = "";
         try {
             ResultSet rs;
-            if(id == null)
-                rs = executeQuery("SELECT DISTINCT tag FROM (SELECT tag, link FROM " + tagLkpTableName + " t LEFT JOIN " + memeTableName + " m ON t.id = m.id) WHERE link IS NOT NULL ORDER BY tag ASC");
-            else
+            if(id == null) {
+                rs = executeQuery("SELECT COUNT(*) c, tag FROM (SELECT tag, link FROM " + tagLkpTableName + " t LEFT JOIN " + memeTableName + " m ON t.id = m.id) WHERE link IS NOT NULL GROUP BY tag ORDER BY tag ASC");
+                while(rs != null && rs.next()) {
+                    retList.add(rs.getString("tag") + " (" + rs.getString("c") + ")");
+                }
+            }
+            else {
                 rs = executeQuery("SELECT tag FROM " + tagLkpTableName + " WHERE id = ? ORDER BY tag ASC", Arrays.asList(new Column(id, Column.ColType.INT)));
-            while(rs != null && rs.next()) {
-                retList.add(rs.getString("tag"));
+                while(rs != null && rs.next()) {
+                    retList.add(rs.getString("tag"));
+                }
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();

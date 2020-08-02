@@ -176,21 +176,18 @@ public class MemeDB2000Test {
                 link4 = "https://cdn.discordapp.com/attachments/647667357879107584/735864874932109322/xvOzIke.jpeg";
         assertEquals(ID1, memebase.store("Ziggy", link1, Arrays.asList("meta", "books")));
         assertEquals(ID2, memebase.store("Ziggy", link2, Arrays.asList("server", "diagram")));
-        assertEquals(ID3, memebase.store("Ziggy", link3, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
-        assertEquals(ID4, memebase.cache("Ziggy", link4, Arrays.asList("fake", "books", "cat", "server")));
+        assertEquals(ID3, memebase.cache("Ziggy", link3, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
+        assertEquals(ID4, memebase.store("Ziggy", link4, Arrays.asList("fake", "books", "cat", "server")));
 
         Set<String> tagSet = new HashSet<String>();
-        tagSet.add("meta");
-        tagSet.add("books");
-        tagSet.add("diagram");
-        tagSet.add("oracle");
-        tagSet.add("sql");
-        tagSet.add("dog");
-        tagSet.add("animal");
-        tagSet.add("test");
-        tagSet.add("server");
+        tagSet.add("meta (1)");
+        tagSet.add("books (2)");
+        tagSet.add("diagram (1)");
+        tagSet.add("cat (1)");
+        tagSet.add("fake (1)");
+        tagSet.add("server (2)");
         List<String> tags = memebase.getTags();
-        assertEquals(9, tags.size());
+        assertEquals(6, tags.size());
         for(String tag : tags){
             if(tagSet.contains(tag))
                 tagSet.remove(tag);
@@ -199,12 +196,13 @@ public class MemeDB2000Test {
         }
 
         tagSet = new HashSet<String>();
-        tagSet.add("books");
-        tagSet.add("fake");
-        tagSet.add("cat");
-        tagSet.add("server");
-        tags = memebase.getTags(ID4);
-        assertEquals(4, tags.size());
+        tagSet.add("oracle");
+        tagSet.add("sql");
+        tagSet.add("dog");
+        tagSet.add("animal");
+        tagSet.add("test");
+        tags = memebase.getTags(ID3);
+        assertEquals(5, tags.size());
         for(String tag : tags){
             if(tagSet.contains(tag))
                 tagSet.remove(tag);
