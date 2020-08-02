@@ -70,11 +70,12 @@ module.exports = {
 				
 			}else if(command == 'queueSize'){
 				queueSize = json.body
-				helpChannel = bot.channels.cache.get(auth.channel)
+				authChannel = bot.channels.cache.get(auth.channel)
 				
-				helpChannel.messages.cache.array().forEach(currentMessage => {
-					if(currentMessage.content.includes('Queue size ')){
-						currentMessage.edit('Queue size ' + queueSize)
+				authChannel.messages.cache.array().forEach(currentMessage => {
+					//console.log(currentMessage)
+					if(currentMessage.content.includes('**Queue count**:')){
+						currentMessage.edit('**Queue count**:' + queueSize)
 					}
 				});
 				

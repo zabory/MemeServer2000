@@ -53,6 +53,7 @@ public class MemeDBReader3000 extends Thread{
                     case SUBMIT_ACK:
                         if(msg.getId() != null){
                             logger.println("Received ACK for cached meme of ID " + msg.getId());
+                            botInputQ.put(new MemeBotMsg2000().command("queueSize").body((approveQ.size() + 1) + ""));
                             approveQ.put(msg.getId());
                         }
                         else
@@ -66,7 +67,7 @@ public class MemeDBReader3000 extends Thread{
                         for(int i=0;i<msg.getTags().size();i++)
                             tags += i + ": " + msg.getTags().get(i) + "\n";
 
-                        botInputQ.put(new MemeBotMsg2000().channelID(approvalChannelID).body("**Queue count**: " + (approveQ.size()-1)).command("sendToChannel"));
+                        botInputQ.put(new MemeBotMsg2000().channelID(approvalChannelID).body("**Queue count**: " + (approveQ.size())).command("sendToChannel"));
                         botInputQ.put(new MemeBotMsg2000().channelID(approvalChannelID).body(tags).command("sendToChannel"));
                         botInputQ.put(new MemeBotMsg2000().command("sendToQueue").body(msg.getLink()).channelID(approvalChannelID));
                         break;
@@ -97,7 +98,8 @@ public class MemeDBReader3000 extends Thread{
                     MemeDBMsg2000 approveMsg = new MemeDBMsg2000().type(GET_MEME_ID).id(approveQ.peek());
                     lastID = approveMsg.getId();
                     dbInputQ.put(approveMsg);
-                    botInputQ.put(new MemeBotMsg2000().command("queueSize").body(approveQ.size() + ""));
+                    botInputQ.put(new MemeBotMsg2000().command("queueSize").body((approveQ.size()) + ""));
+                    logger.println("Meme queue size increased");
                 }
             } catch (InterruptedException e) {
                 logger.println(MemeLogger3000.level.ERROR, getStackTrace().toString());
