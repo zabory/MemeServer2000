@@ -43,7 +43,7 @@ public class MemeBotReader3000 extends Thread{
                         break;
                     case "fetchMeme":
                         logger.println("Fetching meme for " + msg.getUser());
-                        tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getBody().split(","))));
+                        tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getBody().split("\\s*,\\s*"))));
                         LinkedList<String> finalTags1 = tags;
                         tags.forEach(e -> {
                             finalTags1.set(finalTags1.indexOf(e), e.trim().replace("\"", "").replace(";", "").replace("[", "").replace("]", ""));
@@ -52,7 +52,7 @@ public class MemeBotReader3000 extends Thread{
                         break;
                     case "submitMeme":
                         logger.println("Meme submitted by " + msg.getUser() + " with a channel ID of " + msg.getChannelID());
-                        tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getBody().split(","))));
+                        tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getBody().split("\\s*,\\s*"))));
                         LinkedList<String> finalTags = tags;
                         tags.forEach(e -> {
                             finalTags.set(finalTags.indexOf(e), e.trim().replace("\"", "").replace(";", "").replace("[", "").replace("]", ""));
