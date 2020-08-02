@@ -299,11 +299,12 @@ public class MemeDB2000 {
         if(uniqueLink(link)){
             Integer memeID = getID();
             try {
-                execute("INSERT INTO " + memeTableName + " (id, link, submitter, curator) VALUES (?,?,?,?)",
+                execute("INSERT INTO " + memeTableName + " (id, link, submitter, curator, timestamp) VALUES (?,?,?,?,?)",
                         Arrays.asList(  new Column(memeID, Column.ColType.INT),
                                 new Column(link, Column.ColType.STR),
                                 new Column(username, Column.ColType.STR),
-                                new Column(username, Column.ColType.STR)
+                                new Column(username, Column.ColType.STR),
+                                new Column(new Timestamp(System.currentTimeMillis()).toString(), Column.ColType.STR)
                         ));
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
@@ -381,11 +382,12 @@ public class MemeDB2000 {
         // Put it into the memedb
         if(link != null && username != null){
             try {
-                execute("INSERT INTO " + memeTableName + " (id, link, submitter, curator) VALUES (?,?,?,?)",
+                execute("INSERT INTO " + memeTableName + " (id, link, submitter, curator, timestamp) VALUES (?,?,?,?,?)",
                         Arrays.asList(  new Column(id, Column.ColType.INT),
                                 new Column(link, Column.ColType.STR),
                                 new Column(username, Column.ColType.STR),
-                                new Column(curatorName, Column.ColType.STR)
+                                new Column(curatorName, Column.ColType.STR),
+                                new Column(new Timestamp(System.currentTimeMillis()).toString(), Column.ColType.STR)
                         ));
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
