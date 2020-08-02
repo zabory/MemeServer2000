@@ -60,7 +60,7 @@ module.exports = {
 			
 			//add admin tags to list
 			if(addedTags == true){
-				json.approvedTags = json.approvedTags + ',' + tags
+				json.approvedTags = json.approvedTags + ',' + tags.content
 			}
 			
 			if(json.approvedTags.charAt(0) == ','){
