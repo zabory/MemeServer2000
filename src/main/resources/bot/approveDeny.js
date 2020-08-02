@@ -18,9 +18,15 @@ module.exports = {
 			 */
 			
 			//go through tags that got sent with meme
-			
-			
 			//if a tag got reacted to, dont add it to the list
+			bot.guilds.cache.array()[0].channels.cache.array().forEach(ch => {
+				if(ch.name == 'meme-approval'){
+					ch.messages.cache.array()[2].reactions.cache.array().forEach(reaction =>{
+						//console.log(reaction.count)
+					});
+				}
+			});
+			
 			
 			//add admin tags to list
 			if(addedTags){

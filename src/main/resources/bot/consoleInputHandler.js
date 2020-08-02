@@ -51,28 +51,64 @@ module.exports = {
 						message.channel.messages.cache.array().forEach(currentMessage => {
 							if(currentMessage.content.includes('Tags')){
 								tagCount = currentMessage.content.split('\n').length
-								for(i = 0; i < tagCount; i++){
+								for(i = 0; i < tagCount - 1; i++){
 									if(i == 0){
-										message.guild.emojis.cache.array().forEach(emoji => {
-											if(emoji.name=='zero'){
-												message.react(emoji)
-											}
-										});
-									}else if(i == 1){
 										message.guild.emojis.cache.array().forEach(emoji => {
 											if(emoji.name=='one'){
 												message.react(emoji)
 											}
 										});
-									}else if(i == 2){
+									}else if(i == 1){
 										message.guild.emojis.cache.array().forEach(emoji => {
 											if(emoji.name=='two'){
 												message.react(emoji)
 											}
 										});
-									}else if(i == 3){
+									}else if(i == 2){
 										message.guild.emojis.cache.array().forEach(emoji => {
 											if(emoji.name=='three'){
+												message.react(emoji)
+											}
+										});
+									}else if(i == 3){
+										message.guild.emojis.cache.array().forEach(emoji => {
+											if(emoji.name=='four'){
+												message.react(emoji)
+											}
+										});
+									}else if(i == 4){
+										message.guild.emojis.cache.array().forEach(emoji => {
+											if(emoji.name=='five'){
+												message.react(emoji)
+											}
+										});
+									}else if(i == 5){
+										message.guild.emojis.cache.array().forEach(emoji => {
+											if(emoji.name=='six'){
+												message.react(emoji)
+											}
+										});
+									}else if(i == 6){
+										message.guild.emojis.cache.array().forEach(emoji => {
+											if(emoji.name=='seven'){
+												message.react(emoji)
+											}
+										});
+									}else if(i == 7){
+										message.guild.emojis.cache.array().forEach(emoji => {
+											if(emoji.name=='eight'){
+												message.react(emoji)
+											}
+										});
+									}else if(i == 8){
+										message.guild.emojis.cache.array().forEach(emoji => {
+											if(emoji.name=='nine'){
+												message.react(emoji)
+											}
+										});
+									}else if(i == 9){
+										message.guild.emojis.cache.array().forEach(emoji => {
+											if(emoji.name=='ten'){
 												message.react(emoji)
 											}
 										});
