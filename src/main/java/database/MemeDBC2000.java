@@ -119,12 +119,12 @@ public class MemeDBC2000 extends Thread{
                         break;
 
                     case PROMOTE_MEME:
-                        username = db.promote(msg.getId(), msg.getUsername());
+                        username = db.promote(msg.getId(), msg.getUsername(), msg.getTags());
                         link = db.get(msg.getId());
                         if(link != null && username != null){
                             outputQ.put(new MemeDBMsg2000()
                                     .type(CURATE_RESULT)
-                                    .message("This meme has been approved.")
+                                    .message("This meme has been approved with tags: " + msg.getTags().toString())
                                     .id(msg.getId())
                                     .link(link)
                                     .username(username)

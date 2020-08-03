@@ -94,7 +94,8 @@ public class MemeDBC2000Test {
 
             inputQ.put(new MemeDBMsg2000()
                     .type(PROMOTE_MEME).id(1)
-                    .username("Ziggy"));
+                    .username("Ziggy")
+                    .tags(Arrays.asList("bread", "seals", "Charlie")));
             msg = (MemeDBMsg2000) outputQ.take();
             assertEquals(CURATE_RESULT, msg.getType());
             assertEquals((Integer) 1, msg.getId());
@@ -419,6 +420,7 @@ public class MemeDBC2000Test {
                         .type(getRandCurateMsg())
                         .id(i)
                         .username("Ziggy")
+                        .tags(Arrays.asList("testtag", "testing tags"))
                 );
                 outputQ.take();
             }
