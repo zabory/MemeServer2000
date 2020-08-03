@@ -8,7 +8,7 @@ import org.json.JSONObject;
  * @version 2000
  * @since 2000
  */
-public class MemeBotMsg2000 {
+public class MemeBotMsg3000 {
 
 	private String user;
 	private String command;
@@ -28,7 +28,7 @@ public class MemeBotMsg2000 {
 	 * @param admin If the message comes from a user with admin
 	 * @param url embedded URL of an image
 	 */
-	public MemeBotMsg2000(String user, String command, String body, long channelID, boolean admin, String url, String tags) {
+	public MemeBotMsg3000(String user, String command, String body, long channelID, boolean admin, String url, String tags) {
 		this.user = user;
 		this.command = command;
 		this.body = body.toLowerCase();
@@ -41,7 +41,7 @@ public class MemeBotMsg2000 {
 	/**
 	 * Default constructor for class, setting everything to the default value
 	 */
-	public MemeBotMsg2000() {
+	public MemeBotMsg3000() {
 		this("", "", "", 0, false, "", "");
 	}
 
@@ -50,7 +50,7 @@ public class MemeBotMsg2000 {
 	 * 
 	 * @param jObject JSON object of the message
 	 */
-	public MemeBotMsg2000(JSONObject jObject) {
+	public MemeBotMsg3000(JSONObject jObject) {
 		
 		if(jObject.has("user")) {
 			user = jObject.getString("user");
@@ -164,37 +164,37 @@ public class MemeBotMsg2000 {
 		this.url = url;
 	}
 
-	public MemeBotMsg2000 user(String user) {
+	public MemeBotMsg3000 user(String user) {
 		this.user = user;
 		return this;
 	}
 
-	public MemeBotMsg2000 command(String command) {
+	public MemeBotMsg3000 command(String command) {
 		this.command = command;
 		return this;
 	}
 
-	public MemeBotMsg2000 body(String body) {
+	public MemeBotMsg3000 body(String body) {
 		this.body = body;
 		return this;
 	}
 
-	public MemeBotMsg2000 channelID(long channelID) {
+	public MemeBotMsg3000 channelID(long channelID) {
 		this.channelID = channelID;
 		return this;
 	}
 	
-	public MemeBotMsg2000 admin(boolean admin) {
+	public MemeBotMsg3000 admin(boolean admin) {
 		this.admin = admin;
 		return this;
 	}
 	
-	public MemeBotMsg2000 url(String url) {
+	public MemeBotMsg3000 url(String url) {
 		this.url = url;
 		return this;
 	}
 	
-	public MemeBotMsg2000 tags(String tags) {
+	public MemeBotMsg3000 tags(String tags) {
 		this.tags = tags;
 		return this;
 	}

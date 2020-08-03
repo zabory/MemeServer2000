@@ -9,7 +9,7 @@ import java.io.OutputStreamWriter;
 import app.MemeConfigLoader3000;
 import org.json.JSONObject;
 
-public class MemeBot2000 {
+public class MemeBot3000 {
 	
 	private BufferedReader input;
 	private BufferedReader error;
@@ -17,7 +17,7 @@ public class MemeBot2000 {
 	
 	private Process bot;
 	
-	public MemeBot2000(MemeConfigLoader3000 botConfig) {
+	public MemeBot3000(MemeConfigLoader3000 botConfig) {
 		
 		ProcessBuilder pb = new ProcessBuilder();
 		pb.command("cmd.exe", "/c", "node MemeBot2000.js");

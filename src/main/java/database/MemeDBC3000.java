@@ -1,27 +1,27 @@
 package database;
 
 import app.MemeConfigLoader3000;
-import datastructures.MemeDBMsg2000;
+import datastructures.MemeDBMsg3000;
 import datastructures.MemeLogger3000;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
-import static datastructures.MemeDBMsg2000.MsgDBType.*;
+import static datastructures.MemeDBMsg3000.MsgDBType.*;
 
 /**
  *
  * Performs actions on the DB based off of instruction in the inputQ and puts the output into the outputQ
  */
-public class MemeDBC2000 extends Thread{
-    private MemeDB2000 db;
+public class MemeDBC3000 extends Thread{
+    private MemeDB3000 db;
     private MemeConfigLoader3000 config;
     private MemeLogger3000 logger;
-    private BlockingQueue<MemeDBMsg2000> outputQ;
-    private BlockingQueue<MemeDBMsg2000> inputQ;
+    private BlockingQueue<MemeDBMsg3000> outputQ;
+    private BlockingQueue<MemeDBMsg3000> inputQ;
 
-    public MemeDBC2000(MemeConfigLoader3000 config, MemeLogger3000 logger, BlockingQueue inQ, BlockingQueue outQ){
-        db = new MemeDB2000(config, logger);
+    public MemeDBC3000(MemeConfigLoader3000 config, MemeLogger3000 logger, BlockingQueue inQ, BlockingQueue outQ){
+        db = new MemeDB3000(config, logger);
         db.open();
         this.config = config;
         this.outputQ = outQ;
@@ -32,7 +32,7 @@ public class MemeDBC2000 extends Thread{
         String link, username;
         Integer id ;
         List<String> tags;
-        MemeDBMsg2000 msg;
+        MemeDBMsg3000 msg;
         while(true){
             try {
                 msg = inputQ.take();
@@ -46,7 +46,7 @@ public class MemeDBC2000 extends Thread{
                         // any cache memes need to be added to the Q
                         ids = db.getAllCacheIds();
                         for(Integer theid : ids){
-                            outputQ.put(new MemeDBMsg2000()
+                            outputQ.put(new MemeDBMsg3000()
                                     .type(REPLENISH_Q)
                                     .id(theid)
                             );
@@ -54,18 +54,18 @@ public class MemeDBC2000 extends Thread{
 
                         // send all the existing tags tot he info channel
                         tags = db.getTags();
-                        outputQ.put(new MemeDBMsg2000()
+                        outputQ.put(new MemeDBMsg3000()
                                 .type(ALL_TAGS)
                                 .tags(tags)
                         );
 
                         // confirm with switchboard that DB inited
-                        outputQ.put(new MemeDBMsg2000().type(INIT_ACK));
+                        outputQ.put(new MemeDBMsg3000().type(INIT_ACK));
                         break;
 
                     case GET_TAGS:
                         tags = db.getTags();
-                        outputQ.put(new MemeDBMsg2000()
+                        outputQ.put(new MemeDBMsg3000()
                                 .type(ALL_TAGS)
                                 .tags(tags)
                         );
@@ -75,7 +75,7 @@ public class MemeDBC2000 extends Thread{
                         link = db.getCache(msg.getId());
                         tags = db.getTags(msg.getId());
                         if(link != null){
-                            outputQ.put(new MemeDBMsg2000()
+                            outputQ.put(new MemeDBMsg3000()
                                     .type(APPROVE_MEME)
                                     .id(msg.getId())
                                     .link(link)
@@ -89,7 +89,7 @@ public class MemeDBC2000 extends Thread{
                     case GET_MEME_TAGS:
                         link = db.get(msg.getTags());
                         if(link != null){
-                            outputQ.put(new MemeDBMsg2000()
+                            outputQ.put(new MemeDBMsg3000()
                                     .type(MEME)
                                     .link(link)
                                     .id(msg.getId())
@@ -104,7 +104,7 @@ public class MemeDBC2000 extends Thread{
                     case STORE_MEME:
                             id = db.store(msg.getUsername(), msg.getLink(), msg.getTags());
                             if(id != null){
-                                outputQ.put(new MemeDBMsg2000()
+                                outputQ.put(new MemeDBMsg3000()
                                         .type(SUBMIT_ACK)
                                         .username(msg.getUsername())
                                         .message("Stored meme to MemeDB")
@@ -118,7 +118,7 @@ public class MemeDBC2000 extends Thread{
                     case CACHE_MEME:
                         id = db.cache(msg.getUsername(), msg.getLink(), msg.getTags());
                         if(id != null){
-                            outputQ.put(new MemeDBMsg2000()
+                            outputQ.put(new MemeDBMsg3000()
                                     .type(SUBMIT_ACK)
                                     .id(id)
                                     .username(msg.getUsername())
@@ -133,7 +133,7 @@ public class MemeDBC2000 extends Thread{
                         username = db.promote(msg.getId(), msg.getUsername(), msg.getTags());
                         link = db.get(msg.getId());
                         if(link != null && username != null){
-                            outputQ.put(new MemeDBMsg2000()
+                            outputQ.put(new MemeDBMsg3000()
                                     .type(CURATE_RESULT)
                                     .message("This meme has been approved with tags: " + msg.getTags().toString())
                                     .id(msg.getId())
@@ -149,7 +149,7 @@ public class MemeDBC2000 extends Thread{
                         link = db.get(msg.getId());
                         username = db.demote(msg.getId());
                         if(link != null && username != null){
-                            outputQ.put(new MemeDBMsg2000()
+                            outputQ.put(new MemeDBMsg3000()
                                     .type(REPLENISH_Q)
                                     .id(msg.getId())
                                     .link(link)
@@ -164,7 +164,7 @@ public class MemeDBC2000 extends Thread{
                         link = db.getCache(msg.getId());
                         username = db.reject(msg.getId());
                         if(link != null && username != null){
-                            outputQ.put(new MemeDBMsg2000()
+                            outputQ.put(new MemeDBMsg3000()
                                     .type(CURATE_RESULT)
                                     .message("This meme has been rejected.")
                                     .id(msg.getId())
@@ -197,9 +197,9 @@ public class MemeDBC2000 extends Thread{
      * @param fatal indicates if this error breaks the controller
      * @throws InterruptedException
      */
-    private void getDBError(MemeDBMsg2000 msg, Boolean fatal){
-        MemeDBMsg2000 errorMsg = new MemeDBMsg2000()
-                                    .type(MemeDBMsg2000.MsgDBType.ERROR)
+    private void getDBError(MemeDBMsg3000 msg, Boolean fatal){
+        MemeDBMsg3000 errorMsg = new MemeDBMsg3000()
+                                    .type(MemeDBMsg3000.MsgDBType.ERROR)
                                     .message((fatal ? "[ FATAL ] " : "") + db.getError())
                                     .tags(msg.getTags())
                                     .username(msg.getUsername())

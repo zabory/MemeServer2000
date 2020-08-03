@@ -10,7 +10,7 @@ import app.MemeConfigLoader3000;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import datastructures.MemeBotMsg2000;
+import datastructures.MemeBotMsg3000;
 
 /**
  * An interfacer between the memeBot and the main thread.
@@ -19,12 +19,12 @@ import datastructures.MemeBotMsg2000;
  * @version 2000
  * @since 2000
  */
-public class MemeBotInterfacer2000 {
+public class MemeBotInterfacer3000 {
 	
 	//input from main thread
-	private BlockingQueue<MemeBotMsg2000> input;
+	private BlockingQueue<MemeBotMsg3000> input;
 	//output to main thread
-	private BlockingQueue<MemeBotMsg2000> output;
+	private BlockingQueue<MemeBotMsg3000> output;
 	
 	//input from bot
 	private BufferedReader botInput;
@@ -34,15 +34,15 @@ public class MemeBotInterfacer2000 {
 	private BufferedWriter botOutput;
 	
 	//actual bot
-	private MemeBot2000 bot;
+	private MemeBot3000 bot;
 	
-	public MemeBotInterfacer2000(MemeConfigLoader3000 config, BlockingQueue<MemeBotMsg2000> botInputQ, BlockingQueue<MemeBotMsg2000> botOutputQ) {
+	public MemeBotInterfacer3000(MemeConfigLoader3000 config, BlockingQueue<MemeBotMsg3000> botInputQ, BlockingQueue<MemeBotMsg3000> botOutputQ) {
 				
 		this.input = botInputQ;
 		this.output = botOutputQ;
 		
 		//launch bot
-		bot = new MemeBot2000(config);
+		bot = new MemeBot3000(config);
 		
 		//get bot streams
 		botInput = bot.getBotOutput();
@@ -108,7 +108,7 @@ public class MemeBotInterfacer2000 {
 						in.put("command", "print");
 					}
 					
-					output.add(new MemeBotMsg2000(in));
+					output.add(new MemeBotMsg3000(in));
 				} catch (JSONException | IOException e) {
 					e.printStackTrace();
 				}
@@ -136,7 +136,7 @@ public class MemeBotInterfacer2000 {
 		}
 	}
 
-	public Queue<MemeBotMsg2000> getOutput() {
+	public Queue<MemeBotMsg3000> getOutput() {
 		return output;
 	}
 	

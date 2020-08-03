@@ -10,7 +10,7 @@ import java.util.List;
 
 import static datastructures.MemeLogger3000.level.ERROR;
 
-public class MemeDB2000 {
+public class MemeDB3000 {
     /*
      *
      * VARS AND SUCH
@@ -50,7 +50,7 @@ public class MemeDB2000 {
      * Constructor
      * @param config the config object
      */
-    MemeDB2000(MemeConfigLoader3000 config, MemeLogger3000 logger) {
+    MemeDB3000(MemeConfigLoader3000 config, MemeLogger3000 logger) {
         this.config = config;
         this.logger = logger;
         this.db = "jdbc:sqlite:" + config.getDatabaseLocation();

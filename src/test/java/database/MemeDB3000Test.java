@@ -12,8 +12,8 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-public class MemeDB2000Test {
-    static MemeDB2000 memebase;
+public class MemeDB3000Test {
+    static MemeDB3000 memebase;
     static MemeConfigLoader3000 config;
 
     @BeforeClass
@@ -23,7 +23,7 @@ public class MemeDB2000Test {
         context.refresh();
         config = context.getBean(MemeConfigLoader3000.class);
         context.close();
-        memebase = new MemeDB2000(config, new MemeLogger3000());
+        memebase = new MemeDB3000(config, new MemeLogger3000());
     }
 
     @Before

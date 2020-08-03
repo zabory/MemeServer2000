@@ -2,7 +2,7 @@ package datastructures;
 
 import java.util.List;
 
-public class MemeDBMsg2000 {
+public class MemeDBMsg3000 {
     public enum MsgDBType {
         // To MemeDB message types
         GET_MEME_ID,            // Used to get a specific meme to approve
@@ -36,7 +36,7 @@ public class MemeDBMsg2000 {
     private Long channelID;
 
     // Default
-    public MemeDBMsg2000() {
+    public MemeDBMsg3000() {
         this.type = null;
         this.message = null;
         this.link = null;
@@ -46,37 +46,37 @@ public class MemeDBMsg2000 {
         this.channelID = null;
     }
 
-    public MemeDBMsg2000 type(MsgDBType type) {
+    public MemeDBMsg3000 type(MsgDBType type) {
         this.type = type;
         return this;
     }
 
-    public MemeDBMsg2000 message(String message) {
+    public MemeDBMsg3000 message(String message) {
         this.message = message;
         return this;
     }
 
-    public MemeDBMsg2000 link(String link) {
+    public MemeDBMsg3000 link(String link) {
         this.link = link;
         return this;
     }
 
-    public MemeDBMsg2000 id(Integer id) {
+    public MemeDBMsg3000 id(Integer id) {
         this.id = id;
         return this;
     }
 
-    public MemeDBMsg2000 tags(List<String> tags) {
+    public MemeDBMsg3000 tags(List<String> tags) {
         this.tags = tags;
         return this;
     }
 
-    public MemeDBMsg2000 username(String username) {
+    public MemeDBMsg3000 username(String username) {
         this.username = username;
         return this;
     }
 
-    public MemeDBMsg2000 channelID(Long channelID) {
+    public MemeDBMsg3000 channelID(Long channelID) {
         this.channelID = channelID;
         return this;
     }

@@ -1,15 +1,15 @@
 package app;
 
-import bot.MemeBotInterfacer2000;
+import bot.MemeBotInterfacer3000;
 import datastructures.MemeLogger3000;
-import datastructures.MemeBotMsg2000;
-import datastructures.MemeDBMsg2000;
-import database.MemeDBC2000;
+import datastructures.MemeBotMsg3000;
+import datastructures.MemeDBMsg3000;
+import database.MemeDBC3000;
 
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import static datastructures.MemeDBMsg2000.MsgDBType.*;
+import static datastructures.MemeDBMsg3000.MsgDBType.*;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -32,10 +32,10 @@ public class MemeSwitchboard3000 {
 		MemeLogger3000 logger = new MemeLogger3000();
 
 		//create the Qs
-		BlockingQueue<MemeBotMsg2000> botOutputQ = new LinkedBlockingQueue<MemeBotMsg2000>(qCapacity);
-		BlockingQueue<MemeBotMsg2000> botInputQ = new LinkedBlockingQueue<MemeBotMsg2000>(qCapacity);
-		BlockingQueue<MemeDBMsg2000> dbOutputQ = new LinkedBlockingQueue<MemeDBMsg2000>(qCapacity);
-		BlockingQueue<MemeDBMsg2000> dbInputQ = new LinkedBlockingQueue<MemeDBMsg2000>(qCapacity);
+		BlockingQueue<MemeBotMsg3000> botOutputQ = new LinkedBlockingQueue<MemeBotMsg3000>(qCapacity);
+		BlockingQueue<MemeBotMsg3000> botInputQ = new LinkedBlockingQueue<MemeBotMsg3000>(qCapacity);
+		BlockingQueue<MemeDBMsg3000> dbOutputQ = new LinkedBlockingQueue<MemeDBMsg3000>(qCapacity);
+		BlockingQueue<MemeDBMsg3000> dbInputQ = new LinkedBlockingQueue<MemeDBMsg3000>(qCapacity);
 		BlockingQueue<Integer> approveQ = new LinkedBlockingQueue<Integer>(qCapacity);
 
 		logger.println("Loading the config...");
@@ -46,17 +46,17 @@ public class MemeSwitchboard3000 {
 		context.close();
 
 		logger.println("Initializing the DB...");
-		MemeDBC2000 dbController = new MemeDBC2000(config, logger, dbInputQ, dbOutputQ);
+		MemeDBC3000 dbController = new MemeDBC3000(config, logger, dbInputQ, dbOutputQ);
 		MemeDBReader3000 dbReader = new MemeDBReader3000(logger, config, botInputQ, dbOutputQ, dbInputQ, approveQ);
 		dbController.start();
 		dbReader.start();
-		dbInputQ.add(new MemeDBMsg2000().type(INITIALIZE));
+		dbInputQ.add(new MemeDBMsg3000().type(INITIALIZE));
 
 		logger.println("Waiting for initialization ACK from DB...");
-		BlockingQueue<MemeBotMsg2000> tempQ = new LinkedBlockingQueue<MemeBotMsg2000>(qCapacity);
+		BlockingQueue<MemeBotMsg3000> tempQ = new LinkedBlockingQueue<MemeBotMsg3000>(qCapacity);
 		try {
 			while(true){
-				MemeBotMsg2000 msg = botInputQ.take();
+				MemeBotMsg3000 msg = botInputQ.take();
 				if(msg.getCommand().equals("INIT"))
 					break;
 				else
@@ -68,10 +68,11 @@ public class MemeSwitchboard3000 {
 		logger.println("The DB has been initialized");
 
 		logger.println("Initializing the bot...");
-		botInputQ.add(new MemeBotMsg2000().command("clearQueue"));
-		MemeBotInterfacer2000 memeBotInterfacer = new MemeBotInterfacer2000(config, botInputQ, botOutputQ);
+		botInputQ.add(new MemeBotMsg3000().command("clearQueue"));
+		MemeBotInterfacer3000 memeBotInterfacer = new MemeBotInterfacer3000(config, botInputQ, botOutputQ);
 		MemeBotReader3000 botReader = new MemeBotReader3000(logger, botOutputQ, dbInputQ, approveQ);
 		botReader.start();
+		logger.println("The bot has been initialized");
 
 		logger.println("We're ready to GO!");
 	}
