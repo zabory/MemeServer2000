@@ -34,7 +34,6 @@ public class MemeSwitchboard3000 {
 		//create the Qs
 		BlockingQueue<MemeBotMsg3000> botOutputQ = new LinkedBlockingQueue<MemeBotMsg3000>(qCapacity);
 		BlockingQueue<MemeBotMsg3000> botInputQ = new LinkedBlockingQueue<MemeBotMsg3000>(qCapacity);
-		botInputQ.add(new MemeBotMsg3000().command("clearQueue"));
 		BlockingQueue<MemeDBMsg3000> dbOutputQ = new LinkedBlockingQueue<MemeDBMsg3000>(qCapacity);
 		BlockingQueue<MemeDBMsg3000> dbInputQ = new LinkedBlockingQueue<MemeDBMsg3000>(qCapacity);
 		BlockingQueue<Integer> approveQ = new LinkedBlockingQueue<Integer>(qCapacity);
@@ -58,8 +57,10 @@ public class MemeSwitchboard3000 {
 		try {
 			while(true){
 				MemeBotMsg3000 msg = botInputQ.take();
-				if(msg.getCommand().equals("INIT"))
+				if(msg.getCommand().equals("INIT")) {
+					botInputQ.add(new MemeBotMsg3000().command("clearQueue"));
 					break;
+				}
 				else
 					tempQ.put(msg);
 			}
