@@ -34,6 +34,7 @@ public class MemeSwitchboard3000 {
 		//create the Qs
 		BlockingQueue<MemeBotMsg3000> botOutputQ = new LinkedBlockingQueue<MemeBotMsg3000>(qCapacity);
 		BlockingQueue<MemeBotMsg3000> botInputQ = new LinkedBlockingQueue<MemeBotMsg3000>(qCapacity);
+		botInputQ.add(new MemeBotMsg3000().command("clearQueue"));
 		BlockingQueue<MemeDBMsg3000> dbOutputQ = new LinkedBlockingQueue<MemeDBMsg3000>(qCapacity);
 		BlockingQueue<MemeDBMsg3000> dbInputQ = new LinkedBlockingQueue<MemeDBMsg3000>(qCapacity);
 		BlockingQueue<Integer> approveQ = new LinkedBlockingQueue<Integer>(qCapacity);
@@ -68,7 +69,6 @@ public class MemeSwitchboard3000 {
 		logger.println("The DB has been initialized");
 
 		logger.println("Initializing the bot...");
-		botInputQ.add(new MemeBotMsg3000().command("clearQueue"));
 		MemeBotInterfacer3000 memeBotInterfacer = new MemeBotInterfacer3000(config, botInputQ, botOutputQ);
 		MemeBotReader3000 botReader = new MemeBotReader3000(logger, botOutputQ, dbInputQ, approveQ);
 		botReader.start();
