@@ -22,6 +22,7 @@ public class MemeDBC3000 extends Thread{
 
     public MemeDBC3000(MemeConfigLoader3000 config, MemeLogger3000 logger, BlockingQueue inQ, BlockingQueue outQ){
         db = new MemeDB3000(config, logger);
+        this.logger = logger;
         db.open();
         this.config = config;
         this.outputQ = outQ;
