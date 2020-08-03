@@ -41,7 +41,7 @@ public class MemeBotReader3000 extends Thread{
                         tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getTags().split("\\s*,\\s*"))));
                         LinkedList<String> finalTags2 = tags;
                         tags.forEach(e -> {
-                            finalTags2.set(finalTags2.indexOf(e), e.trim().replace("\"", "").replace(";", "").replace("[", "").replace("]", ""));
+                            finalTags2.set(finalTags2.indexOf(e), e.trim().replace("\"", "").replace(";", "").replace("[", "").replace("]", "").toLowerCase());
                         });
                         newMsg = new MemeDBMsg3000().type(PROMOTE_MEME).username(msg.getUser()).id(approveQ.peek()).tags(new LinkedList<String>(tags));
                         break;
@@ -50,7 +50,7 @@ public class MemeBotReader3000 extends Thread{
                         tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getBody().split("\\s*,\\s*"))));
                         LinkedList<String> finalTags1 = tags;
                         tags.forEach(e -> {
-                            finalTags1.set(finalTags1.indexOf(e), e.trim().replace("\"", "").replace(";", "").replace("[", "").replace("]", ""));
+                            finalTags1.set(finalTags1.indexOf(e), e.trim().replace("\"", "").replace(";", "").replace("[", "").replace("]", "").toLowerCase());
                         });
                         newMsg = new MemeDBMsg3000().type(GET_MEME_TAGS).tags(new LinkedList<String>(tags)).username(msg.getUser()).channelID(msg.getChannelID());
                         break;
@@ -59,7 +59,7 @@ public class MemeBotReader3000 extends Thread{
                         tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getBody().split("\\s*,\\s*"))));
                         LinkedList<String> finalTags = tags;
                         tags.forEach(e -> {
-                            finalTags.set(finalTags.indexOf(e), e.trim().replace("\"", "").replace(";", "").replace("[", "").replace("]", ""));
+                            finalTags.set(finalTags.indexOf(e), e.trim().replace("\"", "").replace(";", "").replace("[", "").replace("]", "").toLowerCase());
                         });
                         newMsg = new MemeDBMsg3000().link(msg.getUrl()).tags(tags).username(msg.getUser()).channelID(msg.getChannelID());
                         if(msg.isAdmin()) {

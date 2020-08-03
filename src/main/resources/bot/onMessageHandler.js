@@ -7,7 +7,7 @@ module.exports = {
 			// get username of sent message
 			user = data.author.username
 			
-			if(user != 'MemeBot2000' && user != 'MemeBotTester'){
+			if(user != 'MemeBot3000' && user != 'MemeBotTester'){
 				
 				// get the channel id
 				channel = data.channel.id
