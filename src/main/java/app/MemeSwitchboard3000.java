@@ -25,7 +25,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 @SpringBootApplication
 public class MemeSwitchboard3000 {
-	private static final Integer qCapacity = 100;
+	private static final Integer qCapacity = 1000;
 
 	public static void main(String[] args) throws IOException {
 		// parent logger
