@@ -1,6 +1,7 @@
 package database;
 
 import app.MemeConfigLoader3000;
+import datastructures.MemeLogger3000;
 import org.junit.*;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -22,7 +23,7 @@ public class MemeDB2000Test {
         context.refresh();
         config = context.getBean(MemeConfigLoader3000.class);
         context.close();
-        memebase = new MemeDB2000(config);
+        memebase = new MemeDB2000(config, new MemeLogger3000());
     }
 
     @Before

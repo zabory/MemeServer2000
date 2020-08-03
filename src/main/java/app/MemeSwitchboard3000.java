@@ -15,12 +15,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
- * 
+ *
  * @author Ben Shabowski
  * @author Jacob Marszalek
  * @version 3000
  * @since 2000
- * 
+ *
  */
 
 @SpringBootApplication
@@ -50,7 +50,7 @@ public class MemeSwitchboard3000 {
 		MemeBotReader3000 botReader = new MemeBotReader3000(logger, botOutputQ, dbInputQ, approveQ);
 
 		logger.println("Constructing classes to connect to the DB...");
-		MemeDBC2000 dbController = new MemeDBC2000(config, dbInputQ, dbOutputQ);
+		MemeDBC2000 dbController = new MemeDBC2000(config, logger, dbInputQ, dbOutputQ);
 		MemeDBReader3000 dbReader = new MemeDBReader3000(logger, config, botInputQ, dbOutputQ, dbInputQ, approveQ);
 
 		logger.println("Spinning up threads for controllers and readers...");

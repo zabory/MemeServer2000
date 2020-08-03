@@ -2,6 +2,7 @@ package database;
 
 import app.MemeConfigLoader3000;
 import datastructures.MemeDBMsg2000;
+import datastructures.MemeLogger3000;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -15,11 +16,12 @@ import static datastructures.MemeDBMsg2000.MsgDBType.*;
 public class MemeDBC2000 extends Thread{
     private MemeDB2000 db;
     private MemeConfigLoader3000 config;
+    private MemeLogger3000 logger;
     private BlockingQueue<MemeDBMsg2000> outputQ;
     private BlockingQueue<MemeDBMsg2000> inputQ;
 
-    public MemeDBC2000(MemeConfigLoader3000 config, BlockingQueue inQ, BlockingQueue outQ){
-        db = new MemeDB2000(config);
+    public MemeDBC2000(MemeConfigLoader3000 config, MemeLogger3000 logger, BlockingQueue inQ, BlockingQueue outQ){
+        db = new MemeDB2000(config, logger);
         db.open();
         this.config = config;
         this.outputQ = outQ;
@@ -49,7 +51,6 @@ public class MemeDBC2000 extends Thread{
                                 .type(ALL_TAGS)
                                 .tags(tags)
                         );
-
                         break;
 
                     case GET_TAGS:
@@ -170,15 +171,10 @@ public class MemeDBC2000 extends Thread{
                         return;
 
                     default:
-                        System.out.println("MemeDBC cannot handle a message of type: " + msg.getType().toString());
+                        logger.println(MemeLogger3000.level.ERROR, "MemeDBC cannot handle a message of type: " + msg.getType().toString());
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
-                System.out.println("Cannot output error to outputQ.\n" +
-                        "Msg type: " + msg.getType() +
-                        "Tags: " + msg.getTags() +
-                        "Username: " + msg.getUsername() +
-                        "ID: " + msg.getId());
+                logger.println(MemeLogger3000.level.ERROR, e.getStackTrace().toString());
                 db.close();
                 return;
             }
@@ -201,12 +197,12 @@ public class MemeDBC2000 extends Thread{
         try {
             outputQ.put(errorMsg);
         } catch (InterruptedException e) {
-            e.printStackTrace();
-            System.out.println("Cannot output error to outputQ.\n" +
-                    "Msg type: " + msg.getType() +
-                    "Tags: " + msg.getTags() +
-                    "Username: " + msg.getUsername() +
-                    "ID: " + msg.getId());
+            logger.println(MemeLogger3000.level.ERROR, "Cannot output error to outputQ." +
+                    "\nMsg type: " + msg.getType() +
+                    "\nTags: " + msg.getTags() +
+                    "\nUsername: " + msg.getUsername() +
+                    "\nID: " + msg.getId() +
+                    "\n Stacktrace: " + e.getStackTrace().toString());
         }
     }
 

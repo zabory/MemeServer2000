@@ -93,7 +93,7 @@ public class MemeLogger3000 {
 	 */
 	public void println(level logLevel, String message) {
 		String classTag = "";
-		int spaceFactor = 24;
+		int spaceFactor = 28;
 		for(StackTraceElement element : Thread.currentThread().getStackTrace()){
 			if(!element.getClassName().equals(Thread.currentThread().getStackTrace()[0].getClassName())) {
 				String className = element.getClassName().replaceAll(".*\\.", "");

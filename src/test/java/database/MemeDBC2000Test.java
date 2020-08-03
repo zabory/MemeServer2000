@@ -2,6 +2,7 @@ package database;
 
 import app.MemeConfigLoader3000;
 import datastructures.MemeDBMsg2000;
+import datastructures.MemeLogger3000;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -39,7 +40,7 @@ public class MemeDBC2000Test {
         // connect to the db
         inputQ = new LinkedBlockingQueue(100);
         outputQ = new LinkedBlockingQueue(100);
-        controller = new MemeDBC2000(config, inputQ, outputQ);
+        controller = new MemeDBC2000(config, new MemeLogger3000(), inputQ, outputQ);
         controller.start();
     }
 

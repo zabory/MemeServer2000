@@ -1,12 +1,14 @@
 package database;
 
 import app.MemeConfigLoader3000;
+import datastructures.MemeLogger3000;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
+
+import static datastructures.MemeLogger3000.level.ERROR;
 
 public class MemeDB2000 {
     /*
@@ -30,6 +32,7 @@ public class MemeDB2000 {
     }
 
     private MemeConfigLoader3000 config;
+    private MemeLogger3000 logger;
     private String db;
     static String memeTableName, cacheTableName, tagLkpTableName;
     static List<String> tableDefs;
@@ -47,8 +50,9 @@ public class MemeDB2000 {
      * Constructor
      * @param config the config object
      */
-    MemeDB2000(MemeConfigLoader3000 config) {
+    MemeDB2000(MemeConfigLoader3000 config, MemeLogger3000 logger) {
         this.config = config;
+        this.logger = logger;
         this.db = "jdbc:sqlite:" + config.getDatabaseLocation();
         this.memeTableName = config.getMemeTableName();
         this.cacheTableName = config.getCacheTableName();
@@ -547,7 +551,7 @@ public class MemeDB2000 {
      */
     private void error(String error){
         errorMsg = error;
-        System.out.println(errorMsg);
+        logger.println(ERROR, errorMsg);
     }
 
     /**
@@ -569,7 +573,7 @@ public class MemeDB2000 {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
                 errorMsg = "Encountered an error inserting tag " + tag + " into DB, rolling back...";
-                System.out.println(errorMsg);
+                error(errorMsg);
                 rollback();
                 return false;
             }
@@ -676,7 +680,7 @@ public class MemeDB2000 {
         try {
             conn.rollback();
             errorMsg = "[ ROLLBACK ] " + errorMsg;
-            System.out.println("Performing DB rollback...");
+            error("Performing DB rollback...");
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -690,7 +694,7 @@ public class MemeDB2000 {
         try {
             conn.commit();
         } catch (SQLException e) {
-            System.out.println("Failed to commit");
+            error("Failed to commit");
             e.printStackTrace();
             return false;
         }
