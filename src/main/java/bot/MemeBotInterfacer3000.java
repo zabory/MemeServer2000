@@ -74,7 +74,7 @@ public class MemeBotInterfacer3000 {
 		public void run() {
 			while (true) {
 				try {
-					Thread.sleep(250);
+					Thread.sleep(500);
 					String in = input.take().toJSON().toString() + "\n";
 					
 					botOutput.write(in);
