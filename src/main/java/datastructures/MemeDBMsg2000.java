@@ -17,6 +17,7 @@ public class MemeDBMsg2000 {
         GET_TAGS,               // Used to get all available tags in the DB
 
         // To MemeServer message types
+        INIT_ACK,               // Used to tell switchboard that DB initialization has completed
         REPLENISH_Q,            // Used to pass cached meme ID that still hasnt been approved
         ALL_TAGS,               // Used to pass all tags available back to the bot
         SUBMIT_ACK,             // Used to pass ACK info back to the bot after a submission (cache or store)

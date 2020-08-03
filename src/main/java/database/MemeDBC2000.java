@@ -52,11 +52,15 @@ public class MemeDBC2000 extends Thread{
                             );
                         }
 
+                        // send all the existing tags tot he info channel
                         tags = db.getTags();
                         outputQ.put(new MemeDBMsg2000()
                                 .type(ALL_TAGS)
                                 .tags(tags)
                         );
+
+                        // confirm with switchboard that DB inited
+                        outputQ.put(new MemeDBMsg2000().type(INIT_ACK));
                         break;
 
                     case GET_TAGS:

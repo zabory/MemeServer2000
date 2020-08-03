@@ -45,22 +45,33 @@ public class MemeSwitchboard3000 {
 		MemeConfigLoader3000 config = context.getBean(MemeConfigLoader3000.class);
 		context.close();
 
-		logger.println("Constructing classes to connect to the bot...");
-		MemeBotInterfacer2000 memeBotInterfacer = new MemeBotInterfacer2000(config, botInputQ, botOutputQ);
-		MemeBotReader3000 botReader = new MemeBotReader3000(logger, botOutputQ, dbInputQ, approveQ);
-
-		logger.println("Constructing classes to connect to the DB...");
+		logger.println("Initializing the DB...");
 		MemeDBC2000 dbController = new MemeDBC2000(config, logger, dbInputQ, dbOutputQ);
 		MemeDBReader3000 dbReader = new MemeDBReader3000(logger, config, botInputQ, dbOutputQ, dbInputQ, approveQ);
-
-		logger.println("Spinning up threads for controllers and readers...");
 		dbController.start();
 		dbReader.start();
-		botReader.start();
-
-		logger.println("Initializing DB and bot...");
-		botInputQ.add(new MemeBotMsg2000().command("clearQueue"));
 		dbInputQ.add(new MemeDBMsg2000().type(INITIALIZE));
+
+		logger.println("Waiting for initialization ACK from DB...");
+		BlockingQueue<MemeBotMsg2000> tempQ = new LinkedBlockingQueue<MemeBotMsg2000>(qCapacity);
+		try {
+			while(true){
+				MemeBotMsg2000 msg = botInputQ.take();
+				if(msg.getCommand().equals("INIT"))
+					break;
+				else
+					tempQ.put(msg);
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		logger.println("The DB has been initialized");
+
+		logger.println("Initializing the bot...");
+		botInputQ.add(new MemeBotMsg2000().command("clearQueue"));
+		MemeBotInterfacer2000 memeBotInterfacer = new MemeBotInterfacer2000(config, botInputQ, botOutputQ);
+		MemeBotReader3000 botReader = new MemeBotReader3000(logger, botOutputQ, dbInputQ, approveQ);
+		botReader.start();
 
 		logger.println("We're ready to GO!");
 	}

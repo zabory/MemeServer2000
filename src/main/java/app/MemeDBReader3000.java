@@ -38,6 +38,11 @@ public class MemeDBReader3000 extends Thread{
             try {
                 msg = dbOutputQ.take();
                 switch(msg.getType()){
+                    case INIT_ACK:
+                        logger.println("Received INIT_ACK");
+                        botInputQ.put(new MemeBotMsg2000().command("INIT"));
+                        break;
+
                     case REPLENISH_Q:
                         logger.println("Meme ID of " + msg.getId() + " was put into pending approval.");
                         approveQ.put(msg.getId());
