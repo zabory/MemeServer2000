@@ -26,3 +26,5 @@ hs_err_pid*
 auth.json
 /.classpath
 /.project
+/doc/
+/logs/

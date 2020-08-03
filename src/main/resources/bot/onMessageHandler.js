@@ -1,13 +1,13 @@
-var auth = require('./auth.json');
+var AD = require('./approveDeny.js')
 
 module.exports = {
 		
-		handle: function(bot, data){
-			
+		handle: function(bot, data, auth){
 			
 			// get username of sent message
 			user = data.author.username
-			if(user != 'MemeBot2000'){
+			
+			if(user != 'MemeBot2000' && user != 'MemeBotTester'){
 				
 				// get the channel id
 				channel = data.channel.id
@@ -15,18 +15,27 @@ module.exports = {
 				// lets make sure the bot doesnt process messages from other channels
 				allowedChannel = true
 				
+				//make sure its not meme approval
 				bot.guilds.cache.array()[0].channels.cache.array().forEach(ch => {
 					if(data.channel.name == ch.name && data.channel.name != 'meme-approval'){
 						allowedChannel = false;
 					}
 				});
 				
-				if(allowedChannel){
+				if(channel != auth.channel){
+					if(data.content.includes('!meme') || data.content.includes('!request')){
+						//if not an allowed channel, treat it like a request
+						json = {"user":user, "channelID":channel, "command":"fetchMeme", "body":data.content.replace("!request ", "").replace("!meme ", "")}
+						
+						console.log(JSON.stringify(json))
+					}else if(/*check to see if its a DM*/data.channel.type == 'dm'){
+						
 					if(data.attachments.size > 0){
 						url = data.attachments.array()[0].url
 					
 						// message content should end up being the tags
 						tags = data.content
+						
 						if(tags != ""){
 							// checks if user has the admin role
 							adminRole = false
@@ -43,12 +52,6 @@ module.exports = {
 							json = {'user':user, 'admin':adminRole, 'channelID':channel, 'url':url, 'body': tags, 'command': 'submitMeme'}
 							console.log(JSON.stringify(json))
 						
-							if(json.admin){
-								//data.reply('Meme submitted to the database')
-							}else{
-								//data.reply('Meme has been submitted to be revied by a curator')
-							}
-						
 						}else{
 							data.reply('Give me tags! Give me taaaags!')
 						}
@@ -56,13 +59,11 @@ module.exports = {
 					}else{
 						data.reply('I dont see a meme here??')
 					}
-				}else{
-					if(data.content.includes('!request')){
-					//if not an allowed channel, treat it like a request
-					json = {"user":user, "channelID":channel, "command":"fetchMeme", "body":data.content.replace("!request ", "")}
-					
-					console.log(JSON.stringify(json))
 				}
+				}else{
+					
+					AD.handle(bot, true, data, user)
+					
 				}
 			}
 			

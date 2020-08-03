@@ -1,4 +1,4 @@
-package dataStructures;
+package datastructures;
 
 import org.json.JSONObject;
 
@@ -8,7 +8,7 @@ import org.json.JSONObject;
  * @version 2000
  * @since 2000
  */
-public class MemeBotMsg2000 {
+public class MemeBotMsg3000 {
 
 	private String user;
 	private String command;
@@ -16,7 +16,8 @@ public class MemeBotMsg2000 {
 	private long channelID;
 	private boolean admin;
 	private String url;
-
+	private JSONObject json;
+	private String tags;
 	/**
 	 * Create a message from variables
 	 * 
@@ -27,20 +28,21 @@ public class MemeBotMsg2000 {
 	 * @param admin If the message comes from a user with admin
 	 * @param url embedded URL of an image
 	 */
-	public MemeBotMsg2000(String user, String command, String body, long channelID, boolean admin, String url) {
+	public MemeBotMsg3000(String user, String command, String body, long channelID, boolean admin, String url, String tags) {
 		this.user = user;
 		this.command = command;
 		this.body = body.toLowerCase();
 		this.channelID = channelID;
 		this.admin = admin;
 		this.url = url;
+		this.tags = tags;
 	}
 
 	/**
 	 * Default constructor for class, setting everything to the default value
 	 */
-	public MemeBotMsg2000() {
-		this("", "", "", 0, false, "");
+	public MemeBotMsg3000() {
+		this("", "", "", 0, false, "", "");
 	}
 
 	/**
@@ -48,7 +50,8 @@ public class MemeBotMsg2000 {
 	 * 
 	 * @param jObject JSON object of the message
 	 */
-	public MemeBotMsg2000(JSONObject jObject) {
+	public MemeBotMsg3000(JSONObject jObject) {
+		
 		if(jObject.has("user")) {
 			user = jObject.getString("user");
 		}
@@ -73,8 +76,11 @@ public class MemeBotMsg2000 {
 			admin = jObject.getBoolean("admin");
 		}
 		
-//		 jObject.getString("body").toLowerCase(),
-//				jObject.getLong("channelID"));
+		if(jObject.has("approvedTags")) {
+			tags = jObject.getString("approvedTags");
+		}
+		
+		json = jObject;
 	}
 
 	/**
@@ -90,7 +96,12 @@ public class MemeBotMsg2000 {
 		j.put("channelID", channelID + "");
 		j.put("admin", admin);
 		j.put("url", url);
+		j.put("tags", tags);
 		return j;
+	}
+	
+	public String toString() {
+		return json.toString();
 	}
 
 	public String getUser() {
@@ -102,7 +113,11 @@ public class MemeBotMsg2000 {
 	}
 
 	public String getCommand() {
-		return command;
+		if(command != null) {
+			return command;
+		}else {
+			return "print";
+		}
 	}
 
 	public void setCommand(String command) {
@@ -111,6 +126,14 @@ public class MemeBotMsg2000 {
 
 	public String getBody() {
 		return body;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
 	}
 
 	public void setBody(String body) {
@@ -141,33 +164,38 @@ public class MemeBotMsg2000 {
 		this.url = url;
 	}
 
-	public MemeBotMsg2000 user(String user) {
+	public MemeBotMsg3000 user(String user) {
 		this.user = user;
 		return this;
 	}
 
-	public MemeBotMsg2000 command(String command) {
+	public MemeBotMsg3000 command(String command) {
 		this.command = command;
 		return this;
 	}
 
-	public MemeBotMsg2000 body(String body) {
+	public MemeBotMsg3000 body(String body) {
 		this.body = body;
 		return this;
 	}
 
-	public MemeBotMsg2000 channelID(long channelID) {
+	public MemeBotMsg3000 channelID(long channelID) {
 		this.channelID = channelID;
 		return this;
 	}
 	
-	public MemeBotMsg2000 admin(boolean admin) {
+	public MemeBotMsg3000 admin(boolean admin) {
 		this.admin = admin;
 		return this;
 	}
 	
-	public MemeBotMsg2000 url(String url) {
+	public MemeBotMsg3000 url(String url) {
 		this.url = url;
+		return this;
+	}
+	
+	public MemeBotMsg3000 tags(String tags) {
+		this.tags = tags;
 		return this;
 	}
 

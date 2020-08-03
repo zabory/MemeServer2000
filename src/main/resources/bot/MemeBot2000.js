@@ -2,7 +2,7 @@ var Discord = require('discord.js');
 var logger = require('winston');
 var readline = require('readline');
 
-var auth = require('./auth.json');
+let auth = {'token':"","channel":"","helpChannel":"","approve":"","deny":""};
 
 var MRH = require('./messageReactionHandler.js')
 var OMH = require('./onMessageHandler.js')
@@ -15,24 +15,70 @@ const consoleInput = readline.createInterface({
 	output: process.stdout
 });
 
+//Input to program from server
+consoleInput.on('line', input => {
+	
+	json = JSON.parse(input)
+	command = json.command
+	
+	if(command == 'start'){
+		auth['token'] = json.token
+		auth['channel'] = json.channel
+		auth['helpChannel'] = json.helpChannel
+		auth['approve'] = json.approve
+		auth['deny'] = json.deny
+		
+		bot.login(auth.token)
+		
+	}else{
+		CIH.handle(bot, input, auth)
+	}
+	
+});
+
 // set activity of the bot
 bot.on('ready', () => {
 	bot.user.setActivity("Someone get this man a meme")
+	//post the tags list if none exists
+	helpChannel = bot.channels.cache.get(auth.helpChannel)
+	
+	foundTagsMessage = false
+	
+	helpChannel.messages.cache.array().forEach(currentMessage => {
+		if(currentMessage.content.includes('Tag list')){
+			foundTagsMessage = true;
+		}
+	});
+	
+	foundCommandsMessage = false
+	
+	helpChannel.messages.cache.array().forEach(currentMessage => {
+		if(currentMessage.content.includes('Command list')){
+			foundCommandsMessage = true;
+		}
+	});
+	
+	bot.guilds.cache.array()[0].channels.cache.array().forEach(channel => {
+		if(channel.type == 'text' && channel.id == auth.helpChannel){
+			channel.bulkDelete(100)
+		}
+	});
+	
+	if(!foundCommandsMessage){
+		helpChannel.send('Command list\n=================\n')
+	}
+	
+	if(!foundTagsMessage){
+		helpChannel.send('Tag list\n=================\n')
+	}
 });
 
 // whenever the bot gets a message
 bot.on('message', data => {
-	OMH.handle(bot, data)
+	OMH.handle(bot, data, auth)
 });
 
 // whenever the bot sees a reaction to a message
-bot.on('messageReactionAdd', (data, userdata) => {
-	MRH.handle(data, userdata)
+bot.on('messageReactionAdd', (data, messageData) => {
+	MRH.handle(data, messageData, bot, auth)
 });
-
-// Input to program from server
-consoleInput.on('line', input => {
-	CIH.handle(bot, input)
-});
-
-bot.login(auth.token)

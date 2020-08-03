@@ -1,4 +1,4 @@
-package app;
+package bot;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-public class MemeBot2000 {
+import app.MemeConfigLoader3000;
+import org.json.JSONObject;
+
+public class MemeBot3000 {
 	
 	private BufferedReader input;
 	private BufferedReader error;
@@ -14,29 +17,50 @@ public class MemeBot2000 {
 	
 	private Process bot;
 	
-	public MemeBot2000() throws IOException {
+	public MemeBot3000(MemeConfigLoader3000 botConfig) {
 		
 		ProcessBuilder pb = new ProcessBuilder();
 		pb.command("cmd.exe", "/c", "node MemeBot2000.js");
 		
-		//TODO we need to find the dir of memebot
 		pb.directory(new File("src\\main\\resources\\bot"));
 		
-		bot = pb.start();
-		
-		//Sleep thread, not like the server can do anything while the bot is booting up and connecting anywas
 		try {
-			Thread.sleep(3500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+			bot = pb.start();
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 		
 		input =  new BufferedReader(new InputStreamReader(bot.getInputStream()));
 		error = new BufferedReader(new InputStreamReader(bot.getErrorStream()));
 		output = new BufferedWriter(new OutputStreamWriter(bot.getOutputStream()));
 
+		try {
+			
+			JSONObject json = new JSONObject();
+			
+			json.put("command", "start");
+			json.put("token", botConfig.getBotToken());
+			json.put("channel", botConfig.getApprovalChannel());
+			json.put("helpChannel", botConfig.getHelpChannel());
+			json.put("approve", botConfig.getApproveEmoji());
+			json.put("deny", botConfig.getDenyEmoji());
+			
+			output.write(json.toString() + "\n");
+			output.flush();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// Sleep thread, not like the server can do anything while the bot is booting up
+		// and connecting anywas
+		try {
+			Thread.sleep(3500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	/**
 	 * Kill the bot process
 	 */

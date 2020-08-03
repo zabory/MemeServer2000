@@ -1,11 +1,16 @@
-package app;
+package database;
+
+import app.MemeConfigLoader3000;
+import datastructures.MemeLogger3000;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MemeDB2000 {
+import static datastructures.MemeLogger3000.level.ERROR;
+
+public class MemeDB3000 {
     /*
      *
      * VARS AND SUCH
@@ -26,33 +31,14 @@ public class MemeDB2000 {
         }
     }
 
+    private MemeConfigLoader3000 config;
+    private MemeLogger3000 logger;
     private String db;
+    static String memeTableName, cacheTableName, tagLkpTableName;
+    static List<String> tableDefs;
     private Integer headID;
     private Connection conn;
     private String errorMsg;
-    static String memeTableName = "memes";
-    static String cacheTableName = "cache";
-    static String tagLkpTableName = "tag_lkp";
-    static String dbName = "meme.db";
-    static List<String> tableDefs = Arrays.asList(
-            "CREATE TABLE IF NOT EXISTS " + memeTableName + " (" +
-                    "id integer PRIMARY KEY UNIQUE," +
-                    "link text UNIQUE NOT NULL," +
-                    "submitter text NOT NULL," +
-                    "curator text NOT NULL" +
-                    ");",
-
-            "CREATE TABLE IF NOT EXISTS " + tagLkpTableName + " (" +
-                    "id integer," +
-                    "tag text NOT NULL" +
-                    ");",
-
-            "CREATE TABLE IF NOT EXISTS " + cacheTableName + " (" +
-                    "id integer PRIMARY KEY UNIQUE," +
-                    "link text UNIQUE NOT NULL," +
-                    "submitter text NOT NULL" +
-                    ");"
-    );
 
     /*
      *
@@ -62,10 +48,20 @@ public class MemeDB2000 {
 
     /**
      * Constructor
-     * @param filePath The true path where to store this DB
+     * @param config the config object
      */
-    MemeDB2000(String filePath) {
-        this.db = "jdbc:sqlite:" + filePath + dbName;
+    MemeDB3000(MemeConfigLoader3000 config, MemeLogger3000 logger) {
+        this.config = config;
+        this.logger = logger;
+        this.db = "jdbc:sqlite:" + config.getDatabaseLocation();
+        this.memeTableName = config.getMemeTableName();
+        this.cacheTableName = config.getCacheTableName();
+        this.tagLkpTableName = config.getTagLkpTableName();
+        tableDefs = Arrays.asList(
+                config.getMemeTableDef().replace("memeTableName", memeTableName),
+                config.getCacheTableDef().replace("cacheTableName", cacheTableName),
+                config.getTagLkpTableDef().replace("tagLkpTableName", tagLkpTableName)
+        );
         headID = 0;
         conn = null;
         errorMsg = "";
@@ -92,6 +88,7 @@ public class MemeDB2000 {
             conn = DriverManager.getConnection(db);
             conn.setAutoCommit(false);
             execute(tableDefs);
+            commit();
         }
         catch(SQLException throwables){
             throwables.printStackTrace();
@@ -110,7 +107,7 @@ public class MemeDB2000 {
             return false;
         }
 
-        // Select the max ID from memeDB
+        // Select the max ID from cache
         try {
             rs = executeQuery("SELECT MAX(id) m FROM " + cacheTableName + ";");
             if(rs != null && rs.next())
@@ -142,10 +139,10 @@ public class MemeDB2000 {
     }
 
     /**
-     * Gets all ids in the cache to load the approve Q
+     * Gets all ids in the cache
      * @return
      */
-    public List<Integer> initialize(){
+    public List<Integer> getAllCacheIds(){
         List<Integer> retlist = new ArrayList<>();
         try {
             ResultSet rs = executeQuery("SELECT id FROM " + cacheTableName + ";");
@@ -155,6 +152,28 @@ public class MemeDB2000 {
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            error("Failed retrieving all ids from the cache");
+            return null;
+        }
+        return retlist;
+    }
+
+    /**
+     * Gets all ids of memes older that property file or NULL
+     * @return
+     */
+    public List<Integer> getAllOldMemeIDs(){
+        List<Integer> retlist = new ArrayList<>();
+        try {
+            ResultSet rs = executeQuery("SELECT id FROM " + memeTableName + " WHERE timestamp IS NULL OR timestamp < ?;", Arrays.asList(new Column(config.getTime(), Column.ColType.STR)));
+            while(rs != null && rs.next()) {
+                retlist.add(rs.getInt("id"));
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            error("Failed retrieving all ids from the cache");
+            return null;
         }
         return retlist;
     }
@@ -236,6 +255,44 @@ public class MemeDB2000 {
     }
 
     /**
+     * Returns all tags existing
+     * @return
+     */
+    public List<String> getTags(){
+        return getTags(null);
+    }
+
+    /**
+     * Return all tags or all tags that have id
+     * @param id
+     * @return
+     */
+    public List<String> getTags(Integer id){
+        List<String> retList = new ArrayList<>();
+        errorMsg = "";
+        try {
+            ResultSet rs;
+            if(id == null) {
+                rs = executeQuery("SELECT COUNT(*) c, tag FROM (SELECT tag, link FROM " + tagLkpTableName + " t LEFT JOIN " + memeTableName + " m ON t.id = m.id) WHERE link IS NOT NULL GROUP BY tag ORDER BY tag ASC");
+                while(rs != null && rs.next()) {
+                    retList.add(rs.getString("tag") + " (" + rs.getString("c") + ")");
+                }
+            }
+            else {
+                rs = executeQuery("SELECT tag FROM " + tagLkpTableName + " WHERE id = ? ORDER BY tag ASC", Arrays.asList(new Column(id, Column.ColType.INT)));
+                while(rs != null && rs.next()) {
+                    retList.add(rs.getString("tag"));
+                }
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            error("Failed getting tags");
+            return null;
+        }
+        return retList;
+    }
+
+    /**
      * Gets a meme from cache
      * @param id of a meme
      * @return the link to the meme or null
@@ -267,11 +324,12 @@ public class MemeDB2000 {
         if(uniqueLink(link)){
             Integer memeID = getID();
             try {
-                execute("INSERT INTO " + memeTableName + " (id, link, submitter, curator) VALUES (?,?,?,?)",
+                execute("INSERT INTO " + memeTableName + " (id, link, submitter, curator, timestamp) VALUES (?,?,?,?,?)",
                         Arrays.asList(  new Column(memeID, Column.ColType.INT),
-                                new Column(link, Column.ColType.STR),
-                                new Column(username, Column.ColType.STR),
-                                new Column(username, Column.ColType.STR)
+                                        new Column(link, Column.ColType.STR),
+                                        new Column(username, Column.ColType.STR),
+                                        new Column(username, Column.ColType.STR),
+                                        new Column(new Timestamp(System.currentTimeMillis()).toString(), Column.ColType.STR)
                         ));
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
@@ -302,8 +360,8 @@ public class MemeDB2000 {
             try {
                 execute("INSERT INTO " + cacheTableName + " (id, link, submitter) VALUES (?,?,?)",
                         Arrays.asList(  new Column(memeID, Column.ColType.INT),
-                                new Column(link, Column.ColType.STR),
-                                new Column(username, Column.ColType.STR)
+                                        new Column(link, Column.ColType.STR),
+                                        new Column(username, Column.ColType.STR)
                         ));
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
@@ -326,9 +384,10 @@ public class MemeDB2000 {
      * Promote a meme from the cache to meme table
      * @param id of the meme
      * @param curatorName name of curator
+     * @param tags tags of the promoted meme
      * @return name of user who submitted the meme or null in case of error
      */
-    public String promote(Integer id, String curatorName){
+    public String promote(Integer id, String curatorName, List<String> tags){
         String link, username;
 
         // Get the link
@@ -349,11 +408,12 @@ public class MemeDB2000 {
         // Put it into the memedb
         if(link != null && username != null){
             try {
-                execute("INSERT INTO " + memeTableName + " (id, link, submitter, curator) VALUES (?,?,?,?)",
+                execute("INSERT INTO " + memeTableName + " (id, link, submitter, curator, timestamp) VALUES (?,?,?,?,?)",
                         Arrays.asList(  new Column(id, Column.ColType.INT),
-                                new Column(link, Column.ColType.STR),
-                                new Column(username, Column.ColType.STR),
-                                new Column(curatorName, Column.ColType.STR)
+                                        new Column(link, Column.ColType.STR),
+                                        new Column(username, Column.ColType.STR),
+                                        new Column(curatorName, Column.ColType.STR),
+                                        new Column(new Timestamp(System.currentTimeMillis()).toString(), Column.ColType.STR)
                         ));
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
@@ -361,7 +421,6 @@ public class MemeDB2000 {
                 rollback();
                 return null;
             }
-
         }
 
         // Remove it from the cache
@@ -370,6 +429,31 @@ public class MemeDB2000 {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             error("Failed to remove meme from cache: (" + id + ", " + link + ", " + username + ")");
+            rollback();
+            return null;
+        }
+
+        // Delete all the existing tags
+        try {
+            execute("DELETE FROM " + tagLkpTableName + " WHERE id = ?", Arrays.asList(  new Column(id, Column.ColType.INT)));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            error("Failed to remove old tags from the tag lookup: (" + id + ", " + link + ", " + username + ")");
+            rollback();
+            return null;
+        }
+
+        // Insert all confirmed tags
+        try {
+            for(String tag : tags){
+                execute("INSERT INTO " + tagLkpTableName + " (id, tag) VALUES (?,?)",
+                        Arrays.asList(  new Column(id, Column.ColType.INT),
+                                        new Column(tag, Column.ColType.STR)
+                        ));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            error("Failed to promote meme to MemeDB: (" + id + ", " + link + ", " + username + ", " + curatorName + ")");
             rollback();
             return null;
         }
@@ -487,7 +571,7 @@ public class MemeDB2000 {
      */
     private void error(String error){
         errorMsg = error;
-        System.out.println(errorMsg);
+        logger.println(ERROR, errorMsg);
     }
 
     /**
@@ -502,14 +586,14 @@ public class MemeDB2000 {
             try {
                 if(status){
                     execute("INSERT INTO " + tagLkpTableName + " (id, tag) VALUES (?,?)",
-                            Arrays.asList(   new Column(memeID, Column.ColType.INT),
-                                    new Column(tag, Column.ColType.STR)
+                            Arrays.asList(  new Column(memeID, Column.ColType.INT),
+                                            new Column(tag, Column.ColType.STR)
                             ));
                 }
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
                 errorMsg = "Encountered an error inserting tag " + tag + " into DB, rolling back...";
-                System.out.println(errorMsg);
+                error(errorMsg);
                 rollback();
                 return false;
             }
@@ -616,7 +700,7 @@ public class MemeDB2000 {
         try {
             conn.rollback();
             errorMsg = "[ ROLLBACK ] " + errorMsg;
-            System.out.println("Performing DB rollback...");
+            error("Performing DB rollback...");
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -630,7 +714,7 @@ public class MemeDB2000 {
         try {
             conn.commit();
         } catch (SQLException e) {
-            System.out.println("Failed to commit");
+            error("Failed to commit");
             e.printStackTrace();
             return false;
         }
