@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("classpath:MemeBot.properties")
+//@PropertySource("classpath:MemeBot.properties")
 @PropertySource("classpath:MemeBotTest.properties")
 public class MemeConfigLoader3000 {
 
@@ -44,6 +44,9 @@ public class MemeConfigLoader3000 {
 
 	@Value("${tagLkpTableDef}")
 	private String tagLkpTableDef;
+
+	@Value("${time}")
+	private String time;
 
 	public String getBotToken() {
 		return botToken;
@@ -91,5 +94,9 @@ public class MemeConfigLoader3000 {
 
 	public String getTagLkpTableDef() {
 		return tagLkpTableDef;
+	}
+
+	public String getTime() {
+		return time;
 	}
 }

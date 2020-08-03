@@ -32,22 +32,28 @@ public class MemeDBC2000 extends Thread{
         String link, username;
         Integer id ;
         List<String> tags;
-        MemeDBMsg2000 msg = new MemeDBMsg2000();
+        MemeDBMsg2000 msg;
         while(true){
             try {
                 msg = inputQ.take();
                 switch(msg.getType()) {
                     case INITIALIZE:
-                        List<Integer> ids = db.initialize();
+                        // Check to see which memes are older and need to be re-cached
+                        List<Integer> ids = db.getAllOldMemeIDs();
+                        for(Integer theid : ids)
+                            db.demote(theid);
+
+                        // any cache memes need to be added to the Q
+                        ids = db.getAllCacheIds();
                         for(Integer theid : ids){
-                            outputQ.add(new MemeDBMsg2000()
+                            outputQ.put(new MemeDBMsg2000()
                                     .type(REPLENISH_Q)
                                     .id(theid)
                             );
                         }
 
                         tags = db.getTags();
-                        outputQ.add(new MemeDBMsg2000()
+                        outputQ.put(new MemeDBMsg2000()
                                 .type(ALL_TAGS)
                                 .tags(tags)
                         );
@@ -55,7 +61,7 @@ public class MemeDBC2000 extends Thread{
 
                     case GET_TAGS:
                         tags = db.getTags();
-                        outputQ.add(new MemeDBMsg2000()
+                        outputQ.put(new MemeDBMsg2000()
                                 .type(ALL_TAGS)
                                 .tags(tags)
                         );

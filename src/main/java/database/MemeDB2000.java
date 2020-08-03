@@ -139,13 +139,33 @@ public class MemeDB2000 {
     }
 
     /**
-     * Gets all ids in the cache to load the approve Q
+     * Gets all ids in the cache
      * @return
      */
-    public List<Integer> initialize(){
+    public List<Integer> getAllCacheIds(){
         List<Integer> retlist = new ArrayList<>();
         try {
             ResultSet rs = executeQuery("SELECT id FROM " + cacheTableName + ";");
+            while(rs != null && rs.next()) {
+                retlist.add(rs.getInt("id"));
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            error("Failed retrieving all ids from the cache");
+            return null;
+        }
+        return retlist;
+    }
+
+    /**
+     * Gets all ids of memes older that property file or NULL
+     * @return
+     */
+    public List<Integer> getAllOldMemeIDs(){
+        List<Integer> retlist = new ArrayList<>();
+        try {
+            ResultSet rs = executeQuery("SELECT id FROM " + memeTableName + " WHERE timestamp IS NULL OR timestamp < ?;", Arrays.asList(new Column(config.getTime(), Column.ColType.STR)));
             while(rs != null && rs.next()) {
                 retlist.add(rs.getInt("id"));
             }
