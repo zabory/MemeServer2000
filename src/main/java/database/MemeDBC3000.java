@@ -38,6 +38,7 @@ public class MemeDBC3000 extends Thread{
                 msg = inputQ.take();
                 switch(msg.getType()) {
                     case INITIALIZE:
+                        logger.println("Initializing...");
                         // Check to see which memes are older and need to be re-cached
                         List<Integer> ids = db.getAllOldMemeIDs();
                         for(Integer theid : ids)
@@ -64,6 +65,7 @@ public class MemeDBC3000 extends Thread{
                         break;
 
                     case GET_TAGS:
+                        logger.println("Getting all tags");
                         tags = db.getTags();
                         outputQ.put(new MemeDBMsg3000()
                                 .type(ALL_TAGS)
@@ -72,6 +74,7 @@ public class MemeDBC3000 extends Thread{
                         break;
 
                     case GET_MEME_ID:
+                        logger.println("Getting info for meme of ID " + msg.getId() + " to be approved");
                         link = db.getCache(msg.getId());
                         tags = db.getTags(msg.getId());
                         if(link != null){
@@ -87,6 +90,7 @@ public class MemeDBC3000 extends Thread{
                         break;
 
                     case GET_MEME_TAGS:
+                        logger.println("Getting all tags for meme of ID " + msg.getId());
                         link = db.get(msg.getTags());
                         if(link != null){
                             outputQ.put(new MemeDBMsg3000()
@@ -102,6 +106,7 @@ public class MemeDBC3000 extends Thread{
                         break;
 
                     case STORE_MEME:
+                        logger.println("Storing meme " + msg.getLink());
                             id = db.store(msg.getUsername(), msg.getLink(), msg.getTags());
                             if(id != null){
                                 outputQ.put(new MemeDBMsg3000()
@@ -116,6 +121,7 @@ public class MemeDBC3000 extends Thread{
                         break;
 
                     case CACHE_MEME:
+                        logger.println("Caching meme " + msg.getLink());
                         id = db.cache(msg.getUsername(), msg.getLink(), msg.getTags());
                         if(id != null){
                             outputQ.put(new MemeDBMsg3000()
@@ -130,6 +136,7 @@ public class MemeDBC3000 extends Thread{
                         break;
 
                     case PROMOTE_MEME:
+                        logger.println("Promoting meme " + msg.getId());
                         username = db.promote(msg.getId(), msg.getUsername(), msg.getTags());
                         link = db.get(msg.getId());
                         if(link != null && username != null){
@@ -146,6 +153,7 @@ public class MemeDBC3000 extends Thread{
                         break;
 
                     case DEMOTE_MEME:
+                        logger.println("Demoting meme " + msg.getId());
                         link = db.get(msg.getId());
                         username = db.demote(msg.getId());
                         if(link != null && username != null){
@@ -161,6 +169,7 @@ public class MemeDBC3000 extends Thread{
                         break;
 
                     case REJECT_MEME:
+                        logger.println("Rejecting meme " + msg.getId());
                         link = db.getCache(msg.getId());
                         username = db.reject(msg.getId());
                         if(link != null && username != null){
@@ -177,6 +186,7 @@ public class MemeDBC3000 extends Thread{
                         break;
 
                     case TERMINATE:
+                        logger.println("Terminating");
                         db.close();
                         return;
 
