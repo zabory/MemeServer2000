@@ -31,12 +31,12 @@ public class MemeBotReader3000 extends Thread{
         while(true){
             try {
                 msg = botOutputQ.take();
-                switch(msg.getCommand()){
-                    case "deny":
+                switch(msg.getType()){
+                    case Deny:
                         logger.println("Meme denied from discord bot by " + msg.getUser());
                         newMsg = new MemeDBMsg3000().type(REJECT_MEME).username(msg.getUser()).id(approveQ.peek());
                         break;
-                    case "approve":
+                    case Approve:
                         logger.println("Meme approved from discord bot by " + msg.getUser() + " with tags of " + msg.getTags());
                         tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getTags().split("\\s*,\\s*"))));
                         LinkedList<String> finalTags2 = tags;
@@ -45,7 +45,7 @@ public class MemeBotReader3000 extends Thread{
                         });
                         newMsg = new MemeDBMsg3000().type(PROMOTE_MEME).username(msg.getUser()).id(approveQ.peek()).tags(new LinkedList<String>(tags));
                         break;
-                    case "fetchMeme":
+                    case Fetch_Meme:
                         logger.println("Fetching meme for " + msg.getUser());
                         tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getBody().split("\\s*,\\s*"))));
                         LinkedList<String> finalTags1 = tags;
@@ -54,7 +54,7 @@ public class MemeBotReader3000 extends Thread{
                         });
                         newMsg = new MemeDBMsg3000().type(GET_MEME_TAGS).tags(new LinkedList<String>(tags)).username(msg.getUser()).channelID(msg.getChannelID());
                         break;
-                    case "submitMeme":
+                    case Submit_Meme:
                         logger.println("Meme submitted by " + msg.getUser() + " with a channel ID of " + msg.getChannelID());
                         tags = new LinkedList<String>(new HashSet<String>(Arrays.asList(msg.getBody().split("\\s*,\\s*"))));
                         LinkedList<String> finalTags = tags;
@@ -68,11 +68,8 @@ public class MemeBotReader3000 extends Thread{
                             newMsg.type(CACHE_MEME);
                         }
                         break;
-                    case "print":
-                        logger.println(msg.getBody());
-                        break;
                     default:
-                        logger.println("Main cannot handle " + msg.getCommand() + " message from the bot. :(");
+                        logger.println("Main cannot handle " + msg.getType() + " message from the bot. :(");
                 }
                 dbInputQ.put(newMsg);
             } catch (InterruptedException e) {

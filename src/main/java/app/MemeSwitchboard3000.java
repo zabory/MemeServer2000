@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import static datastructures.MemeDBMsg3000.MsgDBType.*;
+import static datastructures.MemeBotMsg3000.MemeBotType.*;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -57,8 +58,8 @@ public class MemeSwitchboard3000 {
 		try {
 			while(true){
 				MemeBotMsg3000 msg = botInputQ.take();
-				if(msg.getCommand().equals("INIT")) {
-					botInputQ.add(new MemeBotMsg3000().command("clearQueue"));
+				if(msg.getType() == INIT) {
+					botInputQ.add(new MemeBotMsg3000().type(Clear_Queue));
 					for(MemeBotMsg3000 storedmsg : tempQ)
 						botInputQ.put(storedmsg);
 					break;
@@ -72,7 +73,7 @@ public class MemeSwitchboard3000 {
 		logger.println("The DB has been initialized");
 
 		logger.println("Initializing the bot...");
-		MemeBotInterfacer3000 memeBotInterfacer = new MemeBotInterfacer3000(config, botInputQ, botOutputQ);
+		MemeBotInterfacer3000 memeBotInterfacer = new MemeBotInterfacer3000(config, botInputQ, botOutputQ, logger);
 		MemeBotReader3000 botReader = new MemeBotReader3000(logger, botOutputQ, dbInputQ, approveQ);
 		botReader.start();
 		logger.println("The bot has been initialized");

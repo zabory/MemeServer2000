@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("classpath:MemeBot.properties")
-//@PropertySource("classpath:MemeBotTest.properties")
+//@PropertySource("classpath:MemeBot.properties")
+@PropertySource("classpath:MemeBotTest.properties")
 public class MemeConfigLoader3000 {
 
 	@Value("${auth.token}")
@@ -14,15 +14,6 @@ public class MemeConfigLoader3000 {
 	
 	@Value("${channel}")
 	private String approvalChannel;
-	
-	@Value("${helpChannel}")
-	private String helpChannel;
-	
-	@Value("${approveEmoji}")
-	private String approveEmoji;
-
-	@Value("${denyEmoji}")
-	private String denyEmoji;
 
 	@Value("${database}")
 	private String databaseLocation;
@@ -54,18 +45,6 @@ public class MemeConfigLoader3000 {
 
 	public String getApprovalChannel() {
 		return approvalChannel;
-	}
-
-	public String getHelpChannel() {
-		return helpChannel;
-	}
-
-	public String getApproveEmoji() {
-		return approveEmoji;
-	}
-
-	public String getDenyEmoji() {
-		return denyEmoji;
 	}
 
 	public String getDatabaseLocation() {

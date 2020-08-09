@@ -8,6 +8,7 @@ import datastructures.MemeLogger3000.level;
 import java.util.concurrent.BlockingQueue;
 
 import static datastructures.MemeDBMsg3000.MsgDBType.*;
+import static datastructures.MemeBotMsg3000.MemeBotType.*;
 
 public class MemeDBReader3000 extends Thread{
     private Long approvalChannelID;
@@ -37,7 +38,7 @@ public class MemeDBReader3000 extends Thread{
                 switch(msg.getType()){
                     case INIT_ACK:
                         logger.println("Received INIT_ACK");
-                        botInputQ.put(new MemeBotMsg3000().command("INIT"));
+                        botInputQ.put(new MemeBotMsg3000().type(INIT));
                         break;
 
                     case REPLENISH_Q:
@@ -52,18 +53,18 @@ public class MemeDBReader3000 extends Thread{
                             tagList += e + ",";
                         }
                         if(!tagList.equals(""))
-                            botInputQ.put(new MemeBotMsg3000().command("sendAllTags").body(tagList.substring(0, tagList.length()-1)));
+                            botInputQ.put(new MemeBotMsg3000().type(Send_Tags).body(tagList.substring(0, tagList.length()-1)));
                         break;
 
                     case SUBMIT_ACK:
                         if(msg.getId() != null){
                             logger.println("Received ACK for cached meme of ID " + msg.getId());
-                            botInputQ.put(new MemeBotMsg3000().command("queueSize").body((approveQ.size() + 1) + ""));
+                            botInputQ.put(new MemeBotMsg3000().type(Queue_Size).body((approveQ.size() + 1) + ""));
                             approveQ.put(msg.getId());
                         }
                         else
                             logger.println("Received ACK for meme submitted by " + msg.getUsername());
-                        botInputQ.put(new MemeBotMsg3000().command("sendToUser").body(msg.getMessage()).user(msg.getUsername()));
+                        botInputQ.put(new MemeBotMsg3000().type(Send_User).body(msg.getMessage()).user(msg.getUsername()));
                         break;
 
                     case APPROVE_MEME:
@@ -72,28 +73,28 @@ public class MemeDBReader3000 extends Thread{
                         for(int i=0;i<msg.getTags().size();i++)
                             tags += (i+1) + ": " + msg.getTags().get(i) + "\n";
 
-                        botInputQ.put(new MemeBotMsg3000().channelID(approvalChannelID).body("**Queue count**: " + (approveQ.size())).command("sendToChannel"));
-                        botInputQ.put(new MemeBotMsg3000().channelID(approvalChannelID).body(tags).command("sendToChannel"));
-                        botInputQ.put(new MemeBotMsg3000().command("sendToQueue").body(msg.getLink()).channelID(approvalChannelID));
+                        botInputQ.put(new MemeBotMsg3000().channelID(approvalChannelID).body("**Queue count**: " + (approveQ.size())).type(Send_Channel));
+                        botInputQ.put(new MemeBotMsg3000().channelID(approvalChannelID).body(tags).type(Send_Channel));
+                        botInputQ.put(new MemeBotMsg3000().type(Send_Queue).body(msg.getLink()).channelID(approvalChannelID));
                         break;
 
                     case CURATE_RESULT:
                         logger.println("Received curation result for meme of ID " + msg.getId());
                         approveQ.take();
-                        botInputQ.put(new MemeBotMsg3000().command("clearQueue"));
-                        botInputQ.put(new MemeBotMsg3000().command("sendToUser").body(msg.getLink()).user(msg.getUsername()));
-                        botInputQ.put(new MemeBotMsg3000().command("sendToUser").body(msg.getMessage()).user(msg.getUsername()));
+                        botInputQ.put(new MemeBotMsg3000().type(Clear_Queue));
+                        botInputQ.put(new MemeBotMsg3000().type(Send_User).body(msg.getLink()).user(msg.getUsername()));
+                        botInputQ.put(new MemeBotMsg3000().type(Send_User).body(msg.getMessage()).user(msg.getUsername()));
                         dbInputQ.put(new MemeDBMsg3000().type(GET_TAGS));
                         break;
 
                     case MEME:
                         logger.println("Sending meme to " + msg.getChannelID() + ", requested by " + msg.getUsername());
-                        botInputQ.put(new MemeBotMsg3000().command("sendToChannel").body(msg.getLink()).user(msg.getUsername()).channelID(msg.getChannelID()));
+                        botInputQ.put(new MemeBotMsg3000().type(Send_Channel).body(msg.getLink()).user(msg.getUsername()).channelID(msg.getChannelID()));
                         break;
 
                     case ERROR:
                     	logger.println(level.ERROR, msg.getMessage() + msg.getTags());
-                        botInputQ.put(new MemeBotMsg3000().command("sendToUser").body(msg.getMessage() + msg.getTags()).user(msg.getUsername()));
+                        botInputQ.put(new MemeBotMsg3000().type(Send_User).body(msg.getMessage() + msg.getTags()).user(msg.getUsername()));
                         break;
 
                     default:
@@ -105,7 +106,7 @@ public class MemeDBReader3000 extends Thread{
                     MemeDBMsg3000 approveMsg = new MemeDBMsg3000().type(GET_MEME_ID).id(approveQ.peek());
                     lastID = approveMsg.getId();
                     dbInputQ.put(approveMsg);
-                    botInputQ.put(new MemeBotMsg3000().command("queueSize").body((approveQ.size()) + ""));
+                    botInputQ.put(new MemeBotMsg3000().type(Queue_Size).body((approveQ.size()) + ""));
                     logger.println("Meme queue size increased");
                 }
             } catch (InterruptedException e) {

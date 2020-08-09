@@ -1,7 +1,5 @@
 package datastructures;
 
-import org.json.JSONObject;
-
 /**
  * 
  * @author Ben Shabowski
@@ -9,99 +7,69 @@ import org.json.JSONObject;
  * @since 2000
  */
 public class MemeBotMsg3000 {
+	
+	public enum MemeBotType{
+		// To switchboard
+		
+		/**Deny a meme*/
+		Deny,
+		
+		/**Approve a meme*/
+		Approve,
+		
+		/**Fetch a meme from DB with or without tags*/
+		Fetch_Meme,
+		
+		/**Submit a meme to DB*/
+		Submit_Meme,	
+		
+		// To bot
+		/**Clear the queue in the auth channel*/
+		Clear_Queue,
+		
+		/**Send a message to the user*/
+		Send_User,
+		
+		/**Send a message to the channel*/
+		Send_Channel,
+		
+		/**Send a meme to be approved in the approval channel*/
+		Send_Queue,
+		
+		/**Send the queue size to be updated in the approval channel*/
+		Queue_Size,
+		
+		/**Send all the tags to be updated in the help channel*/
+		Send_Tags,
+		
+		/**Send all the commands to be updated in the help channel*/
+		Send_Command,
+		
+		/**Initialize*/
+		INIT
+	}
 
+	private MemeBotType type;
 	private String user;
-	private String command;
 	private String body;
 	private long channelID;
 	private boolean admin;
 	private String url;
-	private JSONObject json;
 	private String tags;
-	/**
-	 * Create a message from variables
-	 * 
-	 * @param user      Username for message
-	 * @param command   Command for message
-	 * @param body      Body of the message
-	 * @param channelID ChannelID of the message
-	 * @param admin If the message comes from a user with admin
-	 * @param url embedded URL of an image
-	 */
-	public MemeBotMsg3000(String user, String command, String body, long channelID, boolean admin, String url, String tags) {
-		this.user = user;
-		this.command = command;
-		this.body = body.toLowerCase();
-		this.channelID = channelID;
-		this.admin = admin;
-		this.url = url;
-		this.tags = tags;
-	}
 
 	/**
 	 * Default constructor for class, setting everything to the default value
 	 */
 	public MemeBotMsg3000() {
-		this("", "", "", 0, false, "", "");
-	}
-
-	/**
-	 * Create message from JSON object
-	 * 
-	 * @param jObject JSON object of the message
-	 */
-	public MemeBotMsg3000(JSONObject jObject) {
 		
-		if(jObject.has("user")) {
-			user = jObject.getString("user");
-		}
-		
-		if(jObject.has("command")) {
-			command = jObject.getString("command");
-		}
-		
-		if(jObject.has("body")) {
-			body = jObject.getString("body");
-		}
-		
-		if(jObject.has("url")) {
-			url = jObject.getString("url");
-		}
-		
-		if(jObject.has("channelID")) {
-			channelID = jObject.getLong("channelID");
-		}
-		
-		if(jObject.has("admin")) {
-			admin = jObject.getBoolean("admin");
-		}
-		
-		if(jObject.has("approvedTags")) {
-			tags = jObject.getString("approvedTags");
-		}
-		
-		json = jObject;
-	}
-
-	/**
-	 * Converts the class and all its variables into a JSON object
-	 * 
-	 * @return JSON object
-	 */
-	public JSONObject toJSON() {
-		JSONObject j = new JSONObject();
-		j.put("user", user);
-		j.put("command", command);
-		j.put("body", body);
-		j.put("channelID", channelID + "");
-		j.put("admin", admin);
-		j.put("url", url);
-		j.put("tags", tags);
-		return j;
 	}
 	
-	public String toString() {
-		return json.toString();
+	public MemeBotType getType() {
+		return type;
+	}
+	
+	public void setType(MemeBotType type) {
+		this.type = type;
 	}
 
 	public String getUser() {
@@ -110,18 +78,6 @@ public class MemeBotMsg3000 {
 
 	public void setUser(String user) {
 		this.user = user;
-	}
-
-	public String getCommand() {
-		if(command != null) {
-			return command;
-		}else {
-			return "print";
-		}
-	}
-
-	public void setCommand(String command) {
-		this.command = command;
 	}
 
 	public String getBody() {
@@ -169,11 +125,6 @@ public class MemeBotMsg3000 {
 		return this;
 	}
 
-	public MemeBotMsg3000 command(String command) {
-		this.command = command;
-		return this;
-	}
-
 	public MemeBotMsg3000 body(String body) {
 		this.body = body;
 		return this;
@@ -196,6 +147,11 @@ public class MemeBotMsg3000 {
 	
 	public MemeBotMsg3000 tags(String tags) {
 		this.tags = tags;
+		return this;
+	}
+	
+	public MemeBotMsg3000 type(MemeBotType type) {
+		this.type = type;
 		return this;
 	}
 
