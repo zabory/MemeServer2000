@@ -59,6 +59,8 @@ public class MemeSwitchboard3000 {
 				MemeBotMsg3000 msg = botInputQ.take();
 				if(msg.getCommand().equals("INIT")) {
 					botInputQ.add(new MemeBotMsg3000().command("clearQueue"));
+					for(MemeBotMsg3000 storedmsg : tempQ)
+						botInputQ.put(storedmsg);
 					break;
 				}
 				else
