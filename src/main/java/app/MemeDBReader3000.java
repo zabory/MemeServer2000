@@ -106,7 +106,7 @@ public class MemeDBReader3000 extends Thread{
                     MemeDBMsg3000 approveMsg = new MemeDBMsg3000().type(GET_MEME_ID).id(approveQ.peek());
                     lastID = approveMsg.getId();
                     dbInputQ.put(approveMsg);
-                    botInputQ.put(new MemeBotMsg3000().type(Queue_Size).body((approveQ.size()) + ""));
+                   botInputQ.put(new MemeBotMsg3000().type(Queue_Size).body((approveQ.size()) + ""));
                     logger.println("Meme queue size increased");
                 }
             } catch (InterruptedException e) {

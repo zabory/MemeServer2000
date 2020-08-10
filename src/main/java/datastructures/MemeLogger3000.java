@@ -97,8 +97,12 @@ public class MemeLogger3000 {
 		for(StackTraceElement element : Thread.currentThread().getStackTrace()){
 			if(!element.getClassName().equals(Thread.currentThread().getStackTrace()[0].getClassName())) {
 				String className = element.getClassName().replaceAll(".*\\.", "");
+				try {
 				classTag = " ".repeat((spaceFactor - className.length())%2==0 ? (spaceFactor - className.length())/2 : ((spaceFactor - className.length())/2)+1)
 						+ className + " ".repeat((spaceFactor - className.length())/2);
+				}catch (IllegalArgumentException e) {
+					
+				}
 			}
 		}
 

@@ -24,17 +24,16 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 public class MemeBot3000 {
 	
 	JDA bot;
+	MemeBotInterfacer3000 MBI;
 	
-	public MemeBot3000(MemeConfigLoader3000 botConfig) {
-		
+	public MemeBot3000(MemeConfigLoader3000 botConfig, MemeBotInterfacer3000 MBI) {
 		this(botConfig.getBotToken());
-		
+		this.MBI = MBI;
 	}
 	
 	public MemeBot3000(String token) {
 		JDABuilder bot = JDABuilder.createDefault(token).setMemberCachePolicy(MemberCachePolicy.ALL).enableIntents(GatewayIntent.GUILD_MEMBERS).setMemberCachePolicy(MemberCachePolicy.ALL);
-		
-		bot.addEventListeners(new MemeBotInterfacer3000.Listener());
+		bot.addEventListeners(new Listener());
 		bot.setActivity(Activity.playing("Someone get this man a meme"));
 		
 		try {
@@ -46,6 +45,30 @@ public class MemeBot3000 {
 	
 	public JDA getBot() {
 		return bot;
+	}
+	
+	public class Listener extends ListenerAdapter {
+
+		@Override
+		public void onReady(ReadyEvent event) {
+			
+		}
+
+		@Override
+		public void onMessageReceived(MessageReceivedEvent event) {
+			if(!event.getAuthor().isBot()) {
+				MBI.messageHandler(event);
+			}
+
+		}
+
+		@Override
+		public void onMessageReactionAdd(MessageReactionAddEvent event) {
+			if(!event.getUser().isBot()){
+				MBI.messageReactionHandler(event);
+			}
+			
+		}
 	}
 
 }

@@ -45,6 +45,12 @@ public class MemeSwitchboard3000 {
 		context.refresh();
 		MemeConfigLoader3000 config = context.getBean(MemeConfigLoader3000.class);
 		context.close();
+		
+		logger.println("Initializing the bot...");
+		MemeBotInterfacer3000 memeBotInterfacer = new MemeBotInterfacer3000(config, botInputQ, botOutputQ, logger);
+		MemeBotReader3000 botReader = new MemeBotReader3000(logger, botOutputQ, dbInputQ, approveQ);
+		botReader.start();
+		logger.println("The bot has been initialized");
 
 		logger.println("Initializing the DB...");
 		MemeDBC3000 dbController = new MemeDBC3000(config, logger, dbInputQ, dbOutputQ);
@@ -71,12 +77,6 @@ public class MemeSwitchboard3000 {
 			e.printStackTrace();
 		}
 		logger.println("The DB has been initialized");
-
-		logger.println("Initializing the bot...");
-		MemeBotInterfacer3000 memeBotInterfacer = new MemeBotInterfacer3000(config, botInputQ, botOutputQ, logger);
-		MemeBotReader3000 botReader = new MemeBotReader3000(logger, botOutputQ, dbInputQ, approveQ);
-		botReader.start();
-		logger.println("The bot has been initialized");
 
 		logger.println("We're ready to GO!");
 	}

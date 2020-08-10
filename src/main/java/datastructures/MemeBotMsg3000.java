@@ -43,10 +43,13 @@ public class MemeBotMsg3000 {
 		Send_Tags,
 		
 		/**Send all the commands to be updated in the help channel*/
-		Send_Command,
+		Send_Commands,
 		
 		/**Initialize*/
-		INIT
+		INIT,
+		
+		/**Clear the help channel*/
+		Clear_Help
 	}
 
 	private MemeBotType type;
@@ -56,6 +59,7 @@ public class MemeBotMsg3000 {
 	private boolean admin;
 	private String url;
 	private String tags;
+	private long userID;
 
 	/**
 	 * Default constructor for class, setting everything to the default value
@@ -64,6 +68,16 @@ public class MemeBotMsg3000 {
 		
 	}
 	
+	
+	
+	public long getUserID() {
+		return userID;
+	}
+
+	public void setUserID(long userID) {
+		this.userID = userID;
+	}
+
 	public MemeBotType getType() {
 		return type;
 	}
@@ -152,6 +166,11 @@ public class MemeBotMsg3000 {
 	
 	public MemeBotMsg3000 type(MemeBotType type) {
 		this.type = type;
+		return this;
+	}
+	
+	public MemeBotMsg3000 userID(long userID) {
+		this.userID = userID;
 		return this;
 	}
 
