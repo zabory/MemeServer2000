@@ -50,6 +50,7 @@ public class MemeSwitchboard3000 {
 		MemeBotInterfacer3000 memeBotInterfacer = new MemeBotInterfacer3000(config, botInputQ, botOutputQ, logger);
 		MemeBotReader3000 botReader = new MemeBotReader3000(logger, botOutputQ, dbInputQ, approveQ);
 		botReader.start();
+		botInputQ.add(new MemeBotMsg3000().type(Clear_Help));
 		logger.println("The bot has been initialized");
 
 		logger.println("Initializing the DB...");

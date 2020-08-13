@@ -39,10 +39,16 @@ public class MemeBotInterfacer3000 {
 	// output to main thread
 	private BlockingQueue<MemeBotMsg3000> output;
 
+	//logger yaaaaaas
 	private MemeLogger3000 logger;
 
 	// actual bot
 	private JDA bot;
+	
+	//some things we need a lot
+	private TextChannel approvalChannel;
+	private TextChannel helpChannel;
+	private Guild guild;
 
 	public MemeBotInterfacer3000(MemeConfigLoader3000 config, BlockingQueue<MemeBotMsg3000> botInputQ,
 			BlockingQueue<MemeBotMsg3000> botOutputQ, MemeLogger3000 logger) {
@@ -54,6 +60,10 @@ public class MemeBotInterfacer3000 {
 		// launch bot
 		bot = new MemeBot3000(config, this).getBot();
 		logger.println("Bot logged in");
+		
+		guild = bot.getGuilds().get(0);
+		approvalChannel = guild.getTextChannelsByName("meme-approval", true).get(0);
+		helpChannel = guild.getTextChannelsByName("meme-bot-help", true).get(0);
 		
 		new inputThread().start();
 	}
@@ -79,7 +89,7 @@ public class MemeBotInterfacer3000 {
 						boolean admin = false;
 
 						// check if person is an admin
-						for (Role r : bot.getGuilds().get(0).retrieveMemberById(user.getId()).complete().getRoles()) {
+						for (Role r : guild.retrieveMemberById(user.getId()).complete().getRoles()) {
 							if (r.getName().equals("Meme curator")) {
 								admin = true;
 								break;
@@ -111,7 +121,7 @@ public class MemeBotInterfacer3000 {
 	 */
 	public void approve(boolean addedTags, String tags, User user) {
 		String approvedTags = "";
-		for(TextChannel channel: bot.getGuilds().get(0).getTextChannels()) {
+		for(TextChannel channel: guild.getTextChannels()) {
 			if(channel.getName().equals("meme-approval")) {
 				
 				for(MessageReaction reaction : channel.getHistoryFromBeginning(3).complete().getRetrievedHistory().get(0).getReactions()) {
@@ -193,7 +203,7 @@ public class MemeBotInterfacer3000 {
 		case Send_User:
 			try {
 				body = message.getBody();
-				bot.getGuilds().get(0).getMemberById(message.getUserID()).getUser().openPrivateChannel().complete().sendMessage(body).complete();
+				guild.getMemberById(message.getUserID()).getUser().openPrivateChannel().complete().sendMessage(body).complete();
 				logger.println("Sending message to user " + message.getUser());
 			}catch (NullPointerException e) {
 				logger.println("Unable to find user " + message.getUser() + " to send a message to");
@@ -201,19 +211,19 @@ public class MemeBotInterfacer3000 {
 			break;
 		case Send_Channel:
 			body = message.getBody();
-			TextChannel channel = bot.getGuilds().get(0).getTextChannelById(message.getChannelID());
+			TextChannel channel = guild.getTextChannelById(message.getChannelID());
 			channel.sendMessage(body).queue();
 			logger.println("Send message to channel " + message.getChannelID());
 			break;
 		case Send_Queue:
 			body = message.getBody();
-			TextChannel channelId = bot.getGuilds().get(0).getTextChannelsByName("meme-approval", true).get(0);
+			TextChannel channelId = approvalChannel;
 			channelId.sendMessage(body).complete();
 			
 			Message m = channelId.getHistory().retrievePast(3).complete().get(0);
 			
-			m.addReaction(bot.getGuilds().get(0).getEmotesByName("check", true).get(0)).queue();
-			m.addReaction(bot.getGuilds().get(0).getEmotesByName("x_", true).get(0)).queue();
+			m.addReaction(guild.getEmotesByName("check", true).get(0)).queue();
+			m.addReaction(guild.getEmotesByName("x_", true).get(0)).queue();
 			String tags = channelId.getHistory().retrievePast(3).complete().get(1).getContentDisplay();
 			
 			for(int i = 0; i < tags.split("\n").length - 1; i++) {
@@ -251,22 +261,28 @@ public class MemeBotInterfacer3000 {
 					break;
 				}
 				
-				m.addReaction(bot.getGuilds().get(0).getEmotesByName(emojiName, true).get(0)).complete();
+				m.addReaction(guild.getEmotesByName(emojiName, true).get(0)).complete();
 			}
 			
 			logger.println("Added meme and reactions to meme-approval channel");
 			break;
 		case Clear_Queue:
 			try {
-				List<Message> history = bot.getGuilds().get(0).getTextChannelsByName("meme-approval", true).get(0).getHistory().retrievePast(50).complete();
-				bot.getGuilds().get(0).getTextChannelsByName("meme-approval", true).get(0).deleteMessages(history).complete();
+				List<Message> history = approvalChannel.getHistory().retrievePast(50).complete();
+				approvalChannel.deleteMessages(history).complete();
 				logger.println("We cleared the queue");
 			}catch (IllegalArgumentException e) {
 				logger.println("We tried to clear an empty queue");
 			}
 			break;
 		case Clear_Help:
-			//bot.getGuilds().get(0).getTextChannelsByName("meme-bot-help", true).get(0).deleteMessages(history);
+			try {
+				List<Message> history = helpChannel.getHistory().retrievePast(50).complete();
+				helpChannel.deleteMessages(history).complete();
+				logger.println("We cleared the help");
+			}catch (IllegalArgumentException e) {
+				logger.println("We tried to clear an empty help");
+			}
 			break;
 		case Send_Tags:
 			//TODO get this done boi
@@ -275,8 +291,8 @@ public class MemeBotInterfacer3000 {
 			//TODO get this done boi
 			break;
 		case Queue_Size:
-			if(bot.getGuilds().get(0).getTextChannelsByName("meme-approval", true).get(0).getHistoryFromBeginning(3).complete().getRetrievedHistory().size() > 0)
-			bot.getGuilds().get(0).getTextChannelsByName("meme-approval", true).get(0).getHistoryFromBeginning(3).complete().getRetrievedHistory().get(2).editMessage("**Queue count**:" + message.getBody());
+			if(approvalChannel.getHistoryFromBeginning(3).complete().getRetrievedHistory().size() > 0)
+				approvalChannel.getHistoryFromBeginning(3).complete().getRetrievedHistory().get(2).editMessage("**Queue count**:" + message.getBody());
 			logger.println("We probably didnt increase the size there");
 			break;
 		default:
