@@ -1,6 +1,9 @@
 package bot;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
 import app.MemeConfigLoader3000;
@@ -203,7 +206,7 @@ public class MemeBotInterfacer3000 {
 		case Send_User:
 			try {
 				body = message.getBody();
-				guild.getMemberById(message.getUserID()).getUser().openPrivateChannel().complete().sendMessage(body).complete();
+				bot.openPrivateChannelById(message.getUserID()).complete().sendMessage(body).complete();
 				logger.println("Sending message to user " + message.getUser());
 			}catch (NullPointerException e) {
 				logger.println("Unable to find user " + message.getUser() + " to send a message to");
@@ -285,7 +288,37 @@ public class MemeBotInterfacer3000 {
 			}
 			break;
 		case Send_Tags:
-			//TODO get this done boi
+			
+			//each message that needs to be sent out
+			Queue<String> tagMessages = new LinkedList<String>();
+			
+			//each tag
+			List<String> indiTags = new LinkedList<String>(Arrays.asList(message.getBody().split(",")));
+			
+			int currentCharCount = 0;
+			String currentMessage = "";
+			while(!indiTags.isEmpty()) {
+				//get the top tag
+				String nextTag = indiTags.remove(0);
+				
+				//test if the tag will put us over the limit
+				if(currentCharCount + nextTag.length() + 1 > 1500) {
+					tagMessages.add(currentMessage);
+					currentCharCount = nextTag.length();
+					currentMessage = nextTag + "\n";
+				}else {
+					currentMessage += nextTag + "\n";
+				}
+				
+			}
+			//add the last message to tagMessages
+			tagMessages.add(currentMessage);
+			
+			//TODO edit existing tag messages or create new ones
+			
+			
+			
+			
 			break;
 		case Send_Commands:
 			//TODO get this done boi
