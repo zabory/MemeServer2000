@@ -27,6 +27,9 @@ public class MemeConfigLoader3000 {
 	@Value("${tagLkpTableName}")
 	private String tagLkpTableName;
 
+	@Value("${userLkpTableName}")
+	private String userLkpTableName;
+
 	@Value("${memeTableDef}")
 	private String memeTableDef;
 
@@ -35,6 +38,9 @@ public class MemeConfigLoader3000 {
 
 	@Value("${tagLkpTableDef}")
 	private String tagLkpTableDef;
+
+	@Value("${userLkpTableDef}")
+	private String userLkpTableDef;
 
 	@Value("${time}")
 	private String time;
@@ -63,6 +69,10 @@ public class MemeConfigLoader3000 {
 		return tagLkpTableName;
 	}
 
+	public String getUserLkpTableName() {
+		return userLkpTableName;
+	}
+
 	public String getMemeTableDef() {
 		return memeTableDef;
 	}
@@ -73,6 +83,10 @@ public class MemeConfigLoader3000 {
 
 	public String getTagLkpTableDef() {
 		return tagLkpTableDef;
+	}
+
+	public String getUserLkpTableDef() {
+		return userLkpTableDef;
 	}
 
 	public String getTime() {

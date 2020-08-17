@@ -19,6 +19,7 @@ public class MemeDB3000 {
 
     static class Column{
         enum ColType{
+            LONG,
             INT,
             STR
         }
@@ -34,7 +35,7 @@ public class MemeDB3000 {
     private MemeConfigLoader3000 config;
     private MemeLogger3000 logger;
     private String db;
-    static String memeTableName, cacheTableName, tagLkpTableName;
+    static String memeTableName, cacheTableName, tagLkpTableName, userLkpTableName;
     static List<String> tableDefs;
     private Integer headID;
     private Connection conn;
@@ -57,10 +58,12 @@ public class MemeDB3000 {
         this.memeTableName = config.getMemeTableName();
         this.cacheTableName = config.getCacheTableName();
         this.tagLkpTableName = config.getTagLkpTableName();
+        this.userLkpTableName = config.getUserLkpTableName();
         tableDefs = Arrays.asList(
                 config.getMemeTableDef().replace("memeTableName", memeTableName),
                 config.getCacheTableDef().replace("cacheTableName", cacheTableName),
-                config.getTagLkpTableDef().replace("tagLkpTableName", tagLkpTableName)
+                config.getTagLkpTableDef().replace("tagLkpTableName", tagLkpTableName),
+                config.getUserLkpTableDef().replace("userLkpTableName", userLkpTableName)
         );
         headID = 0;
         conn = null;
@@ -319,16 +322,16 @@ public class MemeDB3000 {
      * @param tags Tags associated with this meme
      * @return the id of the meme
      */
-    public Integer store(String username, String link, List<String> tags){
+    public Integer store(Long userId, String username, String link, List<String> tags){
         errorMsg = "";
-        if(uniqueLink(link)){
+        if(uniqueLink(link) && validUser(userId, username)){
             Integer memeID = getID();
             try {
-                execute("INSERT INTO " + memeTableName + " (id, link, submitter, curator, timestamp) VALUES (?,?,?,?,?)",
+                execute("INSERT INTO " + memeTableName + " (id, link, submitterId, curatorId, timestamp) VALUES (?,?,?,?,?)",
                         Arrays.asList(  new Column(memeID, Column.ColType.INT),
                                         new Column(link, Column.ColType.STR),
-                                        new Column(username, Column.ColType.STR),
-                                        new Column(username, Column.ColType.STR),
+                                        new Column(userId, Column.ColType.LONG),
+                                        new Column(userId, Column.ColType.LONG),
                                         new Column(new Timestamp(System.currentTimeMillis()).toString(), Column.ColType.STR)
                         ));
             } catch (SQLException throwables) {
@@ -349,23 +352,24 @@ public class MemeDB3000 {
 
     /**
      * Insert into cache table
-     * @param username user who submitted meme
+     * @param userId user who submitted meme
      * @param link link to meme
      * @param tags tags for this meme
      * @return the id of the meme
      */
-    public Integer cache(String username, String link, List<String> tags){
-        if(uniqueLink(link)){
+    public Integer cache(Long userId, String username, String link, List<String> tags){
+        errorMsg = "";
+        if(uniqueLink(link) && validUser(userId, username)){
             Integer memeID = getID();
             try {
-                execute("INSERT INTO " + cacheTableName + " (id, link, submitter) VALUES (?,?,?)",
+                execute("INSERT INTO " + cacheTableName + " (id, link, submitterId) VALUES (?,?,?)",
                         Arrays.asList(  new Column(memeID, Column.ColType.INT),
                                         new Column(link, Column.ColType.STR),
-                                        new Column(username, Column.ColType.STR)
+                                        new Column(userId, Column.ColType.LONG)
                         ));
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
-                error("ROLLBACK. Failed to insert meme into the cache: (" + tags + ", " + link + ", " + username + ")");
+                error("ROLLBACK. Failed to insert meme into the cache: (" + tags + ", " + link + ", " + userId + ")");
                 rollback();
                 return null;
             }
@@ -383,19 +387,23 @@ public class MemeDB3000 {
     /**
      * Promote a meme from the cache to meme table
      * @param id of the meme
-     * @param curatorName name of curator
+     * @param curatorId id of curator
      * @param tags tags of the promoted meme
-     * @return name of user who submitted the meme or null in case of error
+     * @return id of user who submitted the meme or null in case of error
      */
-    public String promote(Integer id, String curatorName, List<String> tags){
-        String link, username;
+    public Long promote(Integer id, String curator, Long curatorId, List<String> tags){
+        String link;
+        Long userId;
+
+        if(!validUser(curatorId, curator))
+            return null;
 
         // Get the link
         try {
-            ResultSet rs = executeQuery("SELECT link, submitter FROM " + cacheTableName + " WHERE id = ?", Arrays.asList(new Column(id, Column.ColType.INT)));
+            ResultSet rs = executeQuery("SELECT link, submitterId FROM " + cacheTableName + " WHERE id = ?", Arrays.asList(new Column(id, Column.ColType.INT)));
             if(rs != null && rs.next()) {
                 link = rs.getString("link");
-                username = rs.getString("submitter");
+                userId = rs.getLong("submitterId");
             }
             else
                 throw new Exception();
@@ -406,18 +414,18 @@ public class MemeDB3000 {
         }
 
         // Put it into the memedb
-        if(link != null && username != null){
+        if(link != null && userId != null){
             try {
-                execute("INSERT INTO " + memeTableName + " (id, link, submitter, curator, timestamp) VALUES (?,?,?,?,?)",
+                execute("INSERT INTO " + memeTableName + " (id, link, submitterId, curatorId, timestamp) VALUES (?,?,?,?,?)",
                         Arrays.asList(  new Column(id, Column.ColType.INT),
                                         new Column(link, Column.ColType.STR),
-                                        new Column(username, Column.ColType.STR),
-                                        new Column(curatorName, Column.ColType.STR),
+                                        new Column(userId, Column.ColType.LONG),
+                                        new Column(curatorId, Column.ColType.LONG),
                                         new Column(new Timestamp(System.currentTimeMillis()).toString(), Column.ColType.STR)
                         ));
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
-                error("Failed to promote meme to MemeDB: (" + id + ", " + link + ", " + username + ", " + curatorName + ")");
+                error("Failed to promote meme to MemeDB: (" + id + ", " + link + ", " + userId + ", " + curatorId + ")");
                 rollback();
                 return null;
             }
@@ -428,7 +436,7 @@ public class MemeDB3000 {
             execute("DELETE FROM " + cacheTableName + " WHERE id = ?", Arrays.asList(  new Column(id, Column.ColType.INT)));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-            error("Failed to remove meme from cache: (" + id + ", " + link + ", " + username + ")");
+            error("Failed to remove meme from cache: (" + id + ", " + link + ", " + userId + ")");
             rollback();
             return null;
         }
@@ -438,7 +446,7 @@ public class MemeDB3000 {
             execute("DELETE FROM " + tagLkpTableName + " WHERE id = ?", Arrays.asList(  new Column(id, Column.ColType.INT)));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-            error("Failed to remove old tags from the tag lookup: (" + id + ", " + link + ", " + username + ")");
+            error("Failed to remove old tags from the tag lookup: (" + id + ", " + link + ", " + userId + ")");
             rollback();
             return null;
         }
@@ -453,32 +461,35 @@ public class MemeDB3000 {
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-            error("Failed to promote meme to MemeDB: (" + id + ", " + link + ", " + username + ", " + curatorName + ")");
+            error("Failed to promote meme to MemeDB: (" + id + ", " + link + ", " + userId + ", " + curatorId + ")");
             rollback();
             return null;
         }
 
         // All changes succeeded, commit to DB and return the submitter
         commit();
-        return username;
+        return userId;
     }
 
     /**
      * Demote a meme from the meme to cache table
      * @param id of the meme
-     * @return name of user who submitted the meme or null in case of error
+     * @return id of user who submitted the meme or null in case of error
      */
-    public String demote(Integer id) {
-        String link = null, username = null, curator = null;
+    public Long demote(Integer id) {
+        String link;
+        Long userId, curatorId;
         // Get the link
         try {
-            ResultSet rs = executeQuery("SELECT link, submitter, curator FROM " + memeTableName + " WHERE id = ?", Arrays.asList(new Column(id, Column.ColType.INT)));
+            ResultSet rs = executeQuery("SELECT link, submitterId, curatorId FROM " + memeTableName + " WHERE id = ?", Arrays.asList(new Column(id, Column.ColType.INT)));
             if(rs != null && rs.next()) {
                 link = rs.getString("link");
-                username = rs.getString("submitter");
-                curator = rs.getString("curator");
+                userId = rs.getLong("submitterId");
+                curatorId = rs.getLong("curatorId");
             }
-        } catch (SQLException e) {
+            else
+                throw new Exception();
+        } catch (Exception e) {
             e.printStackTrace();
             error("Failed to find a meme with an ID of " + id);
             return null;
@@ -486,14 +497,14 @@ public class MemeDB3000 {
 
         // Put into cache
         try {
-            execute("INSERT INTO " + cacheTableName + " (id, link, submitter) VALUES (?,?,?)",
+            execute("INSERT INTO " + cacheTableName + " (id, link, submitterId) VALUES (?,?,?)",
                     Arrays.asList(  new Column(id, Column.ColType.INT),
                                     new Column(link, Column.ColType.STR),
-                                    new Column(username, Column.ColType.STR)
+                                    new Column(userId, Column.ColType.LONG)
                     ));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-            error("Failed to demote meme to cache: (" + id + ", " + link + ", " + username + ", " + curator + ")");
+            error("Failed to demote meme to cache: (" + id + ", " + link + ", " + userId + ", " + curatorId + ")");
             rollback();
             return null;
         }
@@ -503,34 +514,37 @@ public class MemeDB3000 {
             execute("DELETE FROM " + memeTableName + " WHERE id = ?", Arrays.asList(  new Column(id, Column.ColType.INT)));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-            error("Failed to remove meme from MemeDB: (" + id + ", " + link + ", " + username + ", " + curator + ")");
+            error("Failed to remove meme from MemeDB: (" + id + ", " + link + ", " + userId + ", " + curatorId + ")");
             rollback();
             return null;
         }
 
         // All changes succeeded, commit to DB and return the submitter
         commit();
-        return username;
+        return userId;
     }
 
     /**
      * Remove a meme from the cache and all its tags
      * @param id of the meme
-     * @return the username of the submitter or null if an error occurred
+     * @return the id of the submitter or null if an error occurred
      */
-    public String reject(Integer id){
-        String link = null, username = null;
+    public Long reject(Integer id){
+        String link;
+        Long userId;
 
         // Get the link
         try {
-            ResultSet rs = executeQuery("SELECT link, submitter FROM " + cacheTableName + " WHERE id = ?", Arrays.asList(new Column(id, Column.ColType.INT)));
+            ResultSet rs = executeQuery("SELECT link, submitterId FROM " + cacheTableName + " WHERE id = ?", Arrays.asList(new Column(id, Column.ColType.INT)));
             if(rs != null && rs.next()) {
                 link = rs.getString("link");
-                username = rs.getString("submitter");;
+                userId = rs.getLong("submitterId");;
             }
-        } catch (SQLException e) {
+            else
+                throw new Exception();
+        } catch (Exception e) {
             e.printStackTrace();
-            error("Failed to find a meme in the cache: (" + id + ", " + link + ")");
+            error("Failed to find a meme in the cache: (" + id + ")");
             return null;
         }
 
@@ -556,7 +570,7 @@ public class MemeDB3000 {
 
         // All changes succeeded, commit to DB and return the submitter
         commit();
-        return username;
+        return userId;
     }
 
     /*
@@ -592,8 +606,7 @@ public class MemeDB3000 {
                 }
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
-                errorMsg = "Encountered an error inserting tag " + tag + " into DB, rolling back...";
-                error(errorMsg);
+                error("Encountered an error inserting tag " + tag + " into DB, rolling back...");
                 rollback();
                 return false;
             }
@@ -608,17 +621,20 @@ public class MemeDB3000 {
      */
     private boolean uniqueLink(String link) {
         try {
-            ResultSet rs = executeQuery("SELECT * FROM (" +
-                    "SELECT id, link, submitter " +
+            ResultSet rs = executeQuery("SELECT name FROM (" +
+                    "SELECT id, link, submitterId " +
                     "FROM " + cacheTableName +
                     " UNION " +
-                    "SELECT id, link, submitter " +
+                    "SELECT id, link, submitterId " +
                     "FROM " + memeTableName + ") " +
-                    "WHERE link = ?", Arrays.asList(new Column(link, Column.ColType.STR)));
+                    "INNER JOIN " + userLkpTableName + " lkp" +
+                    " ON submitterId = lkp.id"  +
+                    "WHERE link = ? ", Arrays.asList(new Column(link, Column.ColType.STR))
+            );
 
             if(rs != null && rs.next()) {
-                String previousSubmitter = rs.getString("submitter");
-                error("This meme was already submitted by " + previousSubmitter);
+                String prevSubmitter = rs.getString("name");
+                error("This meme was already submitted by " + prevSubmitter);
                 return false;
             }
             else
@@ -628,6 +644,40 @@ public class MemeDB3000 {
             error("Encountered an error validating uniqueness for " + link);
             return false;
         }
+    }
+
+    /**
+     * Inserts new ID lookup or validates it already exists
+     * @param userId id of user
+     * @param username name of user
+     * @return whether it is ok to proceed
+     */
+    private boolean validUser(Long userId, String username) {
+        String name;
+        // Check to see if it already exists in the DB
+        try {
+            ResultSet rs = executeQuery("SELECT name FROM " + userLkpTableName + " WHERE id = ?", Arrays.asList(new Column(userId, Column.ColType.LONG)));
+            if(rs != null && rs.next())
+                name = rs.getString("name");
+            else{
+                try {
+                    execute("INSERT INTO " + userLkpTableName + " (id, name) VALUES (?,?)",
+                            Arrays.asList(  new Column(userId, Column.ColType.LONG),
+                                    new Column(username, Column.ColType.STR)
+                            ));
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                    error("Encountered an error inserting user (" + userId + ", " + username + ") into DB, rolling back...");
+                    rollback();
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            error("Encountered an error validating user (" + userId + ", " + username + ")");
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -682,6 +732,9 @@ public class MemeDB3000 {
         for(int i=0;i<cols.size();i++){
             Column col = cols.get(i);
             switch(col.type){
+                case LONG:
+                    ps.setLong(i+1, (Long) col.var);
+                    break;
                 case INT:
                     ps.setInt(i+1, (Integer) col.var);
                     break;
