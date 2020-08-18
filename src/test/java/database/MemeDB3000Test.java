@@ -23,6 +23,20 @@ public class MemeDB3000Test {
         context.refresh();
         config = context.getBean(MemeConfigLoader3000.class);
         context.close();
+
+        // Clean DB
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + config.getDatabaseLocation());
+            conn.createStatement().execute("DELETE FROM " + config.getMemeTableName());
+            conn.createStatement().execute("DELETE FROM " + config.getCacheTableName());
+            conn.createStatement().execute("DELETE FROM " + config.getTagLkpTableName());
+            conn.createStatement().execute("DELETE FROM " + config.getUserLkpTableName());
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        // connect to DB
         memebase = new MemeDB3000(config, new MemeLogger3000());
     }
 
@@ -40,6 +54,7 @@ public class MemeDB3000Test {
             conn.createStatement().execute("DELETE FROM " + config.getMemeTableName());
             conn.createStatement().execute("DELETE FROM " + config.getCacheTableName());
             conn.createStatement().execute("DELETE FROM " + config.getTagLkpTableName());
+            conn.createStatement().execute("DELETE FROM " + config.getUserLkpTableName());
             conn.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -50,9 +65,9 @@ public class MemeDB3000Test {
     public void adminSubmitTest() {
         Integer expecID = 1;
         String link = "https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg";
-        assertEquals(expecID, memebase.store(4L, "Ziggy",link, Arrays.asList("meta", "books")));
-        assertEquals("Ziggy", memebase.demote(expecID));
-        assertEquals("Ziggy", memebase.reject(expecID));
+        assertEquals(expecID, memebase.store(1L, "Ziggy",link, Arrays.asList("meta", "books")));
+        assertEquals(Long.valueOf(1), memebase.demote(expecID));
+        assertEquals(Long.valueOf(1), memebase.reject(expecID));
     }
 
     @Test
@@ -60,10 +75,10 @@ public class MemeDB3000Test {
         Integer expecID = 1;
         String link = "https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg";
         assertEquals(expecID, memebase.cache(1L, "Bittah_Artist", link, Arrays.asList("daniel", "ugly", "yeet")));
-        assertEquals("Bittah_Artist", memebase.promote(expecID, "Ziggy", 4L, Arrays.asList("daniel", "newtag", "yeet")));
+        assertEquals(Long.valueOf(1), memebase.promote(expecID, "Ziggy", 4L, Arrays.asList("daniel", "newtag", "yeet")));
         assertEquals(link, memebase.get(Arrays.asList("daniel", "newtag")));
-        assertEquals("Bittah_Artist", memebase.demote(expecID));
-        assertEquals("Bittah_Artist", memebase.reject(expecID));
+        assertEquals(Long.valueOf(1), memebase.demote(expecID));
+        assertEquals(Long.valueOf(1), memebase.reject(expecID));
     }
 
     @Test
@@ -72,14 +87,14 @@ public class MemeDB3000Test {
         String link1 = "https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg",
                 link2 = "https://cdn.discordapp.com/attachments/647667357879107584/736409444577050764/MemeBot2000.jpg",
                 link3 = "https://cdn.discordapp.com/attachments/647667357879107584/735864874932109322/xvOzIkw.jpeg";
-        assertEquals(ID1, memebase.cache(2L, "Kat", link1, Arrays.asList("meta", "books")));
-        assertEquals(ID2, memebase.cache(3L, "Radscaryface", link2, Arrays.asList("server", "diagram")));
-        assertEquals(ID3, memebase.cache(5L, "cedars", link3, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
+        assertEquals(ID1, memebase.cache(1L, "Kat", link1, Arrays.asList("meta", "books")));
+        assertEquals(ID2, memebase.cache(2L, "Radscaryface", link2, Arrays.asList("server", "diagram")));
+        assertEquals(ID3, memebase.cache(3L, "cedars", link3, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
 
-        assertEquals("Kat", memebase.promote(ID1, "Ziggy", 4L, Arrays.asList("meta", "books")));
+        assertEquals(Long.valueOf(1), memebase.promote(ID1, "Ziggy", 4L, Arrays.asList("meta", "books")));
         assertEquals(null, memebase.promote(ID1, "Ziggy", 4L, Arrays.asList("meta", "books")));
-        assertEquals("Radscaryface", memebase.promote(ID2, "Ziggy", 4L, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
-        assertEquals("cedars", memebase.reject(ID3));
+        assertEquals(Long.valueOf(2), memebase.promote(ID2, "Ziggy", 4L, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
+        assertEquals(Long.valueOf(3), memebase.reject(ID3));
     }
 
     @Test
@@ -94,9 +109,9 @@ public class MemeDB3000Test {
     public void noMemeTest() {
         Integer expecID = 1;
         String link = "https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg";
-        assertEquals(expecID, memebase.store(4L, "Ziggy", link, Arrays.asList("meta", "books")));
-        assertEquals("Ziggy", memebase.demote(expecID));
-        assertEquals("Ziggy", memebase.reject(expecID));
+        assertEquals(expecID, memebase.store(69L, "Ziggy", link, Arrays.asList("meta", "books")));
+        assertEquals(Long.valueOf(69), memebase.demote(expecID));
+        assertEquals(Long.valueOf(69), memebase.reject(expecID));
         assertEquals(null, memebase.get(new ArrayList<String>()));
     }
 
@@ -106,9 +121,9 @@ public class MemeDB3000Test {
         String link1 = "https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg",
                 link2 = "https://cdn.discordapp.com/attachments/647667357879107584/736409444577050764/MemeBot2000.jpg",
                 link3 = "https://cdn.discordapp.com/attachments/647667357879107584/735864874932109322/xvOzIkw.jpeg";
-        assertEquals(ID1, memebase.store(4L, "Ziggy", link1, Arrays.asList("meta", "books")));
-        assertEquals(ID2, memebase.store(4L, "Ziggy", link2, Arrays.asList("server", "diagram")));
-        assertEquals(ID3, memebase.store(4L, "Ziggy", link3, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
+        assertEquals(ID1, memebase.store(44L, "Ziggy", link1, Arrays.asList("meta", "books")));
+        assertEquals(ID2, memebase.store(44L, "Ziggy", link2, Arrays.asList("server", "diagram")));
+        assertEquals(ID3, memebase.store(44L, "Ziggy", link3, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
 
         assertEquals(null, memebase.get(Arrays.asList("YOOOOOOOOO", "didly squat")));
     }
@@ -135,22 +150,22 @@ public class MemeDB3000Test {
         String link1 = "https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg",
                 link2 = "https://cdn.discordapp.com/attachments/647667357879107584/736409444577050764/MemeBot2000.jpg",
                 link3 = "https://cdn.discordapp.com/attachments/647667357879107584/735864874932109322/xvOzIkw.jpeg";
-        assertEquals(ID1, memebase.store(4L, "Ziggy", link1, Arrays.asList("meta", "books")));
-        assertEquals(ID2, memebase.store(4L, "Ziggy", link2, Arrays.asList("server", "diagram")));
-        assertEquals(ID3, memebase.store(4L, "Ziggy", link3, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
+        assertEquals(ID1, memebase.store(1L, "Ziggy", link1, Arrays.asList("meta", "books")));
+        assertEquals(ID2, memebase.store(1L, "Ziggy", link2, Arrays.asList("server", "diagram")));
+        assertEquals(ID3, memebase.store(1L, "Ziggy", link3, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
 
         assertEquals(link3, memebase.get(ID3));
         assertEquals(link2, memebase.get(ID2));
         assertEquals(null, memebase.get(ID4));
 
-        assertEquals("Ziggy", memebase.demote(ID3));
+        assertEquals(Long.valueOf(1), memebase.demote(ID3));
         assertEquals(null, memebase.get(ID3));
-        assertEquals("Ziggy", memebase.reject(ID3));
+        assertEquals(Long.valueOf(1), memebase.reject(ID3));
         assertEquals(null, memebase.get(ID3));
 
-        assertEquals("Ziggy", memebase.demote(ID1));
+        assertEquals(Long.valueOf(1), memebase.demote(ID1));
         assertEquals(null, memebase.get(ID1));
-        assertEquals("Ziggy", memebase.promote(ID1, "zabory", 7L, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
+        assertEquals(Long.valueOf(1), memebase.promote(ID1, "zabory", 7L, Arrays.asList("oracle", "sql", "dog", "animal", "test")));
         assertEquals(link1, memebase.get(ID1));
     }
 

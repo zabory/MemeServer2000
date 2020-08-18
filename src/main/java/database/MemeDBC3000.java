@@ -92,7 +92,7 @@ public class MemeDBC3000 extends Thread{
                         break;
 
                     case GET_MEME_TAGS:
-                        logger.println("Getting all tags for meme of ID " + msg.getId());
+                        logger.println("Getting a random meme with tags " + msg.getTags());
                         link = db.get(msg.getTags());
                         if(link != null){
                             outputQ.put(new MemeDBMsg3000()
@@ -128,7 +128,7 @@ public class MemeDBC3000 extends Thread{
                             outputQ.put(new MemeDBMsg3000()
                                     .type(SUBMIT_ACK)
                                     .id(id)
-                                    .userID(msg.getId())
+                                    .userID(msg.getUserID())
                                     .message("Stored meme to the Cache. It is pending admin approval.")
                             );
                         }
@@ -212,10 +212,10 @@ public class MemeDBC3000 extends Thread{
         MemeDBMsg3000 errorMsg = new MemeDBMsg3000()
                                     .type(MemeDBMsg3000.MsgDBType.ERROR)
                                     .message((fatal ? "[ FATAL ] " : "") + db.getError())
-                                    .tags(msg.getTags())
-                                    .userID(msg.getUserID())
-                                    .username(msg.getUsername())
-                                    .id(msg.getId());
+                                    .tags(msg != null ? msg.getTags() : null)
+                                    .userID(msg != null ? msg.getUserID() : null)
+                                    .username(msg != null ? msg.getUsername() : null)
+                                    .id(msg != null ? msg.getId() : null);
         try {
             outputQ.put(errorMsg);
         } catch (InterruptedException e) {

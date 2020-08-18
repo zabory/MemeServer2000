@@ -83,12 +83,12 @@ public class MemeDBMsg3000 {
         return this;
     }
     
-    public MemeDBMsg3000 userID(long userID) {
+    public MemeDBMsg3000 userID(Long userID) {
     	this.userID = userID;
     	return this;
     }
     
-    public long getUserID() {
+    public Long getUserID() {
     	return userID;
     }
 

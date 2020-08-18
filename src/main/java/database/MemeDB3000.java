@@ -628,7 +628,7 @@ public class MemeDB3000 {
                     "SELECT id, link, submitterId " +
                     "FROM " + memeTableName + ") " +
                     "INNER JOIN " + userLkpTableName + " lkp" +
-                    " ON submitterId = lkp.id"  +
+                    " ON submitterId = lkp.id "  +
                     "WHERE link = ? ", Arrays.asList(new Column(link, Column.ColType.STR))
             );
 
@@ -654,17 +654,28 @@ public class MemeDB3000 {
      */
     private boolean validUser(Long userId, String username) {
         String name;
+        if(userId == null || username == null){
+            error("Need a non-null username: [" + username + "] and userID: [" + userId + "] to modify the DB");
+            return false;
+        }
+
         // Check to see if it already exists in the DB
         try {
             ResultSet rs = executeQuery("SELECT name FROM " + userLkpTableName + " WHERE id = ?", Arrays.asList(new Column(userId, Column.ColType.LONG)));
-            if(rs != null && rs.next())
+            if(rs != null && rs.next()) {
                 name = rs.getString("name");
+                if(!username.equals(name)) {
+                    error("Username mismatch for ID: [" + userId + "]. DB has name: [" + name + "], provided: [" + username + "]");
+                    return false;
+                }
+            }
             else{
                 try {
                     execute("INSERT INTO " + userLkpTableName + " (id, name) VALUES (?,?)",
                             Arrays.asList(  new Column(userId, Column.ColType.LONG),
                                     new Column(username, Column.ColType.STR)
                             ));
+                    commit();
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                     error("Encountered an error inserting user (" + userId + ", " + username + ") into DB, rolling back...");
@@ -700,6 +711,9 @@ public class MemeDB3000 {
         for(int i=0;i<cols.size();i++){
             Column col = cols.get(i);
             switch(col.type){
+                case LONG:
+                    ps.setLong(i+1, (Long) col.var);
+                    break;
                 case INT:
                     ps.setInt(i+1, (Integer) col.var);
                     break;

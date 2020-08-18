@@ -53,6 +53,7 @@ public class MemeDBC3000Test {
             conn.createStatement().execute("DELETE FROM " + config.getMemeTableName());
             conn.createStatement().execute("DELETE FROM " + config.getCacheTableName());
             conn.createStatement().execute("DELETE FROM " + config.getTagLkpTableName());
+            conn.createStatement().execute("DELETE FROM " + config.getUserLkpTableName());
             conn.close();
 
             controller.join();
@@ -69,11 +70,12 @@ public class MemeDBC3000Test {
                     .type(STORE_MEME)
                     .link("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg")
                     .username("Zabory")
+                    .userID(1L)
                     .tags(Arrays.asList("bread", "seals")));
             MemeDBMsg3000 msg = (MemeDBMsg3000) outputQ.take();
             assertEquals(SUBMIT_ACK, msg.getType());
             assertEquals(null, msg.getId());
-            assertEquals("Zabory", msg.getUsername());
+            assertEquals(Long.valueOf(1), msg.getUserID());
         } catch (InterruptedException e) {
             e.printStackTrace();
             assertTrue(false);
@@ -87,21 +89,23 @@ public class MemeDBC3000Test {
                     .type(CACHE_MEME)
                     .link("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg")
                     .username("Zabory")
+                    .userID(1L)
                     .tags(Arrays.asList("bread", "seals")));
             MemeDBMsg3000 msg = (MemeDBMsg3000) outputQ.take();
             assertEquals(SUBMIT_ACK, msg.getType());
             assertEquals((Integer) 1, msg.getId());
-            assertEquals("Zabory", msg.getUsername());
+            assertEquals(Long.valueOf(1L), msg.getUserID());
 
             inputQ.put(new MemeDBMsg3000()
                     .type(PROMOTE_MEME).id(1)
                     .username("Ziggy")
+                    .userID(2L)
                     .tags(Arrays.asList("bread", "seals", "Charlie")));
             msg = (MemeDBMsg3000) outputQ.take();
             assertEquals(CURATE_RESULT, msg.getType());
             assertEquals((Integer) 1, msg.getId());
             assertEquals("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg", msg.getLink());
-            assertEquals("Zabory", msg.getUsername());
+            assertEquals(Long.valueOf(1L), msg.getUserID());
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -116,20 +120,22 @@ public class MemeDBC3000Test {
                     .type(CACHE_MEME)
                     .link("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg")
                     .username("Zabory")
+                    .userID(1L)
                     .tags(Arrays.asList("bread", "seals")));
             MemeDBMsg3000 msg = (MemeDBMsg3000) outputQ.take();
             assertEquals(SUBMIT_ACK, msg.getType());
             assertEquals((Integer) 1, msg.getId());
-            assertEquals("Zabory", msg.getUsername());
+            assertEquals(Long.valueOf(1L), msg.getUserID());
 
             inputQ.put(new MemeDBMsg3000()
                     .type(REJECT_MEME).id(1)
-                    .username("Ziggy"));
+                    .username("Ziggy")
+                    .userID(1L));
             msg = (MemeDBMsg3000) outputQ.take();
             assertEquals(CURATE_RESULT, msg.getType());
             assertEquals((Integer) 1, msg.getId());
             assertEquals("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg", msg.getLink());
-            assertEquals("Zabory", msg.getUsername());
+            assertEquals(Long.valueOf(1L), msg.getUserID());
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -144,11 +150,12 @@ public class MemeDBC3000Test {
                     .type(STORE_MEME)
                     .link("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg")
                     .username("Zabory")
+                    .userID(1L)
                     .tags(Arrays.asList("bread", "seals")));
             MemeDBMsg3000 msg = (MemeDBMsg3000) outputQ.take();
             assertEquals(SUBMIT_ACK, msg.getType());
             assertEquals(null, msg.getId());
-            assertEquals("Zabory", msg.getUsername());
+            assertEquals(Long.valueOf(1L), msg.getUserID());
 
             inputQ.put(new MemeDBMsg3000()
                     .type(DEMOTE_MEME).id(1));
@@ -156,7 +163,7 @@ public class MemeDBC3000Test {
             assertEquals(REPLENISH_Q, msg.getType());
             assertEquals((Integer) 1, msg.getId());
             assertEquals("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg", msg.getLink());
-            assertEquals("Zabory", msg.getUsername());
+            assertEquals(Long.valueOf(1L), msg.getUserID());
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -171,10 +178,11 @@ public class MemeDBC3000Test {
                     .type(CACHE_MEME)
                     .link("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg")
                     .username("Zabory")
+                    .userID(10L)
                     .tags(Arrays.asList("bread", "seals")));
             MemeDBMsg3000 msg = (MemeDBMsg3000) outputQ.take();
             assertEquals(SUBMIT_ACK, msg.getType());
-            assertEquals("Zabory", msg.getUsername());
+            assertEquals(Long.valueOf(10), msg.getUserID());
 
             inputQ.put(new MemeDBMsg3000().type(GET_MEME_ID).id(1));
             msg = (MemeDBMsg3000) outputQ.take();
@@ -194,11 +202,12 @@ public class MemeDBC3000Test {
                     .type(STORE_MEME)
                     .link("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg")
                     .username("Zabory")
+                    .userID(25L)
                     .tags(Arrays.asList("bread", "seals")));
             MemeDBMsg3000 msg = (MemeDBMsg3000) outputQ.take();
             assertEquals(SUBMIT_ACK, msg.getType());
             assertEquals(null, msg.getId());
-            assertEquals("Zabory", msg.getUsername());
+            assertEquals(Long.valueOf(25), msg.getUserID());
 
             inputQ.put(new MemeDBMsg3000()
                     .type(GET_MEME_TAGS)
@@ -223,6 +232,7 @@ public class MemeDBC3000Test {
                         .type(STORE_MEME)
                         .link(link)
                         .username("Ziggy")
+                        .userID(1L)
                         .tags(Arrays.asList("dog", "cat"))
                 );
                 link += "a";
@@ -231,6 +241,7 @@ public class MemeDBC3000Test {
                     .type(STORE_MEME)
                     .link("https://cdn.discordapp.com/attachments/647667357879107584/735884634818215936/p1Uoukq.jpeg")
                     .username("Zabory")
+                    .userID(100L)
                     .tags(Arrays.asList("bread", "seals")));
             for(int i=0;i<11;i++)
                 outputQ.take();
@@ -264,26 +275,35 @@ public class MemeDBC3000Test {
         String link = "b";
         try{
             for(int i=0;i<50;i++){
+                String user = getRandomName();
+                Long id = getUserId(user);
                 inputQ.put(new MemeDBMsg3000()
                         .type(CACHE_MEME)
                         .link(link)
-                        .username(getRandomName())
+                        .username(user)
+                        .userID(id)
                         .tags(getRandomTagList(4))
                 );
                 link += "b";
             }
 
+            String user = getRandomName();
+            Long id = getUserId(user);
             inputQ.put(new MemeDBMsg3000()
                     .type(STORE_MEME)
                     .link("testlinkstore")
-                    .username(getRandomName())
+                    .username(user)
+                    .userID(id)
                     .tags(getRandomTagList(4))
             );
 
+            user = getRandomName();
+            id = getUserId(user);
             inputQ.put(new MemeDBMsg3000()
                     .type(CACHE_MEME)
                     .link("testlink")
-                    .username(getRandomName())
+                    .username(user)
+                    .userID(id)
                     .tags(getRandomTagList(4))
             );
 
@@ -308,46 +328,62 @@ public class MemeDBC3000Test {
             msg = (MemeDBMsg3000) outputQ.take();
             assertEquals(ERROR, msg.getType());
 
+            user = getRandomName();
+            id = getUserId(user);
             // cant store a meme that exists
             inputQ.put(new MemeDBMsg3000()
                     .type(STORE_MEME)
-                    .username(getRandomName())
+                    .username(user)
+                    .userID(id)
                     .link("testlinkstore")
             );
             msg = (MemeDBMsg3000) outputQ.take();
             assertEquals(ERROR, msg.getType());
 
+            user = getRandomName();
+            id = getUserId(user);
             // cant cache a meme that exists
             inputQ.put(new MemeDBMsg3000()
                     .type(CACHE_MEME)
-                    .username(getRandomName())
+                    .username(user)
+                    .userID(id)
                     .link("testlink")
             );
             msg = (MemeDBMsg3000) outputQ.take();
             assertEquals(ERROR, msg.getType());
 
+            user = getRandomName();
+            id = getUserId(user);
             // cant store a meme that exists in the cache
             inputQ.put(new MemeDBMsg3000()
                     .type(STORE_MEME)
-                    .username(getRandomName())
+                    .username(user)
+                    .userID(id)
                     .link("testlink")
             );
             msg = (MemeDBMsg3000) outputQ.take();
             assertEquals(ERROR, msg.getType());
 
+            user = getRandomName();
+            id = getUserId(user);
             // cant cache a meme that exists
             inputQ.put(new MemeDBMsg3000()
                     .type(CACHE_MEME)
-                    .username(getRandomName())
+                    .username(user)
+                    .userID(id)
                     .link("testlinkstore")
             );
             msg = (MemeDBMsg3000) outputQ.take();
             assertEquals(ERROR, msg.getType());
 
+            user = getRandomName();
+            id = getUserId(user);
             // cant promote a meme that isnt in the cache
             inputQ.put(new MemeDBMsg3000()
                     .type(PROMOTE_MEME)
                     .id(100)
+                    .username(user)
+                    .userID(id)
             );
             msg = (MemeDBMsg3000) outputQ.take();
             assertEquals(ERROR, msg.getType());
@@ -360,10 +396,73 @@ public class MemeDBC3000Test {
             msg = (MemeDBMsg3000) outputQ.take();
             assertEquals(ERROR, msg.getType());
 
+            user = getRandomName();
+            id = getUserId(user);
             // cant reject a meme that isnt in the cache
             inputQ.put(new MemeDBMsg3000()
                     .type(REJECT_MEME)
                     .id(100)
+                    .username(user)
+                    .userID(id)
+            );
+            msg = (MemeDBMsg3000) outputQ.take();
+            assertEquals(ERROR, msg.getType());
+
+            // cannot submit a meme without an id
+            inputQ.put(new MemeDBMsg3000()
+                    .type(CACHE_MEME)
+                    .link("testlink")
+                    .username("screee")
+                    .userID(null)
+                    .tags(getRandomTagList(4))
+            );
+            msg = (MemeDBMsg3000) outputQ.take();
+            assertEquals(ERROR, msg.getType());
+
+            // cannot submit a meme without a username
+            inputQ.put(new MemeDBMsg3000()
+                    .type(CACHE_MEME)
+                    .link("testlink")
+                    .username(null)
+                    .userID(1L)
+                    .tags(getRandomTagList(4))
+            );
+            msg = (MemeDBMsg3000) outputQ.take();
+            assertEquals(ERROR, msg.getType());
+
+            // cannot submit a meme with a different pair of ID and usernames
+            inputQ.put(new MemeDBMsg3000()
+                    .type(CACHE_MEME)
+                    .link("userLink")
+                    .username("ADMIN")
+                    .userID(100L)
+                    .tags(getRandomTagList(4))
+            );
+            outputQ.take();
+            inputQ.put(new MemeDBMsg3000()
+                    .type(CACHE_MEME)
+                    .link("userLink2")
+                    .username("NOT_ADMIN")
+                    .userID(100L)
+                    .tags(getRandomTagList(4))
+            );
+            msg = (MemeDBMsg3000) outputQ.take();
+            assertEquals(ERROR, msg.getType());
+
+            // cannot move a meme around without a valid user and id combo
+            inputQ.put(new MemeDBMsg3000()
+                    .type(CACHE_MEME)
+                    .link("userLink2")
+                    .username("ADMIN")
+                    .userID(100L)
+                    .tags(getRandomTagList(4))
+            );
+            outputQ.take();
+            inputQ.put(new MemeDBMsg3000()
+                    .type(PROMOTE_MEME)
+                    .id(54)
+                    .username("NOT_ADMIN")
+                    .userID(100L)
             );
             msg = (MemeDBMsg3000) outputQ.take();
             assertEquals(ERROR, msg.getType());
@@ -384,6 +483,7 @@ public class MemeDBC3000Test {
                         .type(STORE_MEME)
                         .link(link)
                         .username("Ziggy")
+                        .userID(100L)
                         .tags(getRandomTagList(4))
                 );
                 link += "a";
@@ -392,10 +492,14 @@ public class MemeDBC3000Test {
             // run 10 CACHE commands
             link = "b";
             for(int i=0;i<10;i++){
+                String user = getRandomName();
+                Long id = getUserId(user);
+
                 inputQ.put(new MemeDBMsg3000()
                         .type(CACHE_MEME)
                         .link(link)
-                        .username(getRandomName())
+                        .username(user)
+                        .userID(id)
                         .tags(getRandomTagList(4))
                 );
                 link += "b";
@@ -407,7 +511,7 @@ public class MemeDBC3000Test {
                 outputQ.take();
 
             // perform random actions on all inserted
-            for(int i=0;i<10;i++){
+            for(int i=11;i<=20;i++){
                 inputQ.put(new MemeDBMsg3000()
                         .type(getRandMemeMsg())
                         .id(i)
@@ -421,6 +525,7 @@ public class MemeDBC3000Test {
                         .type(getRandCurateMsg())
                         .id(i)
                         .username("Ziggy")
+                        .userID(100L)
                         .tags(Arrays.asList("testtag", "testing tags"))
                 );
                 outputQ.take();
@@ -452,6 +557,10 @@ public class MemeDBC3000Test {
         List<String> names = Arrays.asList("Owen", "Ethan", "Anthony", "Kat", "Mike", "BenDu", "BenShu", "BenMu", "Reba", "Charlie", "Mario");
         Random rand = new Random();
         return names.get(rand.nextInt(names.size()-1));
+    }
+
+    private Long getUserId(String user) {
+        return Long.valueOf(Arrays.asList("Owen", "Ethan", "Anthony", "Kat", "Mike", "BenDu", "BenShu", "BenMu", "Reba", "Charlie", "Mario").indexOf(user));
     }
 
     MsgDBType getRandMemeMsg(){
