@@ -34,7 +34,7 @@ public class MemeBotReader3000 extends Thread{
                 switch(msg.getType()){
                     case Deny:
                         logger.println("Meme denied from discord bot by " + msg.getUser());
-                        newMsg = new MemeDBMsg3000().type(REJECT_MEME).username(msg.getUser()).id(approveQ.peek());
+                        newMsg = new MemeDBMsg3000().type(REJECT_MEME).username(msg.getUser()).userID(msg.getUserID()).id(approveQ.peek());
                         break;
                     case Approve:
                         logger.println("Meme approved from discord bot by " + msg.getUser() + " with tags of " + msg.getTags());
@@ -43,7 +43,7 @@ public class MemeBotReader3000 extends Thread{
                         tags.forEach(e -> {
                             finalTags2.set(finalTags2.indexOf(e), e.trim().replace("\"", "").replace(";", "").replace("[", "").replace("]", "").toLowerCase());
                         });
-                        newMsg = new MemeDBMsg3000().type(PROMOTE_MEME).username(msg.getUser()).id(approveQ.peek()).tags(new LinkedList<String>(tags));
+                        newMsg = new MemeDBMsg3000().type(PROMOTE_MEME).username(msg.getUser()).userID(msg.getUserID()).id(approveQ.peek()).tags(new LinkedList<String>(tags));
                         break;
                     case Fetch_Meme:
                         logger.println("Fetching meme for " + msg.getUser());
@@ -52,7 +52,7 @@ public class MemeBotReader3000 extends Thread{
                         tags.forEach(e -> {
                             finalTags1.set(finalTags1.indexOf(e), e.trim().replace("\"", "").replace(";", "").replace("[", "").replace("]", "").toLowerCase());
                         });
-                        newMsg = new MemeDBMsg3000().type(GET_MEME_TAGS).tags(new LinkedList<String>(tags)).username(msg.getUser()).channelID(msg.getChannelID());
+                        newMsg = new MemeDBMsg3000().type(GET_MEME_TAGS).tags(new LinkedList<String>(tags)).username(msg.getUser()).userID(msg.getUserID()).channelID(msg.getChannelID());
                         break;
                     case Submit_Meme:
                         logger.println("Meme submitted by " + msg.getUser() + " with a channel ID of " + msg.getChannelID());
@@ -61,7 +61,7 @@ public class MemeBotReader3000 extends Thread{
                         tags.forEach(e -> {
                             finalTags.set(finalTags.indexOf(e), e.trim().replace("\"", "").replace(";", "").replace("[", "").replace("]", "").toLowerCase());
                         });
-                        newMsg = new MemeDBMsg3000().link(msg.getUrl()).tags(tags).username(msg.getUser()).channelID(msg.getChannelID());
+                        newMsg = new MemeDBMsg3000().link(msg.getUrl()).tags(tags).username(msg.getUser()).userID(msg.getUserID()).channelID(msg.getChannelID());
                         if(msg.isAdmin()) {
                             newMsg.type(STORE_MEME);
                         }else {
