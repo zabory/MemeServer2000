@@ -3,6 +3,7 @@ package database;
 import app.MemeConfigLoader3000;
 import datastructures.MemeLogger3000;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,7 +55,11 @@ public class MemeDB3000 {
     MemeDB3000(MemeConfigLoader3000 config, MemeLogger3000 logger) {
         this.config = config;
         this.logger = logger;
-        this.db = "jdbc:sqlite:" + config.getDatabaseLocation();
+        File dataBaseFile = new File(config.getDatabaseLocation());
+        if(!dataBaseFile.exists()) {
+        	dataBaseFile.getParentFile().mkdirs();
+        }
+        this.db = "jdbc:sqlite:" + dataBaseFile.getAbsolutePath();
         this.memeTableName = config.getMemeTableName();
         this.cacheTableName = config.getCacheTableName();
         this.tagLkpTableName = config.getTagLkpTableName();

@@ -73,6 +73,7 @@ public class MemeBotInterfacer3000 {
 
 	public void messageHandler(MessageReceivedEvent e) {
 		User user = e.getAuthor();
+		long userID = user.getIdLong();
 		MessageChannel channel = e.getChannel();
 		Message message = e.getMessage();
 
@@ -82,7 +83,7 @@ public class MemeBotInterfacer3000 {
 		if (!allowedChannel) {
 			// if its the !meme command
 			if (message.getContentDisplay().contains("!meme")) {
-				output.add(new MemeBotMsg3000().user(user.getName()).channelID(channel.getIdLong()).type(Fetch_Meme)
+				output.add(new MemeBotMsg3000().user(user.getName()).channelID(channel.getIdLong()).type(Fetch_Meme).userID(userID)
 						.body(message.getContentDisplay().replace("!meme", "").replace("!request", "")));
 			} else if (channel.getType() == ChannelType.PRIVATE) {
 				if (message.getAttachments().size() != 0) {
@@ -99,7 +100,7 @@ public class MemeBotInterfacer3000 {
 							}
 						}
 
-						output.add(new MemeBotMsg3000().user(user.getName()).admin(admin).channelID(channel.getIdLong())
+						output.add(new MemeBotMsg3000().user(user.getName()).admin(admin).channelID(channel.getIdLong()).userID(userID)
 								.url(url).body(tags).type(Submit_Meme));
 					} else {
 						logger.println(user.getName() + " did not give any tags");
@@ -206,6 +207,7 @@ public class MemeBotInterfacer3000 {
 		case Send_User:
 			try {
 				body = message.getBody();
+				logger.println(message.getUserID() + "");
 				bot.openPrivateChannelById(message.getUserID()).complete().sendMessage(body).complete();
 				logger.println("Sending message to user " + message.getUser());
 			}catch (NullPointerException e) {
