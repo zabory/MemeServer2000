@@ -113,6 +113,7 @@ public class MemeDBC3000 extends Thread{
                             outputQ.put(new MemeDBMsg3000()
                                     .type(SUBMIT_ACK)
                                     .userID(msg.getUserID())
+                                    .username(msg.getUsername())
                                     .message("Stored meme to MemeDB")
                             );
                         }
@@ -129,6 +130,7 @@ public class MemeDBC3000 extends Thread{
                                     .type(SUBMIT_ACK)
                                     .id(id)
                                     .userID(msg.getUserID())
+                                    .username(msg.getUsername())
                                     .message("Stored meme to the Cache. It is pending admin approval.")
                             );
                         }
@@ -137,7 +139,7 @@ public class MemeDBC3000 extends Thread{
                         break;
 
                     case PROMOTE_MEME:
-                        logger.println("Promoting meme " + msg.getId());
+                        logger.println("Promoting meme ID " + msg.getId());
                         userId = db.promote(msg.getId(), msg.getUsername(), msg.getUserID(), msg.getTags());
                         link = db.get(msg.getId());
                         if(link != null && userId != null){
@@ -147,6 +149,7 @@ public class MemeDBC3000 extends Thread{
                                     .id(msg.getId())
                                     .link(link)
                                     .userID(userId)
+                                    .username(msg.getUsername())
                             );
                         }
                         else
@@ -154,7 +157,7 @@ public class MemeDBC3000 extends Thread{
                         break;
 
                     case DEMOTE_MEME:
-                        logger.println("Demoting meme " + msg.getId());
+                        logger.println("Demoting meme ID " + msg.getId());
                         link = db.get(msg.getId());
                         userId = db.demote(msg.getId());
                         if(link != null && userId != null){
@@ -163,6 +166,7 @@ public class MemeDBC3000 extends Thread{
                                     .id(msg.getId())
                                     .link(link)
                                     .userID(userId)
+                                    .username(msg.getUsername())
                             );
                         }
                         else
@@ -170,7 +174,7 @@ public class MemeDBC3000 extends Thread{
                         break;
 
                     case REJECT_MEME:
-                        logger.println("Rejecting meme " + msg.getId());
+                        logger.println("Rejecting meme ID " + msg.getId());
                         link = db.getCache(msg.getId());
                         userId = db.reject(msg.getId());
                         if(link != null && userId != null){
@@ -180,6 +184,7 @@ public class MemeDBC3000 extends Thread{
                                     .id(msg.getId())
                                     .link(link)
                                     .userID(userId)
+                                    .username(msg.getUsername())
                             );
                         }
                         else
