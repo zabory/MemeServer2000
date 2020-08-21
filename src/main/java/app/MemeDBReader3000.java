@@ -63,8 +63,8 @@ public class MemeDBReader3000 extends Thread{
                             approveQ.put(msg.getId());
                         }
                         else
-                            logger.println("Received ACK for meme submitted by " + msg.getUsername());
-                        botInputQ.put(new MemeBotMsg3000().type(Send_User).body(msg.getMessage()).user(msg.getUsername()));
+                            logger.println("Received ACK for meme submitted by " + msg.getUserID());
+                        botInputQ.put(new MemeBotMsg3000().type(Send_User).body(msg.getMessage()).userID(msg.getUserID()));
                         break;
 
                     case APPROVE_MEME:
@@ -82,19 +82,19 @@ public class MemeDBReader3000 extends Thread{
                         logger.println("Received curation result for meme of ID " + msg.getId());
                         approveQ.take();
                         botInputQ.put(new MemeBotMsg3000().type(Clear_Queue));
-                        botInputQ.put(new MemeBotMsg3000().type(Send_User).body(msg.getLink()).user(msg.getUsername()));
-                        botInputQ.put(new MemeBotMsg3000().type(Send_User).body(msg.getMessage()).user(msg.getUsername()));
+                        botInputQ.put(new MemeBotMsg3000().type(Send_User).body(msg.getLink()).userID(msg.getUserID()));
+                        botInputQ.put(new MemeBotMsg3000().type(Send_User).body(msg.getMessage()).userID(msg.getUserID()));
                         dbInputQ.put(new MemeDBMsg3000().type(GET_TAGS));
                         break;
 
                     case MEME:
-                        logger.println("Sending meme to " + msg.getChannelID() + ", requested by " + msg.getUsername());
-                        botInputQ.put(new MemeBotMsg3000().type(Send_Channel).body(msg.getLink()).user(msg.getUsername()).channelID(msg.getChannelID()));
+                        logger.println("Sending meme to " + msg.getChannelID() + ", requested by " + msg.getUserID());
+                        botInputQ.put(new MemeBotMsg3000().type(Send_Channel).body(msg.getLink()).userID(msg.getUserID()).channelID(msg.getChannelID()));
                         break;
 
                     case ERROR:
                     	logger.println(level.ERROR, msg.getMessage() + msg.getTags());
-                        botInputQ.put(new MemeBotMsg3000().type(Send_User).body(msg.getMessage() + msg.getTags()).user(msg.getUsername()));
+                        botInputQ.put(new MemeBotMsg3000().type(Send_User).body(msg.getMessage() + msg.getTags()).userID(msg.getUserID()));
                         break;
 
                     default:
